@@ -1,0 +1,36 @@
+{
+  "name": "webpack-wp-theme-starter",
+  "version": "1.0.0",
+  "description": "Quick starter and empty child theme ready with a basic config with Webpack to make something cool. You can change settings in webpack.config.js.",
+  "main": "main.js",
+  "scripts": {
+    "build": "webpack --color -d --display-error-details",
+    "watch": "webpack --watch-stdin --color -d --display-error-details"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "font-awesome": "^4.7.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.4.3",
+    "@babel/plugin-proposal-object-rest-spread": "^7.4.3",
+    "@babel/plugin-transform-runtime": "^7.4.3",
+    "@babel/preset-env": "^7.4.3",
+    "autoprefixer": "^7.1.5",
+    "babel-loader": "^8.0.5",
+    "compression-webpack-plugin": "^1.0.0",
+    "copy-webpack-plugin": "^4.0.1",
+    "css-loader": "^0.28.4",
+    "extract-text-webpack-plugin": "^3.0.0",
+    "file-loader": "^0.11.2",
+    "node-sass": "^4.5.3",
+    "postcss-loader": "^2.0.7",
+    "purify-css": "^1.2.5",
+    "purifycss-webpack": "^0.7.0",
+    "sass-loader": "^6.0.6",
+    "style-loader": "^0.18.2",
+    "uglifyjs-3-webpack-plugin": "^1.2.4",
+    "webpack": "^3.6.0"
+  }
+}

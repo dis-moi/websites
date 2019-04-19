@@ -1,0 +1,36 @@
+#main-footer {
+
+	.footer-logo {
+		max-width: 150px !important;
+		width: 100%;
+		height: auto;
+	}
+
+	.widget_nav_menu {
+
+	}
+
+	.menu {
+		list-style-type: none;
+		margin: 0;
+		padding: 0;
+
+		li {
+			display: inline;
+			padding-left: 0;
+			margin-right: 10px;
+
+			&:before {
+				content: none;
+			}
+
+			a {
+				&:hover,
+				&:focus {
+					text-decoration: underline;
+				}
+			}
+		}
+	}
+
+}

@@ -1,0 +1,24 @@
+
+
+body:not(.et-fb) {
+
+	.u-display-none-small-less {
+
+		display: block;
+
+		@include respond-to($mq-small) {
+			display: none;
+		}
+
+	}
+
+	.u-display-block-small {
+		display: none;
+
+		@include respond-to($mq-small) {
+			display: block;
+		}
+	}
+
+}
+

@@ -1,6 +1,6 @@
 
 
-.et_section_regular--first {
+.et_section_regular--with-curve {
 	background-color: transparent;
 
 	&:after {
@@ -14,16 +14,6 @@
 		background-image: url('../img/bottom-curve.svg');
 		background-repeat: no-repeat;
 		background-size: 100% 50px;
-	}
-
-	.et_pb_row_0.et_pb_row {
-
-		@include respond-to('medium') {
-			/*
-			background-color: white;
-			padding: 50px !important;
-			border-radius: 15px;*/
-		}
 	}
 }
 

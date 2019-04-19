@@ -29,9 +29,9 @@
     #main-footer .menu li a:hover, #main-footer .menu li a:focus {
       text-decoration: underline; }
 
-.et_section_regular--first {
+.et_section_regular--with-curve {
   background-color: transparent; }
-  .et_section_regular--first:after {
+  .et_section_regular--with-curve:after {
     content: '';
     display: block;
     width: 100%;
@@ -42,13 +42,19 @@
     background-image: url(./dist/assets/img/bottom-curve.svg);
     background-repeat: no-repeat;
     background-size: 100% 50px; }
-  @media (min-width: 960px) {
-    .et_section_regular--first .et_pb_row_0.et_pb_row {
-      /*
-			background-color: white;
-			padding: 50px !important;
-			border-radius: 15px;*/ } }
 
 /* Case: bg transparent */
 .et_section_regular--transparent {
   background-color: transparent; }
+
+body:not(.et-fb) .u-display-none-small-less {
+  display: block; }
+  @media (min-width: 768px) {
+    body:not(.et-fb) .u-display-none-small-less {
+      display: none; } }
+
+body:not(.et-fb) .u-display-block-small {
+  display: none; }
+  @media (min-width: 768px) {
+    body:not(.et-fb) .u-display-block-small {
+      display: block; } }

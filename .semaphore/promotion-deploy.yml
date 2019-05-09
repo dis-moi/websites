@@ -1,0 +1,23 @@
+version: v1.0
+name: Deploy website
+agent:
+  machine:
+    type: e1-standard-2
+    os_image: ubuntu1804
+blocks:
+  - name: Deploy
+    task:
+      secrets:
+        - name: gandi-secrets
+      prologue:
+        commands:
+          - chmod 0600 ~/.keys/*
+          - ssh-add ~/.keys/*
+          - checkout
+      jobs:        
+        - name: Copy Themes to Simple Hosting
+          commands:
+            - cd ./themes && lftp -c "set sftp:connect-program 'ssh -a -x -o StrictHostKeyChecking=no'; open -u $sftp_user,nopassword sftp://$sftp_hostname; mirror -v -R --only-newer ./ $sftp_basepath/wp-content/themes/"
+        - name: Copy Plugins to Simple Hosting
+          commands:
+            - cd ./plugins && lftp -c "set sftp:connect-program 'ssh -a -x -o StrictHostKeyChecking=no';open -u $sftp_user,nopassword sftp://$sftp_hostname; mirror -v -R --only-newer ./ $sftp_basepath/wp-content/plugins/"

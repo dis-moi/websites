@@ -1,0 +1,20 @@
+version: v1.0
+name: Deploy website
+agent:
+  machine:
+    type: e1-standard-2
+    os_image: ubuntu1804
+blocks:
+  - name: Promotion
+    task:
+      jobs:
+        - name: Deploy
+          commands:
+            - echo "Ready to deploy!"
+promotions:
+  - name: Production Deploy
+    pipeline_file: production-deploy.yml
+    auto_promote_on:
+      - result: passed
+        branch:
+          - master

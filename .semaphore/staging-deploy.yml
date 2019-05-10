@@ -9,7 +9,7 @@ blocks:
     task:
       secrets:
         - name: gandi-secrets
-        - name: gandi-production
+        - name: gandi-staging
       prologue:
         commands:
           - chmod 0600 ~/.keys/*

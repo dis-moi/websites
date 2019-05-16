@@ -1,4 +1,9 @@
-#main-header {
-	box-shadow: none;
-	background-color: transparent;
+
+
+.mobile_menu_bar_toggle {
+
+	&:before {
+		font-weight: bold;
+	}
 }
+

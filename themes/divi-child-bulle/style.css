@@ -7,9 +7,8 @@
  Template:       Divi
  Version:        1.0.0
 */
-#main-header {
-  box-shadow: none;
-  background-color: transparent; }
+.mobile_menu_bar_toggle:before {
+  font-weight: bold; }
 
 #main-footer .footer-logo {
   max-width: 150px !important;
@@ -28,6 +27,10 @@
       content: none; }
     #main-footer .menu li a:hover, #main-footer .menu li a:focus {
       text-decoration: underline; }
+
+.page-template-page-landing-alternating #main-header {
+  box-shadow: none;
+  background-color: transparent; }
 
 .et_section_regular--with-curve {
   background-color: transparent; }
@@ -58,3 +61,169 @@ body:not(.et-fb) .u-display-block-small {
   @media (min-width: 768px) {
     body:not(.et-fb) .u-display-block-small {
       display: block; } }
+
+.overlay {
+  display: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 999999;
+  position: fixed;
+  background-color: rgba(255, 255, 255, 0.95); }
+  .overlay .contentOverlay {
+    top: 80px;
+    left: 52%;
+    position: absolute;
+    text-align: left;
+    max-width: 430px; }
+  .overlay .contentReloadOverlay {
+    top: 50px;
+    color: #505050;
+    right: 53%;
+    padding: 15px 26px 12px 26px;
+    position: absolute;
+    font-size: 16px;
+    background: #ffffff;
+    box-shadow: 0px 2px 35px 0px rgba(0, 0, 0, 0.25);
+    font-weight: 600;
+    border-radius: 3px; }
+  .overlay .contentReloadOverlay span {
+    display: block;
+    font-size: 18px !important;
+    color: #707070 !important;
+    font-weight: 400 !important;
+    margin-bottom: 10px; }
+  .overlay .containreRestartButtons {
+    display: block;
+    position: relative; }
+  .overlay .restartButtons {
+    float: right;
+    display: flex;
+    line-height: initial;
+    display: inline-block; }
+  .overlay .restartButton,
+  .overlay .notNowButton {
+    display: inline-block;
+    cursor: pointer;
+    padding: 8px 25px;
+    font-size: 12px;
+    text-align: center;
+    transition: 0.2s;
+    border-radius: 3px; }
+  .overlay .notNowButton {
+    color: #c0c0c0;
+    border: 1px solid #fafafa;
+    margin: 0px 14px 0px 47px;
+    font-weight: 500; }
+  .overlay .notNowButton:hover {
+    color: #ffffff;
+    background-color: #c0c0c0; }
+  .overlay .restartInstallButton {
+    color: #0C52B4;
+    border: 1px solid #0C52B4;
+    padding: 8px 62px;
+    font-weight: 600; }
+  .overlay .restartInstallButton:hover {
+    color: #ffffff;
+    background-color: #0C52B4; }
+  .overlay .restartPlus {
+    margin-right: 6px;
+    display: inline-block;
+    position: relative;
+    top: 1px; }
+  .overlay .restartPlus .h-icon {
+    background-image: url(./dist/assets/img/bulle/icon-add.png);
+    width: 11px;
+    height: 11px;
+    background-size: cover;
+    background-repeat: no-repeat; }
+  .overlay .restartInstallButton:hover .restartPlus .h-icon {
+    background-image: url(./dist/assets/img/bulle/icon-add-white.png); }
+  .overlay .contentOverlay .imgChrome {
+    background-image: url(./dist/assets/img/bulle/imgOverlayChrome.png);
+    width: 230px;
+    height: 250px; }
+  .overlay .contentOverlay .imgFirefox {
+    background-image: url(./dist/assets/img/bulle/imgOverlayFirefox.png);
+    width: 273px;
+    height: 222px;
+    margin-top: -50px; }
+  .overlay .contentOverlay .title {
+    color: #0C52B4;
+    font-size: 45px;
+    line-height: 1.2; }
+  .overlay .contentOverlay .subtitle {
+    color: #707070;
+    font-size: 35px;
+    line-height: 1.1;
+    margin-top: 18px; }
+  .overlay .contentOverlay .infos {
+    margin-top: 30px;
+    color: #404243;
+    font-size: 25px; }
+    .overlay .contentOverlay .infos ul {
+      margin-top: 10px;
+      padding-left: 21px; }
+    .overlay .contentOverlay .infos li {
+      color: #707070;
+      font-size: 18px;
+      padding: 0; }
+      .overlay .contentOverlay .infos li:before {
+        position: absolute;
+        left: -21px;
+        top: 2px; }
+
+.overlayFirefox .contentOverlay {
+  top: 30px; }
+
+.overlayFirefox .contentReloadOverlay {
+  top: 330px; }
+
+.overlayFirefox .contentReloadOverlay span {
+  display: block; }
+
+.overlayFirefox .containreRestartButtons {
+  display: block;
+  top: 0;
+  margin-top: 25px;
+  margin-bottom: 10px; }
+
+.overlayFirefox .notNowButton {
+  margin: 0 14px 0 0; }
+
+/*
+.overlay {display:none;top: 0px;left: 0px;right: 0px;bottom: 0px;z-index: 400;position: fixed;background-color: rgba(255, 255, 255, 0.95);}
+.overlay .contentOverlay{top: 80px;left: 52%;position: absolute;text-align: left;max-width: 430px;}
+.overlayFirefox .contentOverlay{top: 30px;}
+.overlay .contentReloadOverlay{top: 50px;color: #505050;right: 53%;padding: 15px 26px 12px 26px;position: absolute;font-size: 16px;background: #ffffff;box-shadow: 0px 2px 35px 0px rgba(0, 0, 0, 0.25);font-weight: 600;border-radius: 3px;}
+.overlayFirefox .contentReloadOverlay{top: 330px;}
+.overlay .contentReloadOverlay span {display: inline-block;font-family: Varela Round !important;font-size: 18px !important;color:#707070 !important; font-weight: 400 !important}
+.overlayFirefox .contentReloadOverlay span {display: block;}
+.overlay .containreRestartButtons  {display: inline-block;top: -10px;position: relative;}
+.overlayFirefox .containreRestartButtons  {display: block;top: 0px;margin-top: 25px;margin-bottom: 10px;}
+.overlay .restartButtons {float: right;display: flex;line-height: initial;display: inline-block;}
+
+.overlay .restartButton,.overlay .notNowButton {display: inline-block;cursor: pointer;padding: 8px 25px;font-size: 12px;text-align: center;transition: 0.2s;border-radius: 3px;}
+
+.overlay .notNowButton {color: #c0c0c0;border: 1px solid #fafafa;margin: 0px 14px 0px 47px;font-weight: 500;}
+.overlayFirefox .notNowButton {margin: 0px 14px 0px 0px;}
+
+.overlay .notNowButton:hover {color: #ffffff;background-color: #c0c0c0;}
+.overlay .restartInstallButton {color: #0C52B4;border: 1px solid #0C52B4;padding: 8px 62px;font-weight: 600;}
+.overlay .restartInstallButton:hover {color: #ffffff;background-color: #0C52B4;}
+
+.overlay .restartPlus {margin-right: 6px;display: inline-block;position: relative;top: 1px;}
+.overlay .restartPlus .h-icon {background-image: url(../img/bulle/icon-add.png);width:11px;height:11px;background-size: cover;background-repeat: no-repeat;}
+
+.overlay .restartInstallButton:hover .restartPlus .h-icon {background-image: url(../img/bulle/icon-add-white.png);}
+.overlay .contentOverlay .imgChrome{background-image: url(../img/bulle/imgOverlayChrome.png);width:230px;height:250px;}
+.overlay .contentOverlay .imgFirefox{background-image: url(../img/bulle/imgOverlayFirefox.png);width:273px;height:222px;margin-top: -50px;}
+.overlay .contentOverlay .title {color:#0C52B4;font-family: Varela Round;font-size: 45px;line-height: 1.2;}
+.overlay .contentOverlay .subtitle {color:#707070;font-family: Varela Round;font-size: 35px;line-height: 1.1;margin-top: 18px;}
+.overlay .contentOverlay .infos {margin-top: 30px;color:#404243;font-family: Varela Round;font-size: 25px}
+.overlay .contentOverlay .infos ul {margin-top: 10px;padding-left: 21px;}
+.overlay .contentOverlay .infos li {color:#707070;font-family: Varela Round;font-size: 18px;padding: 0px;}
+.overlay .contentOverlay .infos li:before { position: absolute; left: -21px; top: 2px;}
+
+ */

@@ -32,6 +32,9 @@ module.exports = {
     path: __dirname,
     filename: "dist/[name].js"
   },
+  externals: {
+    jquery: 'jQuery'
+  },
   resolve: {
     extensions: ['.js'],
     modules: [

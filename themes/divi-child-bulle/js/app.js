@@ -1,7 +1,10 @@
 
-import { test } from 'script';
+import { initExtensionInstaller } from 'bulle-extension';
 
 window.addEventListener('load', () => {
-  console.log('JavaScript is ready');
-  test();
+
+  console.info('Bulle JS is ready');
+
+  initExtensionInstaller();
+
 });

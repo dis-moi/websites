@@ -10,6 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bowser": "^2.4.0",
     "font-awesome": "^4.7.0"
   },
   "devDependencies": {

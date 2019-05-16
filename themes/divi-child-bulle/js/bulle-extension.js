@@ -20,8 +20,6 @@ const el = {
 };
 
 const closeWin = () => {
-	console.log('closeWin');
-	console.log('el.windowObjectReference', el.windowObjectReference);
 	el.windowObjectReference.close();
 };
 

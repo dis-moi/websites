@@ -15,6 +15,8 @@ Install packages by running `yarn install`
 
 `yarn run buld` for production
 
+`docker-compose up` for docker
+
 
 ### Wishlist
 

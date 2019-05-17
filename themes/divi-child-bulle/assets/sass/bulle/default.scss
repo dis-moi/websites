@@ -1,0 +1,189 @@
+
+.overlay {
+	display:none;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 999999;
+	position: fixed;
+	background-color: rgba(255, 255, 255, 0.95);
+
+	.contentOverlay{
+		top: 80px;
+		left: 52%;
+		position: absolute;
+		text-align: left;
+		max-width: 430px;
+	}
+
+	.contentReloadOverlay{
+		top: 50px;
+		color: #505050;
+		right: 53%;
+		padding: 15px 26px 12px 26px;
+		position: absolute;
+		font-size: 16px;
+		background: #ffffff;
+		box-shadow: 0px 2px 35px 0px rgba(0, 0, 0, 0.25);
+		font-weight: 600;
+		border-radius: 3px;
+	}
+
+	.contentReloadOverlay span {
+		display: block;
+		// font-family: Varela Round !important;
+		font-size: 18px !important;
+		color:#707070 !important;
+		font-weight: 400 !important;
+		margin-bottom: 10px;
+	}
+
+	.containreRestartButtons  {
+		display: block;
+		position: relative;
+	}
+
+	.restartButtons {
+		float: right;
+		display: flex;
+		line-height: initial;
+		display: inline-block;
+	}
+
+	.restartButton,
+	.notNowButton {
+		display: inline-block;
+		cursor: pointer;
+		padding: 8px 25px;
+		font-size: 12px;
+		text-align: center;
+		transition: 0.2s;
+		border-radius: 3px;
+	}
+
+	.notNowButton {
+		color: #c0c0c0;
+		border: 1px solid #fafafa;
+		margin: 0px 14px 0px 47px;
+		font-weight: 500;
+	}
+
+	.notNowButton:hover {
+		color: #ffffff;
+		background-color: #c0c0c0;
+	}
+
+	.restartInstallButton {
+		color: #0C52B4;
+		border: 1px solid #0C52B4;
+		padding: 8px 62px;
+		font-weight: 600;
+	}
+
+	.restartInstallButton:hover {
+		color: #ffffff;
+		background-color: #0C52B4;
+	}
+
+	.restartPlus {
+		margin-right: 6px;
+		display: inline-block;
+		position: relative;
+		top: 1px;
+	}
+
+	.restartPlus .h-icon {
+		background-image: url(../img/bulle/icon-add.png);
+		width:11px;
+		height:11px;
+		background-size: cover;
+		background-repeat: no-repeat;
+	}
+
+	.restartInstallButton:hover .restartPlus .h-icon {
+		background-image: url(../img/bulle/icon-add-white.png);
+	}
+
+	.contentOverlay {
+		.imgChrome{
+			background-image: url(../img/bulle/imgOverlayChrome.png);
+			width:230px;
+			height:250px;
+		}
+
+		.imgFirefox{
+			background-image: url(../img/bulle/imgOverlayFirefox.png);
+			width:273px;
+			height:222px;
+			margin-top: -50px;
+		}
+
+		.title {
+			color:#0C52B4;
+			// font-family: Varela Round;
+			font-size: 45px;
+			line-height: 1.2;
+		}
+
+		.subtitle {
+			color:#707070;
+			//font-family: Varela Round;
+			font-size: 35px;
+			line-height: 1.1;
+			margin-top: 18px;
+		}
+
+		.infos {
+			margin-top: 30px;
+			color:#404243;
+			// font-family: Varela Round;
+			font-size: 25px;
+
+			ul {
+				margin-top: 10px;
+				padding-left: 21px;
+			}
+
+			li {
+				color:#707070;
+				// font-family: Varela Round;
+				font-size: 18px;
+				padding: 0;
+
+				&:before {
+					position: absolute;
+					left: -21px;
+					top: 2px;
+				}
+			}
+		}
+	}
+}
+
+.overlayFirefox {
+
+	.contentOverlay {
+		top: 30px;
+	}
+
+	.contentReloadOverlay{
+		top: 330px;
+	}
+
+	.contentReloadOverlay span {
+		display: block;
+	}
+
+	.containreRestartButtons {
+		display: block;
+		top: 0;
+		margin-top: 25px;
+		margin-bottom: 10px;
+	}
+
+	.notNowButton {
+		margin: 0 14px 0 0;
+	}
+
+}

@@ -1,0 +1,15 @@
+
+$mq-small-less : '<small';
+$mq-small : 'small';
+$mq-medium : 'medium';
+$mq-xmedium : 'xmedium';
+$mq-large : 'large';
+
+
+$breakpoints: (
+		$mq-small-less:  ( max-width:  767px ),
+		$mq-small:  ( min-width:  768px ),
+		$mq-medium: ( min-width:  960px ),
+		$mq-xmedium: ( min-width:  1024px ),
+		$mq-large:  ( min-width: 1200px )
+) !default;

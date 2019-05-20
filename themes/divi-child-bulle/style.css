@@ -191,3 +191,6 @@ body:not(.et-fb) .u-display-block-small {
 
 .overlayFirefox .notNowButton {
   margin: 0 14px 0 0; }
+
+.widget_search #searchsubmit {
+  width: auto; }

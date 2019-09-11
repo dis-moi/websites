@@ -18,3 +18,51 @@
         + "Available breakpoints are: #{map-keys($breakpoints)}.";
 	}
 }
+
+@mixin visually-hide() {
+	border: 0;
+	clip: rect(0 0 0 0);
+	height: 1px;
+	margin: -1px;
+	overflow: hidden;
+	padding: 0;
+	position: absolute;
+	width: 1px;
+}
+
+@mixin hidden {
+	display: none !important;
+	visibility: hidden;
+}
+
+@mixin visually-show {
+	clip: auto;
+	width: auto;
+	height: auto;
+	margin: 0;
+	position: static;
+}
+
+@mixin optional-at-root($sel) {
+	@at-root #{if(not &, $sel, selector-append(&, $sel))} {
+		@content;
+	}
+}
+
+@mixin placeholder {
+	@include optional-at-root('::-webkit-input-placeholder') {
+		@content;
+	}
+
+	@include optional-at-root(':-moz-placeholder') {
+		@content;
+	}
+
+	@include optional-at-root('::-moz-placeholder') {
+		@content;
+	}
+
+	@include optional-at-root(':-ms-input-placeholder') {
+		@content;
+	}
+}

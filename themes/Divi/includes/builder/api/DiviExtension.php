@@ -159,9 +159,18 @@ class DiviExtension {
 	 * @since 3.1
 	 */
 	protected function _set_bundle_dependencies() {
+		/**
+		 * Builder script handle name
+		 *
+		 * @since 3.??
+		 *
+		 * @param string
+		 */
+		$builder_modules_script_handle = apply_filters( 'et_builder_modules_script_handle', 'et-builder-modules-script' );
+
 		$this->_bundle_dependencies = array(
 			'builder'  => array( 'react-dom', "{$this->name}-frontend-bundle" ),
-			'frontend' => array( 'jquery', 'et-builder-modules-script' ),
+			'frontend' => array( 'jquery', $builder_modules_script_handle ),
 		);
 	}
 

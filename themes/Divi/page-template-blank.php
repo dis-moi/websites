@@ -5,9 +5,11 @@ Template Name: Blank Page
 
 get_header();
 
-$is_page_builder_used = et_pb_is_pagebuilder_used( get_the_ID() ); ?>
+$post_id              = get_the_ID();
+$is_page_builder_used = et_pb_is_pagebuilder_used( $post_id );
+$container_tag        = 'product' === get_post_type( $post_id ) ? 'div' : 'article'; ?>
 
-<div id="main-content">
+    <div id="main-content">
 
 <?php if ( ! $is_page_builder_used ) : ?>
 
@@ -19,7 +21,7 @@ $is_page_builder_used = et_pb_is_pagebuilder_used( get_the_ID() ); ?>
 
 			<?php while ( have_posts() ) : the_post(); ?>
 
-				<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
+				<<?php echo $container_tag; ?> id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 
 				<?php if ( ! $is_page_builder_used ) : ?>
 
@@ -54,7 +56,7 @@ $is_page_builder_used = et_pb_is_pagebuilder_used( get_the_ID() ); ?>
 					if ( ! $is_page_builder_used && comments_open() && 'on' === et_get_option( 'divi_show_pagescomments', 'false' ) ) comments_template( '', true );
 				?>
 
-				</article> <!-- .et_pb_post -->
+				</<?php echo $container_tag; ?>> <!-- .et_pb_post -->
 
 			<?php endwhile; ?>
 

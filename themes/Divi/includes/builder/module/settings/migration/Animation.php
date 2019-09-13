@@ -50,7 +50,7 @@ class ET_Builder_Module_Settings_Migration_Animation extends ET_Builder_Module_S
 		return $modules;
 	}
 
-	public function migrate( $field_name, $current_value, $module_slug, $saved_value, $saved_field_name, $attrs, $content ) {
+	public function migrate( $field_name, $current_value, $module_slug, $saved_value, $saved_field_name, $attrs, $content, $module_address ) {
 		// Image & Fullwidth Image modules migration setting
 		if ( in_array( $module_slug, $this->get_modules( 'image' ) ) ) {
 

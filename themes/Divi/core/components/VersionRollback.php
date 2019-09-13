@@ -303,6 +303,17 @@ class ET_Core_VersionRollback {
 			return new WP_Error( 'et_unknown', esc_html__( 'An unknown error has occurred. Please try again later.', 'et-core' ) );
 		}
 
+		/**
+		 * Fires after successful product version rollback.
+		 *
+		 * @since 3.26
+		 *
+		 * @param string $product_short_name    - The short name of the product rolling back.
+		 * @param string $rollback_from_version - The product version rolling back from.
+		 * @param string $rollback_to_version   - The product version rolling back to.
+		 */
+		do_action( 'et_after_version_rollback', $this->product_shortname, $latest_version, $previous_version );
+
 		// Swap version numbers after a successful rollback.
 		$this->_set_previous_installed_version( $latest_version );
 		$this->_set_latest_installed_version( $previous_version );

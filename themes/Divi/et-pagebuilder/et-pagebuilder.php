@@ -16,6 +16,107 @@ function et_setup_builder() {
 }
 add_action( 'init', 'et_setup_builder', 0 );
 
+if ( ! function_exists( 'et_divi_maybe_adjust_row_advanced_options_config' ) ):
+function et_divi_maybe_adjust_row_advanced_options_config( $advanced_options ) {
+	// Get module instances
+	$modules     = ET_Builder_Element::get_modules();
+
+	// This returns section module instance but it is acceptable; any module instance hold the
+	// same post type value. Can't use WordPress' default get_post_type() because this is used
+	// on frontend and visual builder where definition is pulled via ajax request
+	$module      = array_pop( $modules );
+
+	// Get post ID and page layout
+	$post_id     = ET_Builder_Element::get_current_post_id();
+	$page_layout = get_post_meta( $post_id, '_et_pb_page_layout', true );
+
+	// Row in Divi needs to be further wrapped
+	$selector = array(
+		'%%order_class%%',
+		'body #page-container .et-db #et-boc %%order_class%%.et_pb_row',
+		'body.et_pb_pagebuilder_layout.single #page-container #et-boc %%order_class%%.et_pb_row',
+	);
+
+	// Divi has custom styling added for row if fullwidth or no sidebar layout is used. To ensure
+	// custom style not overwritten builder's output, builder's row selector need to be more specific
+	if ( in_array( $page_layout, array( 'et_full_width_page', 'et_no_sidebar' ) ) ) {
+		if ( 'project' !== $module->get_post_type() ) {
+			// Builder automatically adds `#et-boc` on selector on non official post type; hence
+			// alternative selector wrapper for non official post type
+			if ( et_builder_post_is_of_custom_post_type( $post_id ) ) {
+				$selector[] = 'body.et_pb_pagebuilder_layout.single.et_full_width_page #page-container %%order_class%%.et_pb_row';
+			} else {
+				$selector[] = 'body.et_pb_pagebuilder_layout.single.et_full_width_page #page-container #et-boc %%order_class%%.et_pb_row';
+			}
+		} else {
+			// `project` post type has its own specific selector
+			$selector[] = 'body.et_pb_pagebuilder_layout.single.et_full_width_portfolio_page #page-container #et-boc %%order_class%%.et_pb_row';
+
+		}
+	}
+
+	$selector = implode( ', ', $selector );
+
+	et_()->array_set( $advanced_options, 'max_width.css.width', $selector );
+	et_()->array_set( $advanced_options, 'max_width.css.max_width', $selector );
+	et_()->array_set( $advanced_options, 'max_width.options.max_width.default', et_divi_get_content_width() . 'px' );
+
+	if ( ! et_divi_is_boxed_layout() ) {
+		return $advanced_options;
+	}
+
+	$selector = implode( ', ', array(
+		'%%order_class%%',
+		'body.et_boxed_layout #page-container %%order_class%%.et_pb_row',
+		'body.et_boxed_layout.et_pb_pagebuilder_layout.single #page-container #et-boc %%order_class%%.et_pb_row',
+		'body.et_boxed_layout.et_pb_pagebuilder_layout.single.et_full_width_page #page-container #et-boc %%order_class%%.et_pb_row',
+		'body.et_boxed_layout.et_pb_pagebuilder_layout.single.et_full_width_portfolio_page #page-container #et-boc %%order_class%%.et_pb_row',
+	) );
+
+	et_()->array_set( $advanced_options, 'max_width.css.width', $selector );
+	et_()->array_set( $advanced_options, 'max_width.css.max_width', $selector );
+	et_()->array_set( $advanced_options, 'max_width.options.width.default', '90%' );
+
+	return $advanced_options;
+}
+add_filter( 'et_pb_row_advanced_fields', 'et_divi_maybe_adjust_row_advanced_options_config' );
+endif;
+
+if ( ! function_exists( 'et_divi_maybe_adjust_section_advanced_options_config' ) ):
+function et_divi_maybe_adjust_section_advanced_options_config( $advanced_options ) {
+	$is_post_type = is_singular( 'post' ) || ( 'et_fb_update_builder_assets' === et_()->array_get( $_POST, 'action' ) && 'post' === et_()->array_get( $_POST, 'et_post_type' ) );
+
+	et_()->array_set( $advanced_options, 'max_width.extra.inner.options.max_width.default', et_divi_get_content_width() . 'px' );
+
+	if ( et_divi_is_boxed_layout() ) {
+		$selector = implode( ', ', array(
+			'%%order_class%% > .et_pb_row',
+			'body.et_boxed_layout #page-container %%order_class%% > .et_pb_row',
+			'body.et_boxed_layout.et_pb_pagebuilder_layout.single #page-container #et-boc %%order_class%% > .et_pb_row',
+			'body.et_boxed_layout.et_pb_pagebuilder_layout.single.et_full_width_page #page-container #et-boc %%order_class%% > .et_pb_row',
+			'body.et_boxed_layout.et_pb_pagebuilder_layout.single.et_full_width_portfolio_page #page-container #et-boc %%order_class%% > .et_pb_row',
+		) );
+
+		et_()->array_set( $advanced_options, 'max_width.extra.inner.options.width.default', '90%' );
+		et_()->array_set( $advanced_options, 'max_width.extra.inner.css.main', $selector );
+	} else if ( $is_post_type ) {
+		$selector = implode( ', ', array(
+			'%%order_class%% > .et_pb_row',
+			'body #page-container .et-db #et-boc %%order_class%% > .et_pb_row',
+			'body.et_pb_pagebuilder_layout.single #page-container #et-boc %%order_class%% > .et_pb_row',
+			'body.et_pb_pagebuilder_layout.single.et_full_width_page #page-container #et-boc %%order_class%% > .et_pb_row',
+			'body.et_pb_pagebuilder_layout.single.et_full_width_portfolio_page #page-container #et-boc %%order_class%% > .et_pb_row',
+		) );
+		et_()->array_set( $advanced_options, 'max_width.extra.inner.css.main', $selector );
+	}
+
+	et_()->array_set( $advanced_options, 'margin_padding.css.main', '%%order_class%%.et_pb_section' );
+
+	return $advanced_options;
+}
+add_filter( 'et_pb_section_advanced_fields', 'et_divi_maybe_adjust_section_advanced_options_config' );
+endif;
+
 /**
  * Added custom data attribute to builder's section
  * @param array  initial custom data-* attributes for builder's section

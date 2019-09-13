@@ -109,6 +109,12 @@ input {
   box-shadow: none;
   background-color: transparent; }
 
+.custom-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 100; }
+
 .sib_signup_form form,
 .sib_signup_form button,
 .sib_signup_form input,

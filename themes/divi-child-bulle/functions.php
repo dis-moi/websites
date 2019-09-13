@@ -52,6 +52,7 @@ add_action( 'wp_footer', 'output_bulle_overlay' );
 
 function cc_mime_types($mimes) {
 	$mimes['svg'] = 'image/svg+xml';
+	$mimes['webp'] = 'image/webp';
 	return $mimes;
 }
 add_filter('upload_mimes', 'cc_mime_types');

@@ -42,11 +42,18 @@ class ET_Builder_Module_CTA extends ET_Builder_Module {
 					),
 				),
 				'body'   => array(
-					'label'    => esc_html__( 'Body', 'et_builder' ),
-					'css'      => array(
-						'line_height' => "{$this->main_css_element} p",
-						'limited_main' => "{$this->main_css_element} p",
-						'text_shadow' => "{$this->main_css_element} p",
+					'label'          => esc_html__( 'Body', 'et_builder' ),
+					'css'            => array(
+						'line_height'    => "{$this->main_css_element} p",
+						'limited_main'   => "{$this->main_css_element} p",
+						'text_shadow'    => "{$this->main_css_element} p",
+					),
+					'block_elements' => array(
+						'tabbed_subtoggles' => true,
+						'bb_icons_support'  => true,
+						'css'               => array(
+							'main' => "{$this->main_css_element}",
+						),
 					),
 				),
 			),
@@ -85,6 +92,12 @@ class ET_Builder_Module_CTA extends ET_Builder_Module {
 					'box_shadow'    => array(
 						'css' => array(
 							'main' => '%%order_class%% .et_pb_button',
+						),
+					),
+					'margin_padding' => array(
+						'css' => array(
+							'main'      => "{$this->main_css_element} .et_pb_button_wrapper .et_pb_promo_button.et_pb_button",
+							'important' => 'all',
 						),
 					),
 				),
@@ -139,6 +152,8 @@ class ET_Builder_Module_CTA extends ET_Builder_Module {
 				'description'     => esc_html__( 'Input your value to action title here.', 'et_builder' ),
 				'toggle_slug'     => 'main_content',
 				'dynamic_content' => 'text',
+				'mobile_options'  => true,
+				'hover'           => 'tabs',
 			),
 			'button_url' => array(
 				'label'           => esc_html__( 'Button Link URL', 'et_builder' ),
@@ -161,20 +176,24 @@ class ET_Builder_Module_CTA extends ET_Builder_Module {
 				'default_on_front' => 'off',
 			),
 			'button_text' => array(
-				'label'           => esc_html__( 'Button Text', 'et_builder' ),
+				'label'           => esc_html__( 'Button', 'et_builder' ),
 				'type'            => 'text',
 				'option_category' => 'basic_option',
 				'description'     => esc_html__( 'Input your desired button text, or leave blank for no button.', 'et_builder' ),
 				'toggle_slug'     => 'main_content',
 				'dynamic_content' => 'text',
+				'mobile_options'  => true,
+				'hover'           => 'tabs',
 			),
 			'content' => array(
-				'label'           => esc_html__( 'Content', 'et_builder' ),
+				'label'           => esc_html__( 'Body', 'et_builder' ),
 				'type'            => 'tiny_mce',
 				'option_category' => 'basic_option',
 				'description'     => esc_html__( 'Input the main text content for your module here.', 'et_builder' ),
 				'toggle_slug'     => 'main_content',
 				'dynamic_content' => 'text',
+				'mobile_options'  => true,
+				'hover'           => 'tabs',
 			),
 		);
 
@@ -188,19 +207,35 @@ class ET_Builder_Module_CTA extends ET_Builder_Module {
 	}
 
 	function render( $attrs, $content = null, $render_slug ) {
-		$title                           = $this->_esc_attr( 'title' );
+		$multi_view                      = et_pb_multi_view_options( $this );
+		$title                           = $multi_view->render_element( array(
+			'tag'     => et_pb_process_header_level( $this->props['header_level'], 'h2' ),
+			'content' => '{{title}}',
+			'attrs'   => array(
+				'class' => 'et_pb_module_header',
+			),
+		) );
 		$button_url                      = $this->props['button_url'];
 		$button_rel                      = $this->props['button_rel'];
 		$button_text                     = $this->_esc_attr( 'button_text', 'limited' );
 		$background_color                = $this->props['background_color'];
+		$use_background_colors           = et_pb_responsive_options()->get_composite_property_values( $this->props, 'background', 'use_background_color' );
+		$use_background_color_hover      = et_pb_hover_options()->get_compose_value( 'use_background_color', 'background', $this->props, '' );
+		$url_new_window                  = $this->props['url_new_window'];
+		$button_custom                   = $this->props['custom_button'];
+		$header_level                    = $this->props['header_level'];
+
+		$custom_icon_values              = et_pb_responsive_options()->get_property_values( $this->props, 'button_icon' );
+		$custom_icon                     = isset( $custom_icon_values['desktop'] ) ? $custom_icon_values['desktop'] : '';
+		$custom_icon_tablet              = isset( $custom_icon_values['tablet'] ) ? $custom_icon_values['tablet'] : '';
+		$custom_icon_phone               = isset( $custom_icon_values['phone'] ) ? $custom_icon_values['phone'] : '';
+
 		$background_layout               = $this->props['background_layout'];
 		$background_layout_hover         = et_pb_hover_options()->get_value( 'background_layout', $this->props, 'light' );
 		$background_layout_hover_enabled = et_pb_hover_options()->is_enabled( 'background_layout', $this->props );
-		$use_background_color            = $this->props['use_background_color'];
-		$url_new_window                  = $this->props['url_new_window'];
-		$custom_icon                     = $this->props['button_icon'];
-		$button_custom                   = $this->props['custom_button'];
-		$header_level                    = $this->props['header_level'];
+		$background_layout_values        = et_pb_responsive_options()->get_property_values( $this->props, 'background_layout' );
+		$background_layout_tablet        = isset( $background_layout_values['tablet'] ) ? $background_layout_values['tablet'] : '';
+		$background_layout_phone         = isset( $background_layout_values['phone'] ) ? $background_layout_values['phone'] : '';
 
 		$video_background = $this->video_background();
 		$parallax_image_background = $this->get_parallax_image_background();
@@ -213,8 +248,36 @@ class ET_Builder_Module_CTA extends ET_Builder_Module {
 			$this->get_text_orientation_classname(),
 		) );
 
-		if ( 'on' !== $use_background_color ) {
-			$this->add_classname( 'et_pb_no_bg' );
+		if ( ! empty( $background_layout_tablet ) ) {
+			$this->add_classname( "et_pb_bg_layout_{$background_layout_tablet}_tablet" );
+		}
+
+		if ( ! empty( $background_layout_phone ) ) {
+			$this->add_classname( "et_pb_bg_layout_{$background_layout_phone}_phone" );
+		}
+
+		// Background color class.
+		foreach( $use_background_colors as $mode => $value ) {
+			// Ensure value is not empty.
+			if ( empty( $value ) ) {
+				continue;
+			}
+
+			$is_value_on = 'on' === $value;
+			$infix_class = $is_value_on ? 'has' : 'no';
+
+			// Desktop doesn't need has background class.
+			if ( 'desktop' === $mode && $is_value_on ) {
+				continue;
+			}
+
+			$this->add_classname( et_pb_responsive_options()->get_field_name( "et_pb_{$infix_class}_bg", $mode ) );
+		}
+
+		if ( ! empty( $use_background_color_hover ) ) {
+			$is_value_hover_on = 'on' === $use_background_color_hover;
+			$infix_class_hover = $is_value_hover_on ? 'has' : 'on';
+			$this->add_classname( "et_pb_{$infix_class_hover}_bg_hover" );
 		}
 
 		// Remove automatically added classname
@@ -229,8 +292,13 @@ class ET_Builder_Module_CTA extends ET_Builder_Module {
 			'button_text_escaped' => true,
 			'button_url'          => $button_url,
 			'custom_icon'         => $custom_icon,
+			'custom_icon_tablet'  => $custom_icon_tablet,
+			'custom_icon_phone'   => $custom_icon_phone,
 			'url_new_window'      => $url_new_window,
-			'display_button'      => '' !== $button_url && '' !== $button_text,
+			'display_button'      => ( '' !== $button_url && $multi_view->has_value( 'button_text' ) ),
+			'multi_view_data'  => $multi_view->render_attrs( array(
+				'content' => '{{button_text}}',
+			) )
 		) );
 
 		$data_background_layout       = '';
@@ -247,6 +315,11 @@ class ET_Builder_Module_CTA extends ET_Builder_Module {
 			);
 		}
 
+		$content = $multi_view->render_element( array(
+			'tag'     => 'div',
+			'content' => '{{content}}',
+		) );
+
 		// Render module output
 		$output = sprintf(
 			'<div%5$s class="%4$s"%8$s%9$s>
@@ -258,8 +331,8 @@ class ET_Builder_Module_CTA extends ET_Builder_Module {
 				</div>
 				%3$s
 			</div>',
-			( '' !== $title ? sprintf( '<%1$s class="et_pb_module_header">%2$s</%1$s>', et_pb_process_header_level( $header_level, 'h2' ), et_core_esc_previously( $title ) ) : '' ),
-			$this->content,
+			et_core_esc_previously( $title ),
+			et_core_esc_previously( $content ),
 			$button,
 			$this->module_classname( $render_slug ),
 			$this->module_id(),

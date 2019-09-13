@@ -18,7 +18,8 @@ abstract class ET_Builder_Module_Settings_Migration {
 
 	public static $last_hook_checked;
 	public static $last_hook_check_decision;
-	public static $max_version = '3.17.3';
+	public static $max_version = '3.27.4';
+
 	public static $migrated    = array();
 	public static $migrations = array(
 		'3.0.48'  => 'BackgroundUI',
@@ -37,6 +38,13 @@ abstract class ET_Builder_Module_Settings_Migration {
 		'3.12.3'  => 'TeamMemberIconHover',
 		'3.16'    => 'HoverOptions',
 		'3.17.3'  => 'DiscontinueHtmlEncoding',
+		'3.22'    => 'RowCustomWidthToSizing',
+		'3.22.3'  => 'RowZeroGutter',
+		'3.23'    => 'OptionsHarmony2',
+		'3.23.4'  => 'DividerHeight',
+		'3.25'    => 'ColumnOptions',
+		'3.25.3'  => 'ShopOrderByDefault',
+		'3.27.4'  => 'TextAlignment',
 	);
 
 	public static $migrations_by_version = array();
@@ -44,6 +52,7 @@ abstract class ET_Builder_Module_Settings_Migration {
 	public $fields;
 	public $modules;
 	public $version;
+	public $add_missing_fields = false;
 
 	public function __construct() {
 		$this->fields  = $this->get_fields();
@@ -190,7 +199,7 @@ abstract class ET_Builder_Module_Settings_Migration {
 			foreach ( $migration->fields as $field_name => $field_info ) {
 				foreach ( $field_info['affected_fields'] as $affected_field => $affected_modules ) {
 
-					if ( ! isset( $attrs[ $affected_field ] ) || ! in_array( $module_slug, $affected_modules ) ) {
+					if ( ( ! $migration->add_missing_fields && ! isset( $attrs[ $affected_field ] ) ) || ! in_array( $module_slug, $affected_modules ) ) {
 						continue;
 					}
 
@@ -203,7 +212,7 @@ abstract class ET_Builder_Module_Settings_Migration {
 
 					$saved_value = isset( $attrs[ $field_name ] ) ? $attrs[ $field_name ] : '';
 
-					$new_value = $migration->migrate( $field_name, $current_value, $module_slug, $saved_value, $affected_field, $attrs, $content );
+					$new_value = $migration->migrate( $field_name, $current_value, $module_slug, $saved_value, $affected_field, $attrs, $content, $module_address );
 
 					if ( $new_value !== $saved_value || ( $affected_field !== $field_name && $new_value !== $current_value ) ) {
 						$attrs[ $field_name ] = self::$migrated['value_changes'][ $module_address ][ $field_name ] = $new_value;
@@ -256,7 +265,7 @@ abstract class ET_Builder_Module_Settings_Migration {
 		return $content;
 	}
 
-	abstract public function migrate( $field_name, $current_value, $module_slug, $saved_value, $saved_field_name, $attrs, $content );
+	abstract public function migrate( $field_name, $current_value, $module_slug, $saved_value, $saved_field_name, $attrs, $content, $module_address );
 
 	// this could have been written as abstract, but its not as common so as to be expected to be implemented by every migration
 	public function migrate_content( $module_slug, $attrs, $content ) {

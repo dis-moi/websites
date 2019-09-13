@@ -1,4 +1,49 @@
 <?php
+
+/**
+ * Gets the dynamic content fields related to Product post type.
+ *
+ * @since 3.29
+ *
+ * @return array
+ */
+function et_builder_get_product_dynamic_content_fields() {
+	return array(
+		'product_breadcrumb'             => array(
+			'label' => esc_html__( 'Product Breadcrumb', 'et_builder' ),
+			'type'  => 'text',
+		),
+		'product_price'                  => array(
+			'label' => esc_html__( 'Product Price', 'et_builder' ),
+			'type'  => 'text',
+		),
+		'product_description'            => array(
+			'label' => esc_html__( 'Product Description', 'et_builder' ),
+			'type'  => 'text',
+		),
+		'product_short_description'      => array(
+			'label' => esc_html__( 'Product Short Description', 'et_builder' ),
+			'type'  => 'text',
+		),
+		'product_reviews_count'          => array(
+			'label' => esc_html__( 'Product Reviews Count', 'et_builder' ),
+			'type'  => 'text',
+		),
+		'product_sku'                    => array(
+			'label' => esc_html__( 'Product SKU', 'et_builder' ),
+			'type'  => 'text',
+		),
+		'product_reviews'                => array(
+			'label' => esc_html__( 'Product Reviews', 'et_builder' ),
+			'type'  => 'any',
+		),
+		'product_additional_information' => array(
+			'label' => esc_html__( 'Product Additional Information', 'et_builder' ),
+			'type'  => 'text',
+		),
+	);
+}
+
 /**
  * Get built-in dynamic content fields.
  *
@@ -8,7 +53,13 @@
  *
  * @return array<string, array>
  */
-function et_builder_get_built_in_dynamic_content_fields( $post_id = 0 ) {
+function et_builder_get_built_in_dynamic_content_fields( $post_id ) {
+	$cache_key = 'et_builder_get_built_in_dynamic_content_fields';
+
+	if ( et_core_cache_has( $cache_key ) ) {
+		return et_core_cache_get( $cache_key );
+	}
+
 	$post_type           = get_post_type( $post_id );
 	$post_type           = $post_type ? $post_type : 'post';
 	$post_type_object    = get_post_type_object( $post_type );
@@ -224,28 +275,40 @@ function et_builder_get_built_in_dynamic_content_fields( $post_id = 0 ) {
 		),
 		'post_link_url'               => array(
 			// Translators: %1$s: Post type name
-			'label' => esc_html( sprintf( __( '%1$s Link', 'et_builder' ), $post_type_label ) ),
-			'type'  => 'url',
+			'label'  => esc_html( sprintf( __( 'Current %1$s Link', 'et_builder' ), $post_type_label ) ),
+			'type'   => 'url',
 		),
 		'home_url'                    => array(
-			'label' => esc_html__( 'Homepage Link', 'et_builder' ),
-			'type'  => 'url',
+			'label'  => esc_html__( 'Homepage Link', 'et_builder' ),
+			'type'   => 'url',
 		),
 		'post_featured_image'         => array(
-			'label' => esc_html__( 'Featured Image', 'et_builder' ),
-			'type'  => 'image',
+			'label'  => esc_html__( 'Featured Image', 'et_builder' ),
+			'type'   => 'image',
 		),
 		'post_author_profile_picture' => array(
 			// Translators: %1$s: Post type name
-			'label' => esc_html( sprintf( __( '%1$s Author Profile Picture', 'et_builder' ), $post_type_label ) ),
-			'type'  => 'image',
+			'label'  => esc_html( sprintf( __( '%1$s Author Profile Picture', 'et_builder' ), $post_type_label ) ),
+			'type'   => 'image',
 		),
 		'site_logo'                   => array(
-			'label' => esc_html__( 'Site Logo', 'et_builder' ),
-			'type'  => 'image',
+			'label'  => esc_html__( 'Site Logo', 'et_builder' ),
+			'type'   => 'image',
 		),
 	);
 
+	/*
+	 * Include Product dynamic fields on Product post type.
+	 *
+	 * This is enforced based on the discussion at
+	 *
+	 * @see https://github.com/elegantthemes/Divi/issues/15921#issuecomment-512707471
+	 */
+	if ( et_is_woocommerce_plugin_active() && 'product' === $post_type ) {
+		$fields = array_merge( $fields, et_builder_get_product_dynamic_content_fields() );
+	}
+
+	// Fill in tag taxonomies.
 	if ( isset( $post_taxonomy_types["${post_type}_tag"] ) ) {
 		$fields['post_tags'] = array(
 			// Translators: %1$s: Post type name
@@ -278,6 +341,27 @@ function et_builder_get_built_in_dynamic_content_fields( $post_id = 0 ) {
 		unset( $fields['post_tags'] );
 	}
 
+	// Fill in post type URL options.
+	$post_types = et_builder_get_public_post_types();
+	foreach ( $post_types as $public_post_type ) {
+		$public_post_type_label = $public_post_type->labels->singular_name;
+		$key = 'post_link_url_' . $public_post_type->name;
+
+		$fields[ $key ] = array(
+			// Translators: %1$s: Post type name
+			'label'  => esc_html( sprintf( __( '%1$s Link', 'et_builder' ), $public_post_type_label ) ),
+			'type'   => 'url',
+			'fields' => array(
+				'post_id'            => array(
+					'label'     => $public_post_type_label,
+					'type'      => 'select_post',
+					'post_type' => $public_post_type->name,
+					'default'   => '',
+				),
+			),
+		);
+	}
+
 	// Fill in boilerplate.
 	foreach ( $fields as $key => $field ) {
 		$fields[ $key ]['custom'] = false;
@@ -301,8 +385,22 @@ function et_builder_get_built_in_dynamic_content_fields( $post_id = 0 ) {
 		}
 	}
 
+	et_core_cache_add( $cache_key, $fields );
+
 	return $fields;
 }
+
+/**
+ * Clear dynamic content fields cache whenever a custom post type is registered.
+ *
+ * @since 3.26.7
+ *
+ * @return void
+ */
+function et_builder_clear_get_built_in_dynamic_content_fields_cache() {
+	et_core_cache_delete( 'et_builder_get_built_in_dynamic_content_fields' );
+}
+add_action( 'registered_post_type', 'et_builder_clear_get_built_in_dynamic_content_fields_cache' );
 
 /**
  * Get all public taxonomies associated with a given post type.
@@ -578,6 +676,7 @@ function et_builder_filter_resolve_default_dynamic_content( $content, $name, $se
 	$wrapped = false;
 
 	switch ( $name ) {
+		case 'product_title': // Intentional fallthrough.
 		case 'post_title':
 			$content = isset( $overrides[ $name ] ) ? $overrides[ $name ] : get_the_title( $post_id );
 			$content = esc_html( $content );
@@ -762,6 +861,11 @@ function et_builder_filter_resolve_default_dynamic_content( $content, $name, $se
 			$content = esc_url( home_url( '/' ) );
 			break;
 
+		case 'any_post_link_url':
+			$selected_post_id  = $_->array_get( $settings, 'post_id', $def( $post_id, $name, 'post_id' ) );
+			$content           = esc_url( get_permalink( $selected_post_id ) );
+			break;
+
 		case 'post_featured_image':
 			if ( isset( $overrides[ $name ] ) ) {
 				$id      = (int) $overrides[ $name ];
@@ -786,6 +890,235 @@ function et_builder_filter_resolve_default_dynamic_content( $content, $name, $se
 			}
 
 			break;
+
+		case 'product_breadcrumb':
+			$content = ET_Builder_Module_Woocommerce_Breadcrumb::get_breadcrumb( array( 'product' => $post_id ) );
+			break;
+
+		case 'product_price':
+			$product = ET_Builder_Module_Helper_Woocommerce_Modules::get_product( $post_id );
+			$content = $product->get_price_html();
+			break;
+
+		case 'product_description':
+			if ( et_pb_is_pagebuilder_used( $post_id ) ) {
+				$content = get_post_meta( $post_id, ET_BUILDER_WC_PRODUCT_LONG_DESC_META_KEY, true );
+				$content = ! empty( $content ) ? $content : '';
+			} else {
+				$content = $post->post_content;
+			}
+			break;
+
+		case 'product_short_description':
+			$content = get_the_excerpt( $post_id );
+			break;
+
+		case 'product_reviews_count':
+			$product = ET_Builder_Module_Helper_Woocommerce_Modules::get_product( $post_id );
+			if ( $product ) {
+				$content = $product->get_review_count();
+			} else {
+				$content = 0;
+			}
+			break;
+
+		case 'product_sku':
+			$product = ET_Builder_Module_Helper_Woocommerce_Modules::get_product( $post_id );
+			if ( $product ) {
+				$content = $product->get_sku();
+			} else {
+				$content = '';
+			}
+			break;
+
+		case 'product_reviews':
+			// Return early if comments are closed.
+			if ( ! comments_open( $post_id ) ) {
+				$content = '';
+				break;
+			}
+
+			$product = wc_get_product( $post_id );
+			if ( ! ( $product instanceof WC_Product ) ) {
+				$content = '';
+				break;
+			}
+
+			// Product description refers to Product short description.
+			// Product short description is nothing but post excerpt.
+			$args        = array( 'post_id' => $post_id );
+			$comments    = get_comments( $args );
+			$total_pages = get_comment_pages_count( $comments );
+			$content     = wp_list_comments( array(
+				'callback' => 'woocommerce_comments',
+				'echo'     => false,
+			), $comments );
+
+			// Pass $product, $reviews to unify the flow of data.
+			$reviews_title        = ET_Builder_Module_Helper_Woocommerce_Modules::get_reviews_title( $product );
+			$reviews_comment_form = ET_Builder_Module_Helper_Woocommerce_Modules::get_reviews_comment_form( $product, $comments );
+			$no_reviews_text      = sprintf(
+				'<p class="woocommerce-noreviews">%s</p>',
+				esc_html__( 'There are no reviews yet.', 'et_builder' )
+			);
+
+			$no_reviews = is_array( $comments ) && count( $comments ) > 0 ? '' : $no_reviews_text;
+
+			if ( wp_doing_ajax() ) {
+				$page = get_query_var( 'cpage' );
+				if ( ! $page ) {
+					$page = 1;
+				}
+				$args = array(
+					'base'         => add_query_arg( 'cpage', '%#%' ),
+					'format'       => '',
+					'total'        => $total_pages,
+					'current'      => $page,
+					'echo'         => false,
+					'add_fragment' => '#comments',
+					'type'         => 'list',
+				);
+				global $wp_rewrite;
+				if ( $wp_rewrite->using_permalinks() ) {
+					$args['base'] = user_trailingslashit( trailingslashit( get_permalink() ) . $wp_rewrite->comments_pagination_base . '-%#%', 'commentpaged' );
+				}
+
+				$pagination = paginate_links( $args );
+			} else {
+				$pagination = paginate_comments_links( array(
+					'echo'  => false,
+					'type'  => 'list',
+					'total' => $total_pages
+				) );
+			}
+
+			$content = sprintf( '
+						<div id="reviews" class="woocommerce-Reviews">
+								<h2 class="woocommerce-Reviews-title">
+									%1$s
+								</h2>
+							<div id="comments">
+								<ol class="commentlist">
+								%2$s
+								</ol>
+								<nav class="woocommerce-pagination">
+									%5$s
+								</nav>
+								%4$s
+							</div>
+							<div id="review_form_wrapper">
+								%3$s
+							</div>
+						</div>
+						',
+				et_core_esc_previously( $reviews_title ),
+				et_core_esc_previously( $content ),
+				et_core_esc_previously( $reviews_comment_form ),
+				et_core_esc_previously( $no_reviews ),
+				et_core_esc_previously( $pagination )
+			);
+			$wrapped = true;
+			break;
+
+		case 'product_additional_information':
+			$default_content = '';
+			if ( ! function_exists( 'wc_get_product' ) ) {
+				$content = $default_content;
+				break;
+			}
+
+			$product = wc_get_product( $post_id );
+			if ( ! ( $product instanceof WC_Product ) ) {
+				$content = $default_content;
+				break;
+			}
+
+			if ( ! class_exists( 'ET_Builder_Module_Helper_Woocommerce_Modules' ) ) {
+				$content = $default_content;
+				break;
+			}
+
+			$title_markup = sprintf( '<h2 class="et_pb_wc_additional_info__header">%s</h2>',
+				esc_html__( 'Additional Information', 'et_builder' )
+			);
+
+			$markup            = '';
+			$weight_markup     = ET_Builder_Module_Helper_Woocommerce_Modules::get_weight_formatted( $product->get_id() );
+			$dimensions_markup = ET_Builder_Module_Helper_Woocommerce_Modules::get_dimensions_formatted( $product->get_id() );
+
+			if ( ! empty( $weight_markup ) ) {
+				$markup .= sprintf( '
+				<tr>
+					<th>%1$s</th>
+					<td>%2$s</td>
+				</tr>
+				',
+					/* 1$s */
+					esc_html__( 'Weight', 'et_builder' ),
+					/* 2$s */
+					esc_html( $weight_markup )
+				);
+			}
+
+			if ( ! empty( $dimensions_markup ) ) {
+				$markup .= sprintf( '
+				<tr>
+					<th>%1$s</th>
+					<td>%2$s</td>
+				</tr>'
+					,
+					/* 1$s */
+					esc_html__( 'Dimensions', 'et_builder' ),
+					/* 2$s */
+					esc_html( $dimensions_markup )
+				);
+			}
+
+			if ( $product->is_type( 'variable' ) ) {
+				$variation_attributes = $product->get_variation_attributes();
+
+				foreach ( $variation_attributes as $attribute => $attribute_values ) {
+					$markup .= sprintf( '
+					<tr>
+					<th>%1$s</th>
+					<td>%2$s</td>
+					</tr>'
+						,
+						/* 1$s */
+						esc_html( $attribute ),
+						/* 2$s */
+						esc_html( implode( ', ', $attribute_values ) )
+					);
+				}
+			}
+
+			$content = sprintf( '
+				%1$s
+				<table class="et_pb_wc_additional_info__table">
+					%2$s
+				</table>
+				',
+				/* 1$s */
+				et_core_esc_previously( $title_markup ),
+				/* 2$s */
+				et_core_esc_previously( $markup )
+			);
+
+			break;
+	}
+
+	// Handle in post type URL options.
+	$post_types = et_builder_get_public_post_types();
+	foreach ( $post_types as $public_post_type ) {
+		$key = 'post_link_url_' . $public_post_type->name;
+
+		if ( $key !== $name ) {
+			continue;
+		}
+
+		$selected_post_id  = $_->array_get( $settings, 'post_id', $def( $post_id, $name, 'post_id' ) );
+		$content           = esc_url( get_permalink( $selected_post_id ) );
+		break;
 	}
 
 	if ( ! $wrapped ) {
@@ -868,6 +1201,7 @@ add_filter( 'et_builder_resolve_dynamic_content', 'et_builder_filter_resolve_cus
  * @param array $settings
  * @param integer $post_id
  * @param array $overrides
+ * @param boolean $is_content
  *
  * @return string
  */

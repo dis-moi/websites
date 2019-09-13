@@ -83,7 +83,7 @@ class ET_Builder_Module_Settings_Migration_HoverOptions extends ET_Builder_Modul
 		return $return;
 	}
 
-	public function migrate( $field_name, $current_value, $module_slug, $saved_value, $saved_field_name, $attrs, $content ) {
+	public function migrate( $field_name, $current_value, $module_slug, $saved_value, $saved_field_name, $attrs, $content, $module_address ) {
 		if ( $field_name == et_pb_hover_options()->get_hover_field( $field_name ) ) {
 			return strlen( $current_value ) ? $current_value : null;
 		}

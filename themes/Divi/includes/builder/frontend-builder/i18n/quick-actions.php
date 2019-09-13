@@ -72,7 +72,6 @@ return array(
 	'Layout, Section, Row, Module'              => esc_html__( 'Layout, Section, Row, Module', 'et_builder' ),
 	'Library'                                   => esc_html__( 'Library', 'et_builder' ),
 	'Load From Library'                         => esc_html__( 'Load From Library', 'et_builder' ),
-	'Module Customizer'                         => esc_html__( 'Module Customizer', 'et_builder' ),
 	'Open'                                      => esc_html__( 'Open', 'et_builder' ),
 	'Open %s'                                   => esc_html__( 'Open %s', 'et_builder' ),
 	'Open Settings'                             => esc_html__( 'Open Settings', 'et_builder' ),

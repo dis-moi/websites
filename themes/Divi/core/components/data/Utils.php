@@ -225,9 +225,13 @@ class ET_Core_Data_Utils {
 		$keys   = explode( '.', $address );
 		$value  = $array;
 
-		while ( $key = array_shift( $keys ) ) {
-			if ( '[' === $key[0] && is_numeric( substr( $key, 1, -1 ) ) ) {
-				$key = (int) substr( $key, 1, -1 );
+		foreach ( $keys as $key ) {
+			if ( '[' === $key[0] ) {
+				$index = substr( $key, 1, -1 );
+
+				if ( is_numeric( $index ) ) {
+					$key = (int) $index;
+				}
 			}
 
 			if ( ! isset( $value[ $key ] ) ) {

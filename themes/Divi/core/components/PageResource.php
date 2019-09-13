@@ -805,7 +805,7 @@ class ET_Core_PageResource {
 			return $tag;
 		}
 
-		/** @see ET_Support_Center::toggle_safe_mode */
+		/** @see ET_Core_SupportCenter::toggle_safe_mode */
 		if ( et_core_is_safe_mode_active() ) {
 			return $tag;
 		}
@@ -922,6 +922,7 @@ class ET_Core_PageResource {
 		self::$data_utils->remove_empty_directories( $cache_dir );
 
 		// Clear cache managed by 3rd-party cache plugins
+		$post_id = ! empty( $post_id ) && absint( $post_id ) > 0 ? $post_id : '';
 		et_core_clear_wp_cache( $post_id );
 
 		// Set our DONOTCACHEPAGE file for the next request.

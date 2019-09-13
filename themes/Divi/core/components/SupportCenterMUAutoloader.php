@@ -24,7 +24,7 @@ $support_center_installed = get_option( 'et_support_center_installed' );
 
 if ( $support_center_installed ) {
 	// Compile a list of plugins in the `mu-plugins/et-safe-mode` directory
-	// (see `$pathname_to` in `ET_Support_Center::maybe_add_mu_autoloader()`)
+	// (see `$pathname_to` in `ET_Core_SupportCenter::maybe_add_mu_autoloader()`)
 	if ( $mu_plugins = glob( dirname( __FILE__ ) . '/et-safe-mode/*.php' ) ) {
 		// Verbose logging: only log if `wp-config.php` has defined `ET_DEBUG='support_center'`
 		$DEBUG_ET_SUPPORT_CENTER = defined( 'ET_DEBUG' ) && 'support_center' === ET_DEBUG;

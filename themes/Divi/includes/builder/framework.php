@@ -4,8 +4,16 @@ require_once ET_BUILDER_DIR . 'core.php';
 require_once ET_BUILDER_DIR . 'feature/ClassicEditor.php';
 require_once ET_BUILDER_DIR . 'feature/post-content.php';
 require_once ET_BUILDER_DIR . 'feature/dynamic-content.php';
+require_once ET_BUILDER_DIR . 'feature/search-posts.php';
 require_once ET_BUILDER_DIR . 'feature/ErrorReport.php';
 require_once ET_BUILDER_DIR . 'api/DiviExtensions.php';
+require_once ET_BUILDER_DIR . 'feature/custom-defaults/Settings.php';
+require_once ET_BUILDER_DIR . 'feature/custom-defaults/History.php';
+
+// Conditional Includes.
+if ( et_is_woocommerce_plugin_active() ) {
+	require_once ET_BUILDER_DIR . 'feature/woocommerce-modules.php';
+}
 
 if ( wp_doing_ajax() && ! is_customize_preview() ) {
 	define( 'WPE_HEARTBEAT_INTERVAL', et_builder_heartbeat_interval() );
@@ -48,6 +56,15 @@ if ( wp_doing_ajax() && ! is_customize_preview() ) {
 			'et_builder_activate_bfb_auto_draft',
 			'et_builder_toggle_bfb',
 			'et_fb_error_report',
+			'et_core_portability_import',
+			'et_core_version_rollback',
+			'update-theme',
+			'et_safe_mode_update',
+			'et_core_portability_export',
+			'et_core_portability_import',
+			'et_builder_migrate_module_customizer_phase_two',
+			'et_builder_save_custom_defaults_history',
+			'et_builder_retrieve_custom_defaults_history',
 		),
 	);
 
@@ -165,7 +182,7 @@ function et_builder_load_modules_styles() {
 
 	// Load visible.min.js only if AB testing active on current page OR VB (because post settings is synced between VB and BB)
 	if ( $is_ab_testing || $is_fb_enabled ) {
-		wp_enqueue_script( 'et-jquery-visible-viewport', ET_BUILDER_URI . '/scripts/ext/jquery.visible.min.js', array( 'jquery', 'et-builder-modules-script' ), ET_BUILDER_VERSION, true );
+		wp_enqueue_script( 'et-jquery-visible-viewport', ET_BUILDER_URI . '/scripts/ext/jquery.visible.min.js', array( 'jquery', $builder_modules_script_handle ), ET_BUILDER_VERSION, true );
 	}
 
 	wp_localize_script( $builder_modules_script_handle, 'et_pb_custom', array(
@@ -540,6 +557,9 @@ add_filter( 'body_class', 'et_builder_body_classes' );
 
 if ( ! function_exists( 'et_builder_add_main_elements' ) ) :
 function et_builder_add_main_elements() {
+	if ( ET_BUILDER_CACHE_MODULES ) {
+		ET_Builder_Element::init_cache();
+	}
 	require_once ET_BUILDER_DIR . 'main-structure-elements.php';
 	require_once ET_BUILDER_DIR . 'main-modules.php';
 	do_action( 'et_builder_ready' );

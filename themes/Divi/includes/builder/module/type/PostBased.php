@@ -91,4 +91,10 @@ abstract class ET_Builder_Module_Type_PostBased extends ET_Builder_Module {
 
 		return $term_ids;
 	}
+
+	public static function is_processing_computed_prop() {
+		global $et_fb_processing_shortcode_object;
+
+		return $et_fb_processing_shortcode_object || ( wp_doing_ajax() && 'et_pb_process_computed_property' === $_POST['action'] );
+	}
 }

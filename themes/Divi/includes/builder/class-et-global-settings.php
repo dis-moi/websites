@@ -158,6 +158,8 @@ class ET_Global_Settings {
 			'et_pb_blog_masonry-header_font_style'                   => '',
 			'et_pb_blog_masonry-meta_font_size'                      => '14',
 			'et_pb_blog_masonry-meta_font_style'                     => '',
+			'et_pb_blog-read_more_font_size'                         => '14px',
+			'et_pb_blog-read_more_line_height'                       => $font_defaults['line_height'],
 			// Module: Blurb
 			'et_pb_blurb-header_font_size'                           => '18',
 			'et_pb_blurb-header_color'                               => '#333333',
@@ -209,6 +211,9 @@ class ET_Global_Settings {
 			'et_pb_countdown_timer-numbers_font_size'                => '54px',
 			'et_pb_countdown_timer-numbers_line_height'              => '54px',
 			'et_pb_countdown_timer-numbers_letter_spacing'           => $font_defaults['letter_spacing'],
+			'et_pb_countdown_timer-separator_font_size'              => '54px',
+			'et_pb_countdown_timer-separator_line_height'            => '54px',
+			'et_pb_countdown_timer-separator_letter_spacing'         => $font_defaults['letter_spacing'],
 			'et_pb_countdown_timer-label_line_height'                => '25px',
 			'et_pb_countdown_timer-label_letter_spacing'             => $font_defaults['letter_spacing'],
 			'et_pb_countdown_timer-label_font_size'                  => $font_defaults['size'],
@@ -281,6 +286,7 @@ class ET_Global_Settings {
 			'et_pb_filterable_portfolio-background_position'         => $background_image_defaults['position'],
 			'et_pb_filterable_portfolio-background_repeat'           => $background_image_defaults['repeat'],
 			'et_pb_filterable_portfolio-background_blend'            => $background_image_defaults['blend'],
+			'et_pb_filterable_portfolio-zoom_icon_color'             => '',
 			// Module: Fullwidth Header
 			'et_pb_fullwidth_header-scroll_down_icon_size'           => '50px',
 			'et_pb_fullwidth_header-subhead_font_size'               => '18px',
@@ -302,6 +308,7 @@ class ET_Global_Settings {
 			'et_pb_fullwidth_portfolio-background_position'          => $background_image_defaults['position'],
 			'et_pb_fullwidth_portfolio-background_repeat'            => $background_image_defaults['repeat'],
 			'et_pb_fullwidth_portfolio-background_blend'             => $background_image_defaults['blend'],
+			'et_pb_fullwidth_portfolio-zoom_icon_color'              => '',
 			// Module: Fullwidth Post Title
 			'et_pb_fullwidth_post_title-title_font_size'             => '26px',
 			'et_pb_fullwidth_post_title-title_line_height'           => '1em',
@@ -339,6 +346,7 @@ class ET_Global_Settings {
 			'et_pb_gallery-caption_letter_spacing'                   => $font_defaults['letter_spacing'],
 			'et_pb_gallery-pagination_font_size'                     => '16px',
 			'et_pb_gallery-pagination_line_height'                   => '1em',
+			'et_pb_gallery-zoom_icon_color'                          => '',
 			// Module: Image
 			'et_pb_image-animation'                                  => 'left',
 			// Module: Login
@@ -388,6 +396,7 @@ class ET_Global_Settings {
 			'et_pb_portfolio-background_position'                    => $background_image_defaults['position'],
 			'et_pb_portfolio-background_repeat'                      => $background_image_defaults['repeat'],
 			'et_pb_portfolio-background_blend'                       => $background_image_defaults['blend'],
+			'et_pb_portfolio-zoom_icon_color'                        => '',
 			// Module: Post Title
 			'et_pb_post_title-title_font_size'                       => '26px',
 			'et_pb_post_title-title_line_height'                     => '1em',
@@ -419,6 +428,8 @@ class ET_Global_Settings {
 			'et_pb_pricing_table-background_position'                => $background_image_defaults['position'],
 			'et_pb_pricing_table-background_repeat'                  => $background_image_defaults['repeat'],
 			'et_pb_pricing_table-background_blend'                   => $background_image_defaults['blend'],
+			'et_pb_pricing_table-excluded_letter_spacing'            => '0px',
+			'et_pb_pricing_table-excluded_line_height'               => '1.7em',
 			// Module: Pricing Tables
 			'et_pb_pricing_tables-header_font_size'                  => '22',
 			'et_pb_pricing_tables-header_font_style'                 => '',
@@ -440,6 +451,8 @@ class ET_Global_Settings {
 			'et_pb_pricing_tables-background_position'               => $background_image_defaults['position'],
 			'et_pb_pricing_tables-background_repeat'                 => $background_image_defaults['repeat'],
 			'et_pb_pricing_tables-background_blend'                  => $background_image_defaults['blend'],
+			'et_pb_pricing_tables-excluded_letter_spacing'           => '0px',
+			'et_pb_pricing_tables-excluded_line_height'              => '1.7em',
 			// Module: Shop
 			'et_pb_shop-title_font_size'                             => '16',
 			'et_pb_shop-title_font_style'                            => '',
@@ -592,13 +605,33 @@ class ET_Global_Settings {
 			'et_pb_toggle-background_position'                       => $background_image_defaults['position'],
 			'et_pb_toggle-background_repeat'                         => $background_image_defaults['repeat'],
 			'et_pb_toggle-background_blend'                          => $background_image_defaults['blend'],
+			// Module: Woo Title.
+			'et_pb_wc_title-header_font_size'                        => $font_defaults_h1['size'],
+			'et_pb_wc_title-header_line_height'                      => '1em',
+			'et_pb_wc_stock-in_stock_text_color'                     => '#77a464',
+			// Global: Field Input
+			'all_field_font_size'                                    => '16',
+			'all_field_border_width'                                 => '0',
+			'all_field_border_radius'                                => '3',
+			'all_field_spacing'                                      => '0',
+			'all_field_font_style'                                   => '',
+			$hover->get_hover_field( 'all_field_border_radius' )     => '3',
+			$hover->get_hover_field( 'all_field_spacing' )           => '0',
 		);
 
 		if ( et_builder_has_limitation('forced_icon_color_default') ) {
 			$defaults['et_pb_gallery-zoom_icon_color']              = et_get_option( 'accent_color', '#2ea3f2' );
 			$defaults['et_pb_portfolio-zoom_icon_color']            = et_get_option( 'accent_color', '#2ea3f2' );
+			$defaults['et_pb_fullwidth-portfolio-zoom_icon_color']  = et_get_option( 'accent_color', '#2ea3f2' );
 			$defaults['et_pb_filterable_portfolio-zoom_icon_color'] = et_get_option( 'accent_color', '#2ea3f2' );
 		}
+
+		$custom_defaults_manager = ET_Builder_Custom_Defaults_Settings::instance();
+		if ( ! et_is_builder_plugin_active() && ! ET_Builder_Custom_Defaults_Settings::is_customizer_migrated() ) {
+			$custom_defaults_manager->migrate_customizer_settings( $defaults );
+		}
+
+		$custom_defaults_unmigrated = et_get_option( ET_Builder_Custom_Defaults_Settings::CUSTOM_DEFAULTS_UNMIGRATED_OPTION, false );
 
 		// reformat defaults array and add actual values to it
 		foreach( $defaults as $setting_name => $default_value ) {
@@ -606,10 +639,21 @@ class ET_Global_Settings {
 				'default' => $default_value,
 			);
 
-			// Plugin don't have module specific customizer options like Divi theme, so $actual_value is always = ''
-			$actual_value = ! et_is_builder_plugin_active() ? et_get_option( $setting_name, '', '', true ) : '';
-			if ( '' !== $actual_value ) {
-				$defaults[ $setting_name ]['actual']  = $actual_value;
+			if ( ! et_is_builder_plugin_active() ) {
+				$actual_value  = et_get_option( $setting_name, '', '', true );
+				$add_as_actual = false;
+
+				// Pass Theme Customizer non module specific settings
+				$setting_array = explode( '-', $setting_name );
+				$module_name   = $setting_array[0];
+
+				if ( empty( $setting_array[1] ) || ! empty( $custom_defaults_unmigrated->$module_name ) && in_array( $setting_array[1], ET_Builder_Custom_Defaults_Settings::$phase_two_settings ) ) {
+					$add_as_actual = true;
+				}
+
+				if ( $add_as_actual && '' !== $actual_value ) {
+					$defaults[ $setting_name ]['actual'] = $actual_value;
+				}
 			}
 		}
 

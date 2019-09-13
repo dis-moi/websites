@@ -1,42 +1,4 @@
 <?php
-/**
- * Elegant Themes Support Center adds a new item to the [Divi/Divi Builder/Extra] Admin Menu.
- *
- * System Status
- * We will make note of system settings that could potentially cause problems. An extended view (displaying all
- * settings we check, not just those with problematic results) can be toggled, with an option to copy this report
- * to the clipboard so it can be pasted in a support ticket.
- *
- * Remote Access
- * If this is enabled, Elegant Themes will have limited access to the users site (see new user role below). Further,
- * a second toggle appears for the user that will allow them to enable "Admin Access" which has no restrictions
- * (Only specific ET Support staff will be able to request that the user enables this). Admin access can be disabled
- * at anytime, but is disabled whenever the normal remote access is disabled manually or by timeout. Time left will
- * be indicated as well as a way to manually turn off. This will include a description of what this is allowing and
- * enabling. A link for initiating a chat https://www.elegantthemes.com/members-area/help/ will also be available.
- *
- * Divi Documentation & Help
- * This will consist of common help videos, articles, and a link to full documentation. This is not meant to be a
- * full service documentation center as we don't want to duplicate something we already have elsewhere. It's mainly
- * a launch off point. However, if @sofyansitorus builds an easy way to access a searchable list of docs titles in
- * his Quick Actions feature, we could add a search bar that would function the same way that searching for docs
- * works in Quick Actions (creating a most robust search system is TBD).
- *
- * Divi Safe Mode
- * A quick and easy way for users and support to quickly disable plugins and scripts to see if Divi is the cause of
- * an issue. This call to action disables active plugins, custom css, child themes, scripts in integrations tab,
- * static css, and combination/minification of CSS and JS. When enabling this, the user will be presented with a
- * list of plugins and scripts that will be affected (disabled). Likewise, when disabling it, we will indicate which
- * items will be re-enabled. This will basically just put things back the way they were. Site wide (not including
- * the VB), there will be a floating indicator in the upper right or left corner of the website that will indicate
- * that Safe Mode is enabled and will contain a link that takes you to the Support Page to disabled it.
- *
- * Logs
- *
- * @package ET\Core\SupportCenter
- * @author  Elegant Themes <http://www.elegantthemes.com>
- * @license GNU General Public License v2 <http://www.gnu.org/licenses/gpl-2.0.html>
- */
 
 // Quick exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {
@@ -44,11 +6,47 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Class ET_Support_Center Provides admin tools to assist with troubleshooting and fixing issues in our products.
+ * Elegant Themes Support Center adds a new page to the WP Admin menu.
  *
+ * System Status
+ * Here we note system settings that could potentially cause problems. An extended view (displaying all settings we
+ * check, not just those with problematic results) can be toggled, with an option to copy this report to the
+ * clipboard so it can be pasted in a support ticket.
+ *
+ * Elegant Themes Support
+ * If Remote Access is enabled in this section, Elegant Themes Support will be granted limited access to the user's site
+ * (@see ET_Core_SupportCenter::support_user_maybe_create_user()). When this is activated, a second toggle appears
+ * for the user that will allow them to enable "Full Admin Privileges" which has no restrictions (only certain ET
+ * Support staff will be able to request that the user enables this). Full Admin Privileges can be disabled at any
+ * time, but are automatically disabled whenever the Remote Access is disabled (manually or by timeout). Time
+ * remaining until Remote Access is automatically deactivated is indicated alongside the toggle. A link for
+ * initiating a chat https://www.elegantthemes.com/members-area/help/ is also available in this section.
+ *
+ * Divi Documentation & Help
+ * This section contains common help videos, articles, and a link to full documentation. This is not meant to be a
+ * full service documentation center; it's mainly a launch off point.
+ *
+ * Divi Safe Mode
+ * A quick and easy way for users and support to quickly disable plugins and scripts to see if Divi is the cause of
+ * an issue. This call to action disables active plugins, custom css, child themes, scripts in the Integrations tab,
+ * static css, and combination/minification of CSS and JS. When enabling this, the user will be presented with a
+ * list of plugins that will be affected (disabled). Sitewide (not including the Visual Builder), there will be a
+ * floating indicator in the upper right or left corner of the website that will indicate that Safe Mode is enabled
+ * and will contain a link that takes you to the Support Page to disabled it.
+ *
+ * Logs
+ * If WP_DEBUG_LOG is enabled, WordPress related errors will be archived in a log file. We load the most recent entries
+ * of this log file for convienient viewing here, with a link to download the full log, as well as an option to copy
+ * the log to the clipboard so it can be pasted in a support ticket.
+ *
+ * @package ET\Core\SupportCenter
+ * @author  Elegant Themes <http://www.elegantthemes.com>
+ * @license GNU General Public License v2 <http://www.gnu.org/licenses/gpl-2.0.html>
+ *
+ * @since 3.24.1 Renamed from `ET_Support_Center` to `ET_Core_SupportCenter`.
  * @since 3.20
  */
-class ET_Support_Center {
+class ET_Core_SupportCenter {
 	/**
 	 * Catch whether the ET_DEBUG flag is set.
 	 *
@@ -140,6 +138,15 @@ class ET_Support_Center {
 	protected $support_user_expiration_time = '+4 days';
 
 	/**
+	 * Provide nicename equivalents for boolean values
+	 *
+	 * @since 3.23
+	 *
+	 * @type array
+	 */
+	protected $boolean_label = array( 'False', 'True' );
+
+	/**
 	 * Collection of plugins that we will NOT disable when Safe Mode is activated.
 	 *
 	 * @since 3.20
@@ -147,11 +154,30 @@ class ET_Support_Center {
 	 * @type array
 	 */
 	protected $safe_mode_plugins_whitelist = array(
-		'ari-adminer/ari-adminer.php', // ARI Adminer
 		'etdev/etdev.php', // ET Development Workspace
-		'divi-builder/divi-builder.php', // Divi Builder Plugin
+		'bloom/bloom.php', // ET Bloom Plugin
+		'monarch/monarch.php', // ET Monarch Plugin
+		'divi-builder/divi-builder.php', // ET Divi Builder Plugin
+		'ari-adminer/ari-adminer.php', // ARI Adminer
 		'query-monitor/query-monitor.php', // Query Monitor
 		'woocommerce/woocommerce.php', // WooCommerce
+		'really-simple-ssl/rlrsssl-really-simple-ssl.php', // Really Simple SSL
+	);
+
+	/**
+	 * Capabilities that should be granted to the Administrator role on activation.
+	 *
+	 * @since 3.28
+	 *
+	 * @type array
+	 */
+	protected $support_center_administrator_caps = array(
+		'et_support_center',
+		'et_support_center_system',
+		'et_support_center_remote_access',
+		'et_support_center_documentation',
+		'et_support_center_safe_mode',
+		'et_support_center_logs',
 	);
 
 	/**
@@ -200,8 +226,15 @@ class ET_Support_Center {
 			add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts_styles' ) );
 		}
 
+		// Add extra User Role capabilities needed for Remote Access to work with 3rd party software
+		add_filter( 'add_et_support_standard_capabilities', array( $this, 'support_user_extra_caps_standard' ), 10, 1 );
+		add_filter( 'add_et_support_elevated_capabilities', array( $this, 'support_user_extra_caps_elevated' ), 10, 1 );
+
 		// Make sure that our Support Account's roles are set up
 		add_filter( 'add_et_builder_role_options', array( $this, 'support_user_add_role_options' ), 10, 1 );
+
+		// On Multisite installs, grant `unfiltered_html` capabilities to the Support User
+		add_filter( 'map_meta_cap', array( $this, 'support_user_map_meta_cap' ), 1, 3 );
 
 		// Add CSS class name(s) to the Support Center page's body tag
 		add_filter( 'admin_body_class', array( $this, 'add_admin_body_class_name' ) );
@@ -213,20 +246,27 @@ class ET_Support_Center {
 		add_action( 'admin_footer', array( $this, 'maybe_add_safe_mode_indicator' ) );
 		add_action( 'wp_footer', array( $this, 'maybe_add_safe_mode_indicator' ) );
 
-		// Delete our Support User settings on deactivation (whether parent is a plugin or theme)
+		// Add User capabilities to the Administrator Role
+		add_action( 'admin_init', array( $this, 'support_center_capabilities_setup' ) );
+
 		if ( 'plugin' === $this->child_of ) {
+			// Delete our Support User settings on deactivation
 			register_deactivation_hook( __FILE__, array( $this, 'support_user_delete_account' ) );
 			register_deactivation_hook( __FILE__, array( $this, 'unlist_support_center' ) );
+			register_deactivation_hook( __FILE__, array( $this, 'support_center_capabilities_teardown' ) );
 		}
 		if ( 'theme' === $this->child_of ) {
-			add_action( 'switch_theme', array( $this, 'support_user_delete_account' ) );
-			add_action( 'switch_theme', array( $this, 'unlist_support_center' ) );
+			// Delete our Support User settings on deactivation
+			add_action( 'switch_theme', array( $this, 'maybe_deactivate_on_theme_switch' ) );
 		}
 
 		// Automatically delete our Support User when the time runs out
 		add_action( $this->support_user_cron_name, array( $this, 'support_user_cron_maybe_delete_account' ) );
 		add_action( 'init', array( $this, 'support_user_maybe_delete_expired_account' ) );
 		add_action( 'admin_init', array( $this, 'support_user_maybe_delete_expired_account' ) );
+
+		// Remove KSES filters for ET Support User
+		add_action( 'admin_init', array( $this, 'support_user_kses_remove_filters' ) );
 
 		// Update Support User settings via AJAX
 		add_action( 'wp_ajax_et_support_user_update', array( $this, 'support_user_update_via_ajax' ) );
@@ -236,10 +276,6 @@ class ET_Support_Center {
 
 		// Safe Mode: Block restricted actions when Safe Mode active
 		add_action( 'admin_footer', array( $this, 'render_safe_mode_block_restricted' ) );
-
-		// Safe Mode: Temporarily disable Child Theme
-		add_filter( 'stylesheet', array( $this, 'maybe_disable_child_theme' ) );
-		add_filter( 'template', array( $this, 'maybe_disable_child_theme' ) );
 
 		// Safe Mode: Temporarily disable Custom CSS
 		add_action( 'init', array( $this, 'maybe_disable_custom_css' ) );
@@ -251,30 +287,85 @@ class ET_Support_Center {
 	}
 
 	/**
+	 * Add User capabilities to the Administrator Role on first run
+	 *
+	 * @since 3.28
+	 */
+	public function support_center_capabilities_setup() {
+		$support_capabilities = get_option( 'et_support_center_setup_done' );
+		if ( ! $support_capabilities ) {
+			$administrator_role  = get_role( 'administrator' );
+
+			foreach ( $this->support_center_administrator_caps as $cap ) {
+				$administrator_role->add_cap( $cap );
+			}
+			update_option( 'et_support_center_setup_done', 'processed' );
+		}
+	}
+
+	/**
+	 * Remove User capabilities from the Administrator Role when product with Support Center is removed
+	 *
+	 * @since 3.28
+	 */
+	public function support_center_capabilities_teardown() {
+		$support_capabilities = get_option( 'et_support_center_setup_done' );
+		if ( $support_capabilities ) {
+			$administrator_role  = get_role( 'administrator' );
+
+			foreach ( $this->support_center_administrator_caps as $cap ) {
+				$administrator_role->remove_cap( $cap );
+			}
+			delete_option( 'et_support_center_setup_done' );
+		}
+	}
+
+	/**
 	 * Set variables that change depending on whether a theme or a plugin activated the Support Center
 	 *
 	 * @since 3.20
 	 */
 	public function set_parent_properties() {
 		$core_path = _et_core_normalize_path( trailingslashit( dirname( __FILE__ ) ) );
-		$theme_dir = _et_core_normalize_path( realpath( get_template_directory() ) );
+		$theme_dir = _et_core_normalize_path( trailingslashit( realpath( get_template_directory() ) ) );
 
 		if ( 0 === strpos( $core_path, $theme_dir ) ) {
 			$this->child_of   = 'theme';
-			$this->local_path = get_template_directory_uri() . '/core/';
+			$this->local_path = trailingslashit( get_template_directory_uri() . '/core/' );
 		} else {
 			$this->child_of   = 'plugin';
-			$this->local_path = plugin_dir_url( __FILE__ );
+			$this->local_path = plugins_url( '/', dirname( __FILE__ ) );
 		}
 
-		switch ( $this->parent ) {
+		$this->parent_nicename = $this->get_parent_nicename( $this->parent );
+	}
+
+	/**
+	 * Get the "Nice Name" for the parent theme/plugin
+	 *
+	 * @param $parent
+	 *
+	 * @return bool|string
+	 */
+	public function get_parent_nicename( $parent ) {
+		switch ( $parent ) {
+			case 'bloom_plugin':
+				return 'Bloom';
+				break;
+			case 'monarch_plugin':
+				return 'Monarch';
+				break;
 			case 'extra_theme':
-				$this->parent_nicename = 'Extra';
+				return 'Extra';
 				break;
 			case 'divi_theme':
+				return 'Divi';
+				break;
 			case 'divi_builder_plugin':
+				return 'Divi Builder';
+				break;
 			default:
-				$this->parent_nicename = 'Divi';
+				return false;
 		}
 	}
 
@@ -310,6 +401,19 @@ class ET_Support_Center {
 	}
 
 	/**
+	 * @param string $capability
+	 *
+	 * @return bool
+	 */
+	protected function current_user_can( $capability = '' ) {
+		if ( function_exists( 'et_is_builder_plugin_active' ) ) {
+			return et_pb_is_allowed( $capability );
+		}
+
+		return current_user_can( $capability );
+	}
+
+	/**
 	 * Add Safe Mode Autoloader Must-Use Plugin
 	 *
 	 * @since 3.20
@@ -319,7 +423,7 @@ class ET_Support_Center {
 		$file_path = dirname( __FILE__ );
 
 		// Exit if the `mu-plugins` directory doesn't exist & we're unable to create it
-		if ( ! et_()->ensure_directory_exists( WPMU_PLUGIN_DIR ) ) {
+		if ( ! wp_mkdir_p( WPMU_PLUGIN_DIR ) ) {
 			et_error( 'Support Center Safe Mode: mu-plugin folder not found.' );
 
 			return;
@@ -338,7 +442,7 @@ class ET_Support_Center {
 		// Try to create a new subdirectory for our mu-plugins; if it fails, log an error message
 		$pathname_plugins_from = dirname( __FILE__ ) . '/mu-plugins';
 		$pathname_plugins_to   = WPMU_PLUGIN_DIR . '/et-safe-mode';
-		if ( ! et_()->ensure_directory_exists( $pathname_plugins_to ) ) {
+		if ( ! wp_mkdir_p( $pathname_plugins_to ) ) {
 			et_error( 'Support Center Safe Mode: mu-plugins subfolder not found.' );
 
 			return;
@@ -447,31 +551,55 @@ class ET_Support_Center {
 	 * When initialized we were given an identifier for the plugin or theme doing the initializing. We're going to use
 	 * that identifier here to insert the Support Center menu item in the correct location within the WP Admin Menu.
 	 *
+	 * @since 3.28 Expanded sub-menu links with support for additional ET products.
 	 * @since 3.20
 	 */
 	public function add_admin_menu_item() {
-		$parent_menu_slug = '';
+		// Early exit if the user doesn't have Support Center access
+		if ( ! $this->current_user_can( 'et_support_center' ) ) {
+			return;
+		}
 
+		$menu_title       = esc_html__( 'Support Center', 'et-core' );
+		$menu_slug        = null;
+		$parent_menu_slug = null;
+		$capability       = 'manage_options';
+
+		// Define parent and child menu slugs
 		switch ( $this->parent ) {
+			case 'bloom_plugin':
+				$menu_slug        = 'et_support_center_bloom';
+				$parent_menu_slug = 'et_bloom_options';
+				break;
+			case 'monarch_plugin':
+				$menu_title       = esc_html__( 'Monarch Support Center', 'et-core' );
+				$menu_slug        = 'et_support_center_monarch';
+				$parent_menu_slug = 'tools.php';
+				break;
 			case 'extra_theme':
+				$menu_slug        = 'et_support_center_extra';
 				$parent_menu_slug = 'et_extra_options';
 				break;
 			case 'divi_theme':
 			case 'divi_builder_plugin':
+				$menu_slug        = 'et_support_center_divi';
 				$parent_menu_slug = 'et_divi_options';
-				break;
 		}
 
-		if ( et_pb_is_allowed( 'et_support_center' ) ) {
-			add_submenu_page(
-				$parent_menu_slug,
-				esc_html__( 'Support Center', 'et-core' ),
-				esc_html__( 'Support Center', 'et-core' ),
-				'manage_options',
-				'et_support_center',
-				array( $this, 'add_support_center' )
-			);
+		// If there's no menu slug, then this product doesn't have Support Center enabled
+		if ( ! $menu_slug ) {
+			return;
 		}
+
+		// Build the link
+		add_submenu_page(
+			$parent_menu_slug,
+			$menu_title,
+			$menu_title,
+			$capability,
+			$menu_slug,
+			array( $this, 'add_support_center' )
+		);
 	}
 
 	/**
@@ -504,11 +632,23 @@ class ET_Support_Center {
 	 * @return void
 	 */
 	public function admin_enqueue_scripts_styles( $hook ) {
+		et_core_register_admin_assets();
+
+		wp_enqueue_style( 'et-core-admin' );
+		wp_enqueue_script( 'et-core-admin' );
+
 		// Load only on `_et_support_center` pages
 		if ( strpos( $hook, '_et_support_center' ) ) {
+			// Core Admin CSS
+			wp_enqueue_style( 'et-core',
+				$this->local_path . 'admin/css/core.css',
+				array(),
+				ET_CORE_VERSION
+			);
+
 			// ePanel CSS
-			wp_enqueue_style( 'epanel-theme-style',
-				$this->local_path . '../epanel/css/panel.css',
+			wp_enqueue_style( 'et-wp-admin',
+				$this->local_path . 'admin/css/wp-admin.css',
 				array(),
 				ET_CORE_VERSION
 			);
@@ -521,8 +661,8 @@ class ET_Support_Center {
 			);
 
 			// Support Center uses ePanel controls, so include the necessary scripts
-			if ( function_exists( 'et_epanel_admin_js' ) ) {
-				et_epanel_admin_js();
+			if ( function_exists( 'et_core_enqueue_js_admin' ) ) {
+				et_core_enqueue_js_admin();
 			}
 		}
 	}
@@ -552,14 +692,15 @@ class ET_Support_Center {
 
 		$support_center_nonce = wp_create_nonce( 'support_center' );
 
-		wp_localize_script( 'et-support-center', 'etSupportCenter', array(
-			'ajaxLoaderImg'    => esc_url( get_template_directory_uri() . '/core/admin/images/ajax-loader.gif' ),
+		$etSupportCenterSettings = array(
+			'ajaxLoaderImg'    => esc_url( $this->local_path . 'admin/images/ajax-loader.gif' ),
 			'ajaxURL'          => admin_url( 'admin-ajax.php' ),
 			'siteURL'          => get_site_url(),
 			'supportCenterURL' => get_admin_url( null, 'admin.php?page=et_support_center#et_card_safe_mode' ),
-			'safeModeCTA'      => esc_html__( sprintf( 'Turn Off %1$s Safe Mode', $this->parent_nicename ), 'et-core' ),
 			'nonce'            => $support_center_nonce,
-		) );
+		);
+
+		wp_localize_script( 'et-support-center', 'etSupportCenter', $etSupportCenterSettings );
 	}
 
 	/**
@@ -594,6 +735,7 @@ class ET_Support_Center {
 	/**
 	 * Prepare the "Divi Documentation & Help" video player block
 	 *
+	 * @since 3.28 Added support for Bloom, Monarch, and Divi Builer plugins.
 	 * @since 3.20
 	 *
 	 * @param bool $formatted Return either a formatted HTML block (true) or an array (false)
@@ -605,20 +747,75 @@ class ET_Support_Center {
 		/**
 		 * Define the videos list
 		 */
-		$documentation_videos = array(
-			array(
-				'name'       => esc_attr__( 'Getting Started With The Divi Builder', 'et-core' ),
-				'youtube_id' => 'T-Oe01_J62c',
-			),
-			array(
-				'name'       => esc_attr__( 'Using Premade Layout Packs', 'et-core' ),
-				'youtube_id' => '9eqXcrLcnoc',
-			),
-			array(
-				'name'       => esc_attr__( 'The Divi Library', 'et-core' ),
-				'youtube_id' => 'boNZZ0MYU0E',
-			),
-		);
+		switch ( $this->parent ) {
+			case 'extra_theme':
+				$documentation_videos = array(
+					array(
+						'name'       => esc_attr__( 'A Basic Overview Of Extra', 'et-core' ),
+						'youtube_id' => 'JDSg9eq4LIc',
+					),
+					array(
+						'name'       => esc_attr__( 'Using Premade Layout Packs', 'et-core' ),
+						'youtube_id' => '9eqXcrLcnoc',
+					),
+					array(
+						'name'       => esc_attr__( 'Creating Category Layouts', 'et-core' ),
+						'youtube_id' => '30SVxnjdnxcE',
+					),
+				);
+				break;
+			case 'divi_theme':
+			case 'divi_builder_plugin':
+				$documentation_videos = array(
+					array(
+						'name'       => esc_attr__( 'Getting Started With The Divi Builder', 'et-core' ),
+						'youtube_id' => 'T-Oe01_J62c',
+					),
+					array(
+						'name'       => esc_attr__( 'Using Premade Layout Packs', 'et-core' ),
+						'youtube_id' => '9eqXcrLcnoc',
+					),
+					array(
+						'name'       => esc_attr__( 'The Divi Library', 'et-core' ),
+						'youtube_id' => 'boNZZ0MYU0E',
+					),
+				);
+				break;
+			case 'bloom_plugin':
+				$documentation_videos = array(
+					array(
+						'name'       => esc_attr__( 'A Basic Overview Of The Bloom Plugin', 'et-core' ),
+						'youtube_id' => 'E4nfXFjuRRI',
+					),
+					array(
+						'name'       => esc_attr__( 'How To Update The Bloom Plugin', 'et-core' ),
+						'youtube_id' => '-IIdkRLskuA',
+					),
+					array(
+						'name'       => esc_attr__( 'How To Add Mailing List Accounts', 'et-core' ),
+						'youtube_id' => 'nEdWkHIgQwY',
+					),
+				);
+				break;
+			case 'monarch_plugin':
+				$documentation_videos = array(
+					array(
+						'name'       => esc_attr__( 'A Complete Overviw Of Monarch', 'et-core' ),
+						'youtube_id' => 'RlMUEVkbMrs',
+					),
+					array(
+						'name'       => esc_attr__( 'Adding Social Networks', 'et-core' ),
+						'youtube_id' => 'ZabKCiKQJLM',
+					),
+					array(
+						'name'       => esc_attr__( 'Configuring Social Follower APIs', 'et-core' ),
+						'youtube_id' => 'vmE8uFhbzos',
+					),
+				);
+				break;
+			default:
+				$documentation_videos = array();
+		}
 
 		// If we just want the array (not a formatted HTML block), return that now
 		if ( false === $formatted ) {
@@ -643,7 +840,7 @@ class ET_Support_Center {
 		}
 
 		$html = sprintf( '<div class="et_docs_videos">'
-						 . '<div class="wrapper"><div id="et_documentation_player" data-playlist="%2$s"></div></div>'
+						 . '<div class="wrapper"><div id="et_documentation_player" data-playlist="%1$s"></div></div>'
 						 . '<ul class="et_documentation_videos_list">%2$s</ul>'
 						 . '</div>',
 			esc_attr( implode( ',', $playlist ) ),
@@ -656,6 +853,7 @@ class ET_Support_Center {
 	/**
 	 * Prepare the "Divi Documentation & Help" articles list
 	 *
+	 * @since 3.28 Added support for Bloom, Monarch, and Divi Builer plugins.
 	 * @since 3.20
 	 *
 	 * @param bool $formatted Return either a formatted HTML block (true) or an array (false)
@@ -773,6 +971,78 @@ class ET_Support_Center {
 					array(
 						'title' => esc_attr__( 'Divi For Developers', 'et-core' ),
 						'url'   => 'https://www.elegantthemes.com/documentation/developers/',
+					),
+				);
+				break;
+			case 'bloom_plugin':
+				$articles = array(
+					array(
+						'title' => esc_attr__( 'A Basic Overview Of The Bloom Plugin', 'et-core' ),
+						'url'   => 'https://www.elegantthemes.com/documentation/bloom/overview/',
+					),
+					array(
+						'title' => esc_attr__( 'How To Update Your Bloom Plugin', 'et-core' ),
+						'url'   => 'https://www.elegantthemes.com/documentation/bloom/update/',
+					),
+					array(
+						'title' => esc_attr__( 'Adding Email Accounts In Bloom', 'et-core' ),
+						'url'   => 'https://www.elegantthemes.com/documentation/bloom/accounts/',
+					),
+					array(
+						'title' => esc_attr__( 'Customizing Your Opt-in Designs', 'et-core' ),
+						'url'   => 'https://www.elegantthemes.com/documentation/bloom/design/',
+					),
+					array(
+						'title' => esc_attr__( 'The Different Bloom Opt-in Types', 'et-core' ),
+						'url'   => 'https://www.elegantthemes.com/documentation/bloom/optin-types/',
+					),
+					array(
+						'title' => esc_attr__( 'Using The Bloom Display Settings', 'et-core' ),
+						'url'   => 'https://www.elegantthemes.com/documentation/bloom/display/',
+					),
+					array(
+						'title' => esc_attr__( 'How To Use Triggers In Bloom', 'et-core' ),
+						'url'   => 'https://www.elegantthemes.com/documentation/bloom/triggers/',
+					),
+					array(
+						'title' => esc_attr__( 'Adding Custom Fields To Bloom Opt-in Forms', 'et-core' ),
+						'url'   => 'https://www.elegantthemes.com/documentation/bloom/optin/adding-custom-fields-to-bloom-optin-forms/',
+					),
+				);
+				break;
+			case 'monarch_plugin':
+				$articles = array(
+					array(
+						'title' => esc_attr__( 'A Complete Overview Of The Monarch Plugin', 'et-core' ),
+						'url'   => 'https://www.elegantthemes.com/documentation/monarch/overview-monarch/',
+					),
+					array(
+						'title' => esc_attr__( 'How To Update Your Monarch WordPress Plugin', 'et-core' ),
+						'url'   => 'https://www.elegantthemes.com/documentation/monarch/update-monarch/',
+					),
+					array(
+						'title' => esc_attr__( 'Adding and Managing Social Networks', 'et-core' ),
+						'url'   => 'https://www.elegantthemes.com/documentation/monarch/networks/',
+					),
+					array(
+						'title' => esc_attr__( 'Configuring Social Network APIs', 'et-core' ),
+						'url'   => 'https://www.elegantthemes.com/documentation/monarch/api/',
+					),
+					array(
+						'title' => esc_attr__( 'Customizing The Monarch Design', 'et-core' ),
+						'url'   => 'https://www.elegantthemes.com/documentation/monarch/design-monarch/',
+					),
+					array(
+						'title' => esc_attr__( 'Viewing Your Social Stats', 'et-core' ),
+						'url'   => 'https://www.elegantthemes.com/documentation/monarch/stats/',
+					),
+					array(
+						'title' => esc_attr__( 'Using The Floating Sidebar', 'et-core' ),
+						'url'   => 'https://www.elegantthemes.com/documentation/monarch/sidebar/',
+					),
+					array(
+						'title' => esc_attr__( 'Using Popup & Flyin Triggers', 'et-core' ),
+						'url'   => 'https://www.elegantthemes.com/documentation/monarch/triggers-monarch/',
 					),
 				);
 				break;
@@ -927,14 +1197,14 @@ class ET_Support_Center {
 		/** @var array Collection of system settings to run diagnostic checks on. */
 		$system_diagnostics_settings = array(
 			array(
-				'name'           => esc_attr__( 'File Permissions', 'et-core' ),
+				'name'           => esc_attr__( 'Writable wp-content Directory', 'et-core' ),
 				'environment'    => 'server',
-				'type'           => 'size',
-				'pass_minus_one' => false,
-				'pass_zero'      => false,
+				'type'           => 'truthy_falsy',
+				'pass_minus_one' => null,
+				'pass_zero'      => null,
 				'minimum'        => null,
-				'recommended'    => 755,
-				'actual'         => (int) substr( sprintf( '%o', fileperms( WP_CONTENT_DIR ) ), -4 ),
+				'recommended'    => true,
+				'actual'         => wp_is_writable( WP_CONTENT_DIR ),
 				'help_text'      => et_core_intentionally_unescaped( __( 'We recommend that the wp-content directory on your server be writable by WordPress in order to ensure the full functionality of Divi Builder themes and plugins.', 'et-core' ), 'html' ),
 				'learn_more'     => 'https://wordpress.org/support/article/changing-file-permissions/',
 			),
@@ -1017,7 +1287,7 @@ class ET_Support_Center {
 				'pass_minus_one' => false,
 				'pass_zero'      => false,
 				'minimum'        => null,
-				'recommended'    => '3000',
+				'recommended'    => '1000',
 				'actual'         => ini_get( 'max_input_vars' ),
 				'help_text'      => et_get_safe_localization( sprintf( __( 'This setting affects how many input variables may be accepted. If the limit is too low, it may prevent the Divi Builder from loading. You can adjust your max input variables within your <a href="%1$s" target="_blank">php.ini file</a>, or by contacting your host for assistance.', 'et-core' ), 'http://php.net/manual/en/info.configuration.php#ini.max-input-vars' ) ),
 				'learn_more'     => 'http://php.net/manual/en/info.configuration.php#ini.max-input-vars',
@@ -1025,15 +1295,15 @@ class ET_Support_Center {
 			array(
 				'name'           => esc_attr__( 'display_errors', 'et-core' ),
 				'environment'    => 'server',
-				'type'           => 'string',
+				'type'           => 'truthy_falsy',
 				'pass_minus_one' => null,
 				'pass_zero'      => null,
-				'pass_exact'     => true,
+				'pass_exact'     => null,
 				'minimum'        => null,
 				'recommended'    => '0',
-				'actual'         => ini_get( 'display_errors' ),
-				'help_text'      => et_get_safe_localization( sprintf( __( 'This setting determines whether or not errors should be printed as part of the page output. This is a feature to support your site\'s development and should never be used on production sites. You can edit this setting within your <a href="%1$s" target="_blank">php.ini file</a>, or by contacting your host for assistance.', 'et-core' ), 'http://php.net/manual/en/info.configuration.php#ini.display-errors' ) ),
-				'learn_more'     => 'http://php.net/manual/en/info.configuration.php#ini.display-errors',
+				'actual'         => !ini_get( 'display_errors' ) ? '0' : ini_get( 'display_errors' ),
+				'help_text'      => et_get_safe_localization( sprintf( __( 'This setting determines whether or not errors should be printed as part of the page output. This is a feature to support your site\'s development and should never be used on production sites. You can edit this setting within your <a href="%1$s" target="_blank">php.ini file</a>, or by contacting your host for assistance.', 'et-core' ), 'http://php.net/manual/en/errorfunc.configuration.php#ini.display-errors' ) ),
+				'learn_more'     => 'http://php.net/manual/en/errorfunc.configuration.php#ini.display-errors',
 			),
 		);
 
@@ -1080,14 +1350,14 @@ class ET_Support_Center {
 			$message_minimum = '';
 			if ( ! is_null( $scan['minimum'] ) && 'fail' === $system_diagnostics_settings[ $i ]['pass_fail'] ) {
 				$message_minimum = sprintf(
-					esc_html__( 'This fails to meet our minimum required value (%1$s). ', 'et-core' ),
-					$scan['minimum']
+					esc_html__( 'This fails to meet our minimum required value of %1$s. ', 'et-core' ),
+					esc_html( is_bool( $scan['minimum'] ) ? $this->boolean_label[ $scan['minimum'] ] : $scan['minimum'] )
 				);
 			}
 			if ( ! is_null( $scan['minimum'] ) && 'minimal' === $system_diagnostics_settings[ $i ]['pass_fail'] ) {
 				$message_minimum = sprintf(
-					esc_html__( 'This meets our minimum required value (%1$s). ', 'et-core' ),
-					esc_html( $scan['minimum'] )
+					esc_html__( 'This meets our minimum required value of %1$s. ', 'et-core' ),
+					esc_html( is_bool( $scan['minimum'] ) ? $this->boolean_label[ $scan['minimum'] ] : $scan['minimum'] )
 				);
 			}
 
@@ -1108,7 +1378,7 @@ class ET_Support_Center {
 						'- %1$s %2$s',
 						sprintf(
 							esc_html__( 'Congratulations! This meets or exceeds our recommendation of %1$s.', 'et-core' ),
-							esc_html( $scan['recommended'] )
+							esc_html( is_bool( $scan['recommended'] ) ? $this->boolean_label[ $scan['recommended'] ] : $scan['recommended'] )
 						),
 						et_core_intentionally_unescaped( $learn_more_link, 'html' )
 					);
@@ -1120,7 +1390,7 @@ class ET_Support_Center {
 						esc_html( $message_minimum ),
 						sprintf(
 							esc_html__( 'We recommend %1$s for the best experience.', 'et-core' ),
-							esc_html( $scan['recommended'] )
+							esc_html( is_bool( $scan['recommended'] ) ? $this->boolean_label[ $scan['recommended'] ] : $scan['recommended'] )
 						),
 						et_core_intentionally_unescaped( $learn_more_link, 'html' )
 					);
@@ -1182,7 +1452,7 @@ class ET_Support_Center {
 					esc_attr( $item['pass_fail'] ),
 					esc_html( $item['name'] ),
 					et_core_intentionally_unescaped( $help_text, 'html' ),
-					esc_html( $item['actual'] ),
+					esc_html( is_bool( $item['actual'] ) ? $this->boolean_label[ $item['actual'] ] : $item['actual'] ),
 					et_core_intentionally_unescaped( $item['description'], 'html' )
 				);
 			}
@@ -1262,14 +1532,16 @@ class ET_Support_Center {
 	 *
 	 * @since 3.20.2
 	 *
-	 * @param string|int|float $a Value to compare against
-	 * @param string|int|float $b Value being compared
+	 * @param string|int|float $a Our value to compare against
+	 * @param string|int|float $b Server value being compared
 	 * @param string $type Comparison type
 	 *
 	 * @return bool Whether the second value is equal to or greater than the first
 	 */
 	protected function value_is_at_least( $a, $b, $type = 'size' ) {
 		switch ( $type ) {
+			case 'truthy_falsy':
+				return $this->value_is_falsy($a) === $this->value_is_falsy($b);
 			case 'version':
 				return (float) $a <= (float) $b;
 			case 'seconds':
@@ -1281,11 +1553,31 @@ class ET_Support_Center {
 	}
 
 	/**
+	 * Check value against a collection of "falsy" values
+	 *
+	 * @since 3.23
+	 *
+	 * @param string|int|float $a Value to compare against
+	 *
+	 * @return bool Whether the second value is equal to or greater than the first
+	 */
+	protected function value_is_falsy( $a ) {
+		// Accept falsy strings regardless of case (e.g. 'off', 'Off', 'OFF', 'oFf')
+		if ( is_string( $a ) ) {
+			$a = strtolower( $a );
+		}
+
+		return in_array( $a, array( false, 'false', 0, '0', 'off' ), true );
+	}
+
+	/**
 	 * SUPPORT CENTER :: REMOTE ACCESS
 	 */
 
 	/**
 	 * Add Support Center options to the Role Editor screen
+	 *
+	 * @see ET_Core_SupportCenter::current_user_can()
 	 *
 	 * @since 3.20
 	 *
@@ -1323,6 +1615,76 @@ class ET_Support_Center {
 	}
 
 	/**
+	 * Add third party capabilities to Remote Access roles
+	 *
+	 * @return array Capabilities to add to the Remote Access user roles.
+	 */
+	public function support_user_extra_caps_standard( $extra_capabilities = array() ) {
+		// The Events Calendar (if active on the site)
+		if ( class_exists( 'Tribe__Events__Main' ) ) {
+			$the_events_calendar = array(
+				// Events
+				'edit_tribe_event' => 1,
+				'read_tribe_event' => 1,
+				'delete_tribe_event' => 1,
+				'delete_tribe_events' => 1,
+				'edit_tribe_events' => 1,
+				'edit_others_tribe_events' => 1,
+				'delete_others_tribe_events' => 1,
+				'publish_tribe_events' => 1,
+				'edit_published_tribe_events' => 1,
+				'delete_published_tribe_events' => 1,
+				'delete_private_tribe_events' => 1,
+				'edit_private_tribe_events' => 1,
+				'read_private_tribe_events' => 1,
+				// Venues
+				'edit_tribe_venue' => 1,
+				'read_tribe_venue' => 1,
+				'delete_tribe_venue' => 1,
+				'delete_tribe_venues' => 1,
+				'edit_tribe_venues' => 1,
+				'edit_others_tribe_venues' => 1,
+				'delete_others_tribe_venues' => 1,
+				'publish_tribe_venues' => 1,
+				'edit_published_tribe_venues' => 1,
+				'delete_published_tribe_venues' => 1,
+				'delete_private_tribe_venues' => 1,
+				'edit_private_tribe_venues' => 1,
+				'read_private_tribe_venues' => 1,
+				// Organizers
+				'edit_tribe_organizer' => 1,
+				'read_tribe_organizer' => 1,
+				'delete_tribe_organizer' => 1,
+				'delete_tribe_organizers' => 1,
+				'edit_tribe_organizers' => 1,
+				'edit_others_tribe_organizers' => 1,
+				'delete_others_tribe_organizers' => 1,
+				'publish_tribe_organizers' => 1,
+				'edit_published_tribe_organizers' => 1,
+				'delete_published_tribe_organizers' => 1,
+				'delete_private_tribe_organizers' => 1,
+				'edit_private_tribe_organizers' => 1,
+				'read_private_tribe_organizers' => 1,
+			);
+
+			$extra_capabilities = array_merge( $extra_capabilities, $the_events_calendar );
+		}
+
+		return $extra_capabilities;
+	}
+
+	/**
+	 * Add third party capabilities to the *Elevated* Remote Access role only
+	 *
+	 * @return array Capabilities to add to the Elevated Remote Access user role.
+	 */
+	public function support_user_extra_caps_elevated() {
+		$extra_capabilities = array();
+
+		return $extra_capabilities;
+	}
+
+	/**
 	 * Create the Divi Support user (if it doesn't already exist)
 	 *
 	 * @since 3.20
@@ -1341,39 +1703,40 @@ class ET_Support_Center {
 
 		$password = $this->support_user_generate_password( $token );
 
-		$user_id = false;
-
-		if ( $password && ! is_wp_error( $password ) ) {
-			$user_id = wp_insert_user( array(
-				'user_login'   => $this->support_user_account_name,
-				'user_pass'    => $password,
-				'first_name'   => 'Elegant Themes',
-				'last_name'    => 'Support',
-				'display_name' => 'Elegant Themes Support',
-				'role'         => 'et_support',
-			) );
+		if ( is_wp_error( $password ) ) {
+			return $password;
 		}
 
-		if ( $user_id && ! is_wp_error( $user_id ) ) {
-			$account_settings = array(
-				'date_created' => time(),
-				'token'        => $token,
-			);
+		$user_id = wp_insert_user( array(
+			'user_login'   => $this->support_user_account_name,
+			'user_pass'    => $password,
+			'first_name'   => 'Elegant Themes',
+			'last_name'    => 'Support',
+			'display_name' => 'Elegant Themes Support',
+			'role'         => 'et_support',
+		) );
 
-			update_option( $this->support_user_options_name, $account_settings );
-
-			// update options variable
-			$this->support_user_get_options();
-
-			$this->support_user_init_cron_delete_account();
-		} else {
-			return new WP_Error( 'create_user_error', $user_id->get_error_message() );
+		if ( is_wp_error( $user_id ) ) {
+			return $user_id;
 		}
+
+		$account_settings = array(
+			'date_created' => time(),
+			'token'        => $token,
+		);
+
+		update_option( $this->support_user_options_name, $account_settings );
+
+		// update options variable
+		$this->support_user_get_options();
+
+		$this->support_user_init_cron_delete_account();
 	}
 
 	/**
 	 * Define both Standard and Elevated roles for the Divi Support user
 	 *
+	 * @since 3.22 Added filters to extend the list of capabilities for the ET Support User
 	 * @since 3.20
 	 */
 	public function support_user_create_roles() {
@@ -1381,126 +1744,115 @@ class ET_Support_Center {
 		$this->support_user_remove_roles();
 
 		// Divi Support :: Standard
-		add_role(
-			'et_support',
-			'ET Support',
-			array(
-				'assign_product_terms'      => true,
-				'delete_pages'              => true,
-				'delete_posts'              => true,
-				'delete_private_pages'      => true,
-				'delete_private_posts'      => true,
-				'delete_private_products'   => true,
-				'delete_product'            => true,
-				'delete_product_terms'      => true,
-				'delete_products'           => true,
-				'delete_published_pages'    => true,
-				'delete_published_posts'    => true,
-				'delete_published_products' => true,
-				'edit_dashboard'            => true,
-				'edit_files'                => true,
-				'edit_others_pages'         => true,
-				'edit_others_posts'         => true,
-				'edit_others_products'      => true,
-				'edit_pages'                => true,
-				'edit_posts'                => true,
-				'edit_private_pages'        => true,
-				'edit_private_posts'        => true,
-				'edit_private_products'     => true,
-				'edit_product'              => true,
-				'edit_product_terms'        => true,
-				'edit_products'             => true,
-				'edit_published_pages'      => true,
-				'edit_published_posts'      => true,
-				'edit_published_products'   => true,
-				'edit_theme_options'        => true,
-				'list_users'                => true,
-				'manage_categories'         => true,
-				'manage_links'              => true,
-				'manage_options'            => true,
-				'manage_product_terms'      => true,
-				'moderate_comments'         => true,
-				'publish_pages'             => true,
-				'publish_posts'             => true,
-				'publish_products'          => true,
-				'read'                      => true,
-				'read_private_pages'        => true,
-				'read_private_posts'        => true,
-				'read_private_products'     => true,
-				'read_product'              => true,
-				'upload_files'              => true,
-				// WooCommerce Capabilities
-				'manage_woocommerce'        => true,
-			)
+		$standard_capabilities = array(
+			'assign_product_terms'               => true,
+			'delete_pages'                       => true,
+			'delete_posts'                       => true,
+			'delete_private_pages'               => true,
+			'delete_private_posts'               => true,
+			'delete_private_products'            => true,
+			'delete_product'                     => true,
+			'delete_product_terms'               => true,
+			'delete_products'                    => true,
+			'delete_published_pages'             => true,
+			'delete_published_posts'             => true,
+			'delete_published_products'          => true,
+			'edit_dashboard'                     => true,
+			'edit_files'                         => true,
+			'edit_others_pages'                  => true,
+			'edit_others_posts'                  => true,
+			'edit_others_products'               => true,
+			'edit_pages'                         => true,
+			'edit_posts'                         => true,
+			'edit_private_pages'                 => true,
+			'edit_private_posts'                 => true,
+			'edit_private_products'              => true,
+			'edit_product'                       => true,
+			'edit_product_terms'                 => true,
+			'edit_products'                      => true,
+			'edit_published_pages'               => true,
+			'edit_published_posts'               => true,
+			'edit_published_products'            => true,
+			'edit_theme_options'                 => true,
+			'list_users'                         => true,
+			'manage_categories'                  => true,
+			'manage_links'                       => true,
+			'manage_options'                     => true,
+			'manage_product_terms'               => true,
+			'moderate_comments'                  => true,
+			'publish_pages'                      => true,
+			'publish_posts'                      => true,
+			'publish_products'                   => true,
+			'read'                               => true,
+			'read_private_pages'                 => true,
+			'read_private_posts'                 => true,
+			'read_private_products'              => true,
+			'read_product'                       => true,
+			'unfiltered_html'                    => true,
+			'upload_files'                       => true,
+			// Divi
+			'ab_testing'                         => true,
+			'add_library'                        => true,
+			'disable_module'                     => true,
+			'divi_builder_control'               => true,
+			'divi_library'                       => true,
+			'edit_borders'                       => true,
+			'edit_buttons'                       => true,
+			'edit_colors'                        => true,
+			'edit_configuration'                 => true,
+			'edit_content'                       => true,
+			'edit_global_library'                => true,
+			'edit_layout'                        => true,
+			'export'                             => true,
+			'lock_module'                        => true,
+			'page_options'                       => true,
+			'portability'                        => true,
+			'read_dynamic_content_custom_fields' => true,
+			'save_library'                       => true,
+			'use_visual_builder'                 => true,
+			// WooCommerce Capabilities
+			'manage_woocommerce'                 => true,
 		);
 
 		// Divi Support :: Elevated
-		add_role(
-			'et_support_elevated',
-			'ET Support - Elevated',
-			array(
-				'activate_plugins'          => true,
-				'assign_product_terms'      => true,
-				'delete_pages'              => true,
-				'delete_plugins'            => true,
-				'delete_posts'              => true,
-				'delete_private_pages'      => true,
-				'delete_private_posts'      => true,
-				'delete_private_products'   => true,
-				'delete_product'            => true,
-				'delete_product_terms'      => true,
-				'delete_products'           => true,
-				'delete_published_pages'    => true,
-				'delete_published_posts'    => true,
-				'delete_published_products' => true,
-				'delete_themes'             => true,
-				'edit_dashboard'            => true,
-				'edit_files'                => true,
-				'edit_others_pages'         => true,
-				'edit_others_posts'         => true,
-				'edit_others_products'      => true,
-				'edit_pages'                => true,
-				'edit_plugins'              => true,
-				'edit_posts'                => true,
-				'edit_private_pages'        => true,
-				'edit_private_posts'        => true,
-				'edit_private_products'     => true,
-				'edit_product'              => true,
-				'edit_product_terms'        => true,
-				'edit_products'             => true,
-				'edit_published_pages'      => true,
-				'edit_published_posts'      => true,
-				'edit_published_products'   => true,
-				'edit_theme_options'        => true,
-				'edit_themes'               => true,
-				'install_plugins'           => true,
-				'install_themes'            => true,
-				'list_users'                => true,
-				'manage_categories'         => true,
-				'manage_links'              => true,
-				'manage_options'            => true,
-				'manage_product_terms'      => true,
-				'moderate_comments'         => true,
-				'publish_pages'             => true,
-				'publish_posts'             => true,
-				'publish_products'          => true,
-				'read'                      => true,
-				'read_private_pages'        => true,
-				'read_private_posts'        => true,
-				'read_private_products'     => true,
-				'read_product'              => true,
-				'switch_themes'             => true,
-				'update_plugins'            => true,
-				'update_themes'             => true,
-				'upload_files'              => true,
-				// WooCommerce Capabilities
-				'manage_woocommerce'        => true,
-			)
-		);
+		$elevated_capabilities = array_merge( $standard_capabilities, array(
+			'activate_plugins' => true,
+			'delete_plugins'   => true,
+			'delete_themes'    => true,
+			'edit_plugins'     => true,
+			'edit_themes'      => true,
+			'install_plugins'  => true,
+			'install_themes'   => true,
+			'switch_themes'    => true,
+			'update_plugins'   => true,
+			'update_themes'    => true,
+		) );
+
+		// Filters to allow other code to extend the list of capabilities
+		$additional_standard = apply_filters( 'add_et_support_standard_capabilities', array() );
+		$additional_elevated = apply_filters( 'add_et_support_elevated_capabilities', array() );
+
+		// Apply filter capabilities to our definitions
+		$standard_capabilities = array_merge( $additional_standard, $standard_capabilities );
+		// Just like Elevated gets all of Standard's capabilities, it also inherits Standard's filter caps
+		$elevated_capabilities = array_merge( $additional_standard, $additional_elevated, $elevated_capabilities );
+
+		// Create the standard ET Support role
+		add_role( 'et_support', 'ET Support', $standard_capabilities );
+		$et_support_role = get_role( 'et_support' );
+		foreach ( $standard_capabilities as $cap ) {
+			$et_support_role->add_cap( $cap );
+		}
+		// Create the elevated ET Support role
+		add_role( 'et_support_elevated', 'ET Support - Elevated', $elevated_capabilities );
+		$et_support_elevated_role = get_role( 'et_support_elevated' );
+		foreach ( $elevated_capabilities as $cap ) {
+			$et_support_elevated_role->add_cap( $cap );
+		}
 	}
 
 	/**
-	 * Define both Standard and Elevated roles for the Divi Support user
+	 * Remove our Standard and Elevated Support roles
 	 *
 	 * @since 3.20
 	 */
@@ -1513,7 +1865,7 @@ class ET_Support_Center {
 	}
 
 	/**
-	 * Set the ET Support User role
+	 * Set the ET Support User's role
 	 *
 	 * @since 3.20
 	 *
@@ -1537,6 +1889,41 @@ class ET_Support_Center {
 		}
 	}
 
+	/**
+	 * Ensure the `unfiltered_html` capability is added to the ET Support roles in Multisite
+	 *
+	 * @since 3.22
+	 *
+	 * @param  array  $caps    An array of capabilities.
+	 * @param  string $cap     The capability being requested.
+	 * @param  int    $user_id The current user's ID.
+	 *
+	 * @return array Modified array of user capabilities.
+	 */
+	function support_user_map_meta_cap( $caps, $cap, $user_id ) {
+
+		if ( ! $this->is_support_user( $user_id ) ) {
+			return $caps;
+		}
+
+		// This user is in an ET Support user role, so add the capability
+		if ( 'unfiltered_html' === $cap ) {
+			$caps = array( 'unfiltered_html' );
+		}
+
+		return $caps;
+	}
+
+	/**
+	 * Remove KSES filters on ET Support User's content
+	 *
+	 * @since 3.22
+	 */
+	function support_user_kses_remove_filters() {
+		if ( $this->is_support_user() ) {
+			kses_remove_filters();
+		}
+	}
 
 	/**
 	 * Clear "Delete Account" cron hook
@@ -1618,14 +2005,14 @@ class ET_Support_Center {
 	 *
 	 * @param  string $token Token
 	 *
-	 * @return string $password Password
+	 * @return string|WP_Error Generated password if successful, WP Error object otherwise
 	 */
 	public function support_user_generate_password( $token ) {
 		global $wp_version;
 
 		$salt = '';
 
-		/** @see ET_Support_Center::maybe_set_site_id() */
+		/** @see ET_Core_SupportCenter::maybe_set_site_id() */
 		$site_id = get_option( 'et_support_site_id' );
 
 		if ( empty( $site_id ) ) {
@@ -1649,7 +2036,8 @@ class ET_Support_Center {
 			'username'  => esc_attr( $et_license['username'] ),
 			'api_key'   => esc_attr( $et_license['api_key'] ),
 			'site_url'  => esc_url( home_url( '/' ) ),
-			'login_url' => 'https://www.elegantthemes.com/members-area/admin/token/?url=' . urlencode( wp_login_url() )
+			'login_url' => 'https://www.elegantthemes.com/members-area/admin/token/'
+						   . '?url=' . urlencode( wp_login_url() )
 						   . '&token=' . urlencode( $token . '|' . $site_id ),
 		);
 
@@ -1659,25 +2047,90 @@ class ET_Support_Center {
 			'user-agent' => 'WordPress/' . $wp_version . '; ' . home_url( '/' ),
 		);
 
-		$request = wp_remote_post( 'https://www.elegantthemes.com/api/token.php', $support_user_options );
+		$request = wp_remote_post(
+			'https://www.elegantthemes.com/api/token.php',
+			$support_user_options
+		);
 
-		if ( ! is_wp_error( $request ) && 200 == wp_remote_retrieve_response_code( $request ) ) {
-			$response = unserialize( wp_remote_retrieve_body( $request ) );
-
-			if ( ! empty( $response['incorrect_token'] ) && $response['incorrect_token'] ) {
-				// Delete Site ID from database, if API returns the incorrect_token error
-				delete_option( 'et_support_site_id' );
-
-				return new WP_Error( 'incorrect_token', esc_html__( 'Please, try again.', 'et-core' ) );
-			} else if ( ! empty( $response['salt'] ) ) {
-				$salt = sanitize_text_field( $response['salt'] );
-			}
+		// Early exit if we don't get a good HTTP response from the API server
+		if ( 200 !== intval( wp_remote_retrieve_response_code( $request ) ) ) {
+			return new WP_Error(
+				'et_remote_access',
+				esc_html__(
+					'Elegant Themes API Error: HTTP error in API response',
+					'et-core'
+				)
+			);
 		}
+
+		// Early exit and pass along WP_Error report if the server response is an error
+		if ( is_wp_error( $request ) ) {
+			return new WP_Error(
+				'et_remote_access',
+				esc_html__(
+					'Elegant Themes API Error: WordPress Error in API response',
+					'et-core'
+				)
+			);
+		}
+
+		// Otherwise the response is good - let's load it and continue
+		$response = unserialize( wp_remote_retrieve_body( $request ) );
+
+		// If the API returns an error, we will return and log the accompanying message
+		$response_is_error          = array_key_exists( 'error', $response );
+		$response_has_error_message = array_key_exists( 'message', $response );
+
+		if ( $response_is_error && $response_has_error_message ) {
+			return new WP_Error(
+				'et_remote_access',
+				esc_html__(
+					'Elegant Themes API Error: ' . $response['message'],
+					'et-core'
+				)
+			);
+		}
+
+		// If we get an "Incorrect Token" response, delete the generated Site ID from database
+		$response_is_token_error = array_key_exists( 'incorrect_token', $response );
+
+		if ( $response_is_token_error && ! empty( $response['incorrect_token'] ) ) {
+			delete_option( 'et_support_site_id' );
+
+			return new WP_Error(
+				'et_remote_access',
+				esc_html__(
+					'Elegant Themes API Error: Incorrect Token. Please, try again.',
+					'et-core'
+				)
+			);
+		}
+
+		// If we get a normal-looking response, but it doesn't contain the salt we need
+		if ( empty( $response['salt'] ) ) {
+			return new WP_Error(
+				'et_remote_access',
+				esc_html__(
+					'Elegant Themes API Error: The API response was missing required data.',
+					'et-core'
+				)
+			);
+		}
+
+		// We have the salt; let's clean it and make sure we can use it
+		$salt = sanitize_text_field( $response['salt'] );
 
 		if ( empty( $salt ) ) {
-			return false;
+			return new WP_Error(
+				'et_remote_access',
+				esc_html__(
+					'Elegant Themes API Error: The API responded, but the response was empty.',
+					'et-core'
+				)
+			);
 		}
 
+		// Generate the password using the token we were initially passed & the salt from the API
 		$password = hash( 'sha256', $token . $salt );
 
 		return $password;
@@ -1753,6 +2206,73 @@ class ET_Support_Center {
 	}
 
 	/**
+	 * Maybe delete support account and the plugin options when switching themes
+	 *
+	 * If a theme change is one of:
+	 * - [Divi/Extra] > [Divi/Extra] child theme
+	 * - [Divi/Extra] child theme > [Divi/Extra] child theme
+	 * - [Divi/Extra] child theme > [Divi/Extra]
+	 * ...then we won't change the state of the Remote Access toggle.
+	 *
+	 * @since 3.23
+	 *
+	 * @return string | WP_Error  Confirmation message on success, WP_Error on failure
+	 */
+	public function maybe_deactivate_on_theme_switch() {
+		// Don't do anything if the user isn't logged in
+		if ( ! is_user_logged_in() ) {
+			return;
+		}
+
+		// Don't do anything if the parent theme's name matches the parent of this Support Center instance
+		if ( get_option( 'template' ) === $this->parent_nicename ) {
+			return;
+		}
+
+		// Leaving Divi/Extra environment; deactivate Support Center
+		$this->support_user_delete_account();
+		$this->unlist_support_center();
+		$this->support_center_capabilities_teardown();
+	}
+
+	/**
+	 * Is this user the ET Support User?
+	 *
+	 * @since 3.22
+	 *
+	 * @param int|null $user_id Pass a User ID to check. We'll get the current user's ID otherwise.
+	 *
+	 * @return bool Returns whether this user is the ET Support User.
+	 */
+	function is_support_user( $user_id = null ) {
+		$user_id = $user_id ? (int) $user_id : get_current_user_id();
+		if ( ! $user_id ) {
+			return false;
+		}
+
+		$user = get_userdata( $user_id );
+
+		// Gather this user's associated role(s)
+		$user_roles      = (array) $user->roles;
+		$user_is_support = false;
+
+		// First, check the username
+		if ( ! $this->support_user_account_name === $user->user_login ) {
+			return $user_is_support;
+		}
+
+		// Determine whether this user has the ET Support User role
+		if ( in_array( 'et_support', $user_roles ) ) {
+			$user_is_support = true;
+		}
+		if ( in_array( 'et_support_elevated', $user_roles ) ) {
+			$user_is_support = true;
+		}
+
+		return $user_is_support;
+	}
+
+	/**
 	 * Delete support account and the plugin options ( token, expiration date )
 	 *
 	 * @since 3.20
@@ -1815,26 +2335,46 @@ class ET_Support_Center {
 
 		// Update option(s)
 		if ( 'activate' === $support_update ) {
-			$this->support_user_maybe_create_user();
-			$this->support_user_set_role( 'et_support' );
-			$account_settings   = get_option( $this->support_user_options_name );
-			$site_id            = get_option( 'et_support_site_id' );
-			$response['expiry'] = strtotime( date( 'Y-m-d H:i:s ', $this->support_user_options['date_created'] ) . $this->support_user_expiration_time );
-			$response['token']  = '';
-			if ( ! empty( $site_id ) && is_string( $site_id ) ) {
-				$response['token'] = $account_settings['token'] . '|' . $site_id;
+			$maybe_create_user = $this->support_user_maybe_create_user();
+			// Only activate if we have a User ID and Password
+			if ( ! is_wp_error( $maybe_create_user ) ) {
+				$this->support_user_set_role( 'et_support' );
+				$account_settings   = get_option( $this->support_user_options_name );
+				$site_id            = get_option( 'et_support_site_id' );
+				$response['expiry'] = strtotime(
+					date(
+						'Y-m-d H:i:s ',
+						$this->support_user_options['date_created']
+					) . $this->support_user_expiration_time
+				);
+				$response['token']  = '';
+				if ( ! empty( $site_id ) && is_string( $site_id ) ) {
+					$response['token'] = $account_settings['token'] . '|' . $site_id;
+				}
+				$response['message'] = esc_html__(
+					'ET Support User role has been activated.',
+					'et-core'
+				);
+			} else {
+				et_error( $maybe_create_user->get_error_message() );
+				$response['error'] = $maybe_create_user->get_error_message();
 			}
-			$response['message'] = esc_html__( 'ET Support User role has been activated.', 'et-core' );
 		}
 		if ( 'elevate' === $support_update ) {
 			$this->support_user_set_role( 'et_support_elevated' );
-			$response['message'] = esc_html__( 'ET Support User role has been elevated.', 'et-core' );
+			$response['message'] = esc_html__(
+				'ET Support User role has been elevated.',
+				'et-core'
+			);
 		}
 		if ( 'deactivate' === $support_update ) {
 			$this->support_user_set_role( '' );
 			$this->support_user_delete_account();
 			$this->support_user_clear_delete_cron();
-			$response['message'] = esc_html__( 'ET Support User role has been deactivated.', 'et-core' );
+			$response['message'] = esc_html__(
+				'ET Support User role has been deactivated.',
+				'et-core'
+			);
 		}
 
 		// `echo` data to return
@@ -1851,6 +2391,29 @@ class ET_Support_Center {
 	 */
 
 	/**
+	 * ET Product Whitelist
+	 *
+	 * @since 3.28
+	 *
+	 * @param string $product Potential ET product name that we want to confirm is on the list.
+	 *
+	 * @return string|false   If the product is on our list, we return the "nice name" we have for it. Otherwise, we return FALSE.
+	 */
+	protected function is_whitelisted_product( $product = '' ) {
+		switch ( $product ) {
+			case 'divi_builder_plugin':
+			case 'divi_theme':
+			case 'extra_theme':
+			case 'monarch_plugin':
+			case 'bloom_plugin':
+				return $this->get_parent_nicename( $product );
+				break;
+			default:
+				return false;
+		}
+	}
+
+	/**
 	 * Safe Mode: Set session cookie to temporarily disable Plugins
 	 *
 	 * @since 3.20
@@ -1860,14 +2423,27 @@ class ET_Support_Center {
 	function safe_mode_update_via_ajax() {
 		et_core_security_check( 'manage_options', 'support_center', 'nonce' );
 
+		$response = array();
+
 		// Get POST data
 		$support_update = sanitize_text_field( $_POST['support_update'] );
 
-		$response = array();
-
 		// Update option(s)
 		if ( 'activate' === $support_update ) {
-			$this->toggle_safe_mode();
+			// Check the ET product that is activating Safe Mode
+			$safe_mode_activator = sanitize_key( $_POST['product'] );
+
+			// Confirm that this is a whitelisted product
+			$whitelisted_product = $this->is_whitelisted_product( $safe_mode_activator );
+
+			if ( ! $whitelisted_product ) {
+				// Send a failure code and exit the function
+				header( "HTTP/1.0 403 Forbidden" );
+				print 'Bad or malformed ET product name.';
+				wp_die();
+			}
+
+			$this->toggle_safe_mode( true, $safe_mode_activator );
 			$response['message'] = esc_html__( 'ET Safe Mode has been activated.', 'et-core' );
 		}
 		if ( 'deactivate' === $support_update ) {
@@ -1891,15 +2467,32 @@ class ET_Support_Center {
 	 *
 	 * @since 3.20
 	 *
-	 * @param bool $activate TRUE if enabling Safe Mode, FALSE if disabling Safe mode.
+	 * @param bool $activate  TRUE if enabling Safe Mode, FALSE if disabling Safe mode.
+	 * @param string $product Name of ET product that is activating Safe Mode (@see ET_Core_SupportCenter::get_parent_nicename()).
 	 */
-	public function toggle_safe_mode( $activate = true ) {
-		$activate = (bool) $activate;
-		$user_id  = get_current_user_id();
+	public function toggle_safe_mode( $activate = true, $product = '' ) {
+		$activate            = (bool) $activate;
+		$user_id             = get_current_user_id();
+		$whitelisted_product = $this->is_whitelisted_product( $product );
+
+		// Only proceed with an activation request if it comes from a whitelisted product
+		if ( $activate && ! $whitelisted_product ) {
+			return;
+		}
 
 		update_user_meta( $user_id, '_et_support_center_safe_mode', $activate ? 'on' : 'off' );
+		update_user_meta( $user_id, '_et_support_center_safe_mode_product', $activate ? sanitize_text_field( $whitelisted_product ) : '' );
 
 		$activate ? $this->maybe_add_mu_autoloader() : $this->maybe_remove_mu_autoloader();
+
+		/**
+		 * Fires when safe mode is toggled on or off.
+		 *
+		 * @since 3.25.4
+		 *
+		 * @param bool $state True if toggled on, false if toggled off.
+		 */
+		do_action( 'et_support_center_toggle_safe_mode', $activate );
 	}
 
 	/**
@@ -1934,8 +2527,12 @@ class ET_Support_Center {
 			return;
 		}
 
+		// Get the name of the ET product that activated Safe Mode
+		$safe_mode_activator = get_user_meta( get_current_user_id(), '_et_support_center_safe_mode_product', true );
+		$verified_activator  = $this->is_whitelisted_product( $safe_mode_activator );
+
 		?>
-		<script type="text/template" id="et-ajax-saving-template">
+		<script type="text/template" id="et-ajax-safe-mode-template">
 			<div class="et-core-modal-overlay et-core-form et-core-safe-mode-block-modal">
 				<div class="et-core-modal">
 					<div class="et-core-modal-header">
@@ -1953,7 +2550,7 @@ class ET_Support_Center {
 						</div>
 						<a class="et-core-modal-action"
 						   href="<?php echo admin_url( null, 'admin.php?page=et_support_center#et_card_safe_mode' ); ?>">
-							<?php print esc_html__( sprintf( 'Turn Off %1$s Safe Mode', $this->parent_nicename ), 'et-core' ); ?>
+							<?php print esc_html__( sprintf( 'Turn Off %1$s Safe Mode', $verified_activator ), 'et-core' ); ?>
 						</a>
 					</div>
 				</div>
@@ -1961,39 +2558,6 @@ class ET_Support_Center {
 		</script>
 		<?php
 
-	}
-
-	/**
-	 * Disable Child Theme (if Safe Mode is active)
-	 *
-	 * The `is_child_theme()` function returns TRUE if a child theme is active. Parent theme info can be gathered from
-	 * the child theme's settings, so in the case of an active child theme we can capture the parent theme's info and
-	 * temporarily push the parent theme as active (similar to how WP lets the user preview a theme before activation).
-	 *
-	 * @since 3.20
-	 *
-	 * @param $current_theme
-	 *
-	 * @return false|string
-	 */
-	function maybe_disable_child_theme( $current_theme ) {
-		// Don't do anything if the user isn't logged in
-		if ( ! is_user_logged_in() ) {
-			return $current_theme;
-		}
-
-		if ( ! is_child_theme() ) {
-			return $current_theme;
-		}
-
-		if ( et_core_is_safe_mode_active() ) {
-			$child_theme = wp_get_theme( $current_theme );
-			if ( $parent_theme = $child_theme->get( 'Template' ) ) {
-				return $parent_theme;
-			}
-		}
-
-		return $current_theme;
 	}
 
 	/**
@@ -2030,15 +2594,19 @@ class ET_Support_Center {
 		}
 
 		if ( et_core_is_safe_mode_active() ) {
+			// Get the name of the ET product that activated Safe Mode
+			$safe_mode_activator = get_user_meta( get_current_user_id(), '_et_support_center_safe_mode_product', true );
+			$verified_activator  = $this->is_whitelisted_product( $safe_mode_activator );
+
 			print sprintf( '<a class="%1$s" href="%2$s">%3$s</a>',
 				'et-safe-mode-indicator',
 				esc_url( get_admin_url( null, 'admin.php?page=et_support_center#et_card_safe_mode' ) ),
-				esc_html__( sprintf( 'Turn Off %1$s Safe Mode', $this->parent_nicename ), 'et-core' )
+				esc_html__( sprintf( 'Turn Off %1$s Safe Mode', $verified_activator ), 'et-core' )
 			);
 
 			print sprintf( '<div id="%1$s"><img src="%2$s" alt="%3$s" id="%3$s"/></div>',
 				'et-ajax-saving',
-				esc_url( $this->local_path . '/admin/images/ajax-loader.gif' ),
+				esc_url( $this->local_path . 'admin/images/ajax-loader.gif' ),
 				'loading'
 			);
 		}
@@ -2060,8 +2628,10 @@ class ET_Support_Center {
 		}
 
 		?>
-		<div id="et_support_center" class="wrap et-divi-admin-page--wrapper">
-			<h1><?php esc_html_e( 'Divi Help &amp; Support Center', 'et-core' ); ?></h1>
+		<div id="et_support_center" class="wrap et-divi-admin-page--wrapper" data-et-zone="wp-admin"
+			 data-et-page="wp-admin-support-center">
+			<h1><?php esc_html_e( sprintf( '%1$s Help &amp; Support Center', $this->parent_nicename ), 'et-core' );
+				?></h1>
 
 			<div id="epanel">
 				<div id="epanel-content">
@@ -2076,7 +2646,7 @@ class ET_Support_Center {
 					do_action( 'et_support_center_above_cards' );
 
 					// Build Card :: System Status
-					if ( et_pb_is_allowed( 'et_support_center_system' ) ) {
+					if ( $this->current_user_can( 'et_support_center_system' ) ) {
 						$card_title   = esc_html__( 'System Status', 'et-core' );
 						$card_content = sprintf( '<div class="et-system-status summary">%1$s</div>'
 												 . '<textarea id="et_system_status_plain">%2$s</textarea>'
@@ -2106,7 +2676,7 @@ class ET_Support_Center {
 					do_action( 'et_support_center_below_position_1' );
 
 					// Build Card :: Remote Access
-					if ( et_pb_is_allowed( 'et_support_center_remote_access' ) && ( 0 === $is_current_user_et_support ) ) {
+					if ( $this->current_user_can( 'et_support_center_remote_access' ) && ( 0 === $is_current_user_et_support ) ) {
 
 						$card_title   = esc_html__( 'Elegant Themes Support', 'et-core' );
 						$card_content = __( '<p>Enabling <strong>Remote Access</strong> will give the Elegant Themes support team limited access to your WordPress Dashboard. If requested, you can also enable full admin privileges. Remote Access should only be turned on if requested by the Elegant Themes support team. Remote Access is automatically disabled after 4 days.</p>', 'et-core' );
@@ -2156,6 +2726,7 @@ class ET_Support_Center {
 													  . '<span class="et-support-user-expiry" data-expiry="%5$s">%6$s'
 													  . '<span class="support-user-time-to-expiry"></span>'
 													  . '</span>'
+													  . '<span class="et-remote-access-error"></span>'
 													  . '</div>'
 													  . '</div>',
 								esc_html__( 'Remote Access', 'et-core' ),
@@ -2228,7 +2799,7 @@ class ET_Support_Center {
 					do_action( 'et_support_center_below_position_2' );
 
 					// Build Card :: Divi Documentation & Help
-					if ( et_pb_is_allowed( 'et_support_center_documentation' ) ) {
+					if ( $this->current_user_can( 'et_support_center_documentation' ) ) {
 						switch ( $this->parent ) {
 							case 'extra_theme':
 								$documentation_url = 'https://www.elegantthemes.com/documentation/extra/';
@@ -2238,6 +2809,12 @@ class ET_Support_Center {
 								break;
 							case 'divi_builder_plugin':
 								$documentation_url = 'https://www.elegantthemes.com/documentation/divi-builder/';
+								break;
+							case 'monarch_plugin':
+								$documentation_url = 'https://www.elegantthemes.com/documentation/monarch/';
+								break;
+							case 'bloom_plugin':
+								$documentation_url = 'https://www.elegantthemes.com/documentation/bloom/';
 								break;
 							default:
 								$documentation_url = 'https://www.elegantthemes.com/documentation/';
@@ -2276,17 +2853,17 @@ class ET_Support_Center {
 					do_action( 'et_support_center_below_position_3' );
 
 					// Build Card :: Safe Mode
-					if ( et_pb_is_allowed( 'et_support_center_safe_mode' ) ) {
+					if ( $this->current_user_can( 'et_support_center_safe_mode' ) ) {
 
-						$card_title   = esc_html__( 'Safe Mode', 'et-core' );
-						$card_content = __( '<p>Enabling <strong>Safe Mode</strong> will temporarily disable features and plugins that may be causing problems with your Elegant Themes product. This includes all Plugins, Child Themes, and Custom Code added to your integration areas. These items are only disabled for your current user session so your visitors will not be disrupted. Enabling Safe Mode makes it easy to figure out what is causing problems on your website by identifying or eliminating third party plugins and code as potential causes.</p>', 'et-core' );
-
+						$card_title       = esc_html__( 'Safe Mode', 'et-core' );
+						$card_content     = __( '<p>Enabling <strong>Safe Mode</strong> will temporarily disable features and plugins that may be causing problems with your Elegant Themes product. This includes all Plugins, Child Themes, and Custom Code added to your integration areas. These items are only disabled for your current user session so your visitors will not be disrupted. Enabling Safe Mode makes it easy to figure out what is causing problems on your website by identifying or eliminating third party plugins and code as potential causes.</p>', 'et-core' );
+						$error_message    = '';
 						$safe_mode_active = ( et_core_is_safe_mode_active() ) ? ' et_pb_on_state' : ' et_pb_off_state';
 						$plugins_list     = array();
-						$plugins_output = '';
+						$plugins_output   = '';
 
-						$has_mu_plugins_dir        = file_exists( WPMU_PLUGIN_DIR ) && is_writable( WPMU_PLUGIN_DIR );
-						$can_create_mu_plugins_dir = is_writable( WP_CONTENT_DIR ) && ! file_exists( WPMU_PLUGIN_DIR );
+						$has_mu_plugins_dir        = wp_mkdir_p( WPMU_PLUGIN_DIR ) && wp_is_writable( WPMU_PLUGIN_DIR );
+						$can_create_mu_plugins_dir = wp_is_writable( WP_CONTENT_DIR ) && ! wp_mkdir_p( WPMU_PLUGIN_DIR );
 
 						if ( $has_mu_plugins_dir || $can_create_mu_plugins_dir ) {
 							// Gather list of plugins that will be temporarily deactivated in Safe Mode
@@ -2294,14 +2871,19 @@ class ET_Support_Center {
 							$active_plugins = get_option( 'active_plugins' );
 
 							foreach ( $active_plugins as $plugin ) {
+								// Verify this 'active' plugin actually exists in the plugins directory
+								if ( ! in_array( $plugin, array_keys( $all_plugins ) ) ) {
+									continue;
+								}
+
+								// If it's not in our whitelist, add it to the list of plugins we'll disable
 								if ( ! in_array( $plugin, $this->safe_mode_plugins_whitelist ) ) {
 									$plugins_list[] = '<li>' . esc_html( $all_plugins[ $plugin ]['Name'] ) . '</li>';
 								}
 							}
 
 						} else {
-							$error_message  = et_get_safe_localization( sprintf( __( 'Plugins cannot be disabled because your <code>wp-content</code> directory has inconsistent file permissions. <a href="%1$s">Click here</a> for more information.', 'et-core'), 'https://wordpress.org/support/article/changing-file-permissions/' ) );
-							$plugins_list[] = '<li class="et-safe-mode-error">' . $error_message . '</li>';
+							$error_message = et_get_safe_localization( sprintf( __( '<p class="et-safe-mode-error">Plugins cannot be disabled because your <code>wp-content</code> directory has inconsistent file permissions. <a href="%1$s" target="_blank">Click here</a> for more information.</p>', 'et-core' ), 'https://wordpress.org/support/article/changing-file-permissions/' ) );
 						}
 
 						if ( count( $plugins_list ) > 0 ) {
@@ -2312,22 +2894,25 @@ class ET_Support_Center {
 						}
 
 						// Toggle Safe Mode activation
-						$card_content .= sprintf( '<div id="et_card_safe_mode" class="et-safe-mode">'
-						                          . '<div class="et_safe_mode_toggle">'
-						                          . '<div class="%5$s_wrapper"><div class="%5$s %1$s">'
-						                          . '<span class="%6$s et_pb_on_value">%2$s</span>'
-						                          . '<span class="et_pb_button_slider"></span>'
-						                          . '<span class="%6$s et_pb_off_value">%3$s</span>'
-						                          . '</div></div>'
-						                          . '%4$s'
-						                          . '</div>'
-						                          . '</div>',
+						$card_content .= sprintf( '<div id="et_card_safe_mode" class="et-safe-mode" data-et-product="%8$s">'
+												  . '<div class="et_safe_mode_toggle">'
+												  . '<div class="%5$s_wrapper"><div class="%5$s %1$s">'
+												  . '<span class="%6$s et_pb_on_value">%2$s</span>'
+												  . '<span class="et_pb_button_slider"></span>'
+												  . '<span class="%6$s et_pb_off_value">%3$s</span>'
+												  . '</div></div>'
+												  . '%4$s'
+												  . '%7$s'
+												  . '</div>'
+												  . '</div>',
 							esc_attr( $safe_mode_active ),
 							esc_html__( 'Enabled', 'et-core' ),
 							esc_html__( 'Disabled', 'et-core' ),
 							$plugins_output,
 							'et_pb_yes_no_button',
-							'et_pb_value_text'
+							'et_pb_value_text',
+							$error_message,
+							esc_attr( $this->parent )
 						);
 
 						print $this->add_support_center_card( array(
@@ -2348,7 +2933,7 @@ class ET_Support_Center {
 					do_action( 'et_support_center_below_position_4' );
 
 					// Build Card :: Logs
-					if ( et_pb_is_allowed( 'et_support_center_logs' ) ) {
+					if ( $this->current_user_can( 'et_support_center_logs' ) ) {
 						$debug_log_lines = apply_filters( 'et_debug_log_lines', 200 );
 						$wp_debug_log    = $this->get_wp_debug_log( $debug_log_lines );
 						$card_title      = esc_html__( 'Logs', 'et-core' );
@@ -2397,7 +2982,9 @@ class ET_Support_Center {
 			</div>
 		</div>
 		<div id="et-ajax-saving">
-			<img src="<?php echo esc_url( get_template_directory_uri() . '/core/admin/images/ajax-loader.gif' ); ?>" alt="loading" id="loading" />
+			<img src="<?php echo esc_url( $this->local_path . 'admin/images/ajax-loader.gif' ); ?>"
+				 alt="loading"
+				 id="loading" />
 		</div>
 		<?php
 

@@ -328,6 +328,14 @@ $options = array (
 				   "desc" => esc_html__( "Disable translations if you don't want to display translated theme strings on your site.", $themename )
 			),
 
+			array(
+				"name" => esc_html__( "Enable Responsive Images", $themename ),
+				"id"   => $shortname . "_enable_responsive_images",
+				"type" => "checkbox",
+				"std"  => "on",
+				"desc" => esc_html__( "Enable this option to get responsive images size generated when uploading images and adding srcset attribute for images element.", $themename )
+			),
+
 			array( 'name'               => esc_html__( 'Minify And Combine Javascript Files', $themename ),
 				'id'                    => $shortname . '_minify_combine_scripts',
 				'type'                  => 'checkbox',

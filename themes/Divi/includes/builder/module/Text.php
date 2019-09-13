@@ -87,19 +87,19 @@ class ET_Builder_Module_Text extends ET_Builder_Module {
 		$this->advanced_fields = array(
 			'fonts'                 => array(
 				'text'   => array(
-					'label'    => esc_html__( 'Text', 'et_builder' ),
-					'css'      => array(
+					'label'           => esc_html__( 'Text', 'et_builder' ),
+					'css'             => array(
 						'line_height' => "{$this->main_css_element} p",
-						'color' => "{$this->main_css_element}.et_pb_text",
+						'color'       => "{$this->main_css_element}.et_pb_text",
 					),
-					'line_height' => array(
+					'line_height'     => array(
 						'default' => floatval( et_get_option( 'body_font_height', '1.7' ) ) . 'em',
 					),
-					'font_size' => array(
+					'font_size'       => array(
 						'default' => absint( et_get_option( 'body_font_size', '14' ) ) . 'px',
 					),
-					'toggle_slug' => 'text',
-					'sub_toggle'  => 'p',
+					'toggle_slug'     => 'text',
+					'sub_toggle'      => 'p',
 					'hide_text_align' => true,
 				),
 				'link'   => array(
@@ -287,15 +287,18 @@ class ET_Builder_Module_Text extends ET_Builder_Module {
 	function get_fields() {
 		$fields = array(
 			'content' => array(
-				'label'           => esc_html__( 'Content', 'et_builder' ),
+				'label'           => esc_html__( 'Body', 'et_builder' ),
 				'type'            => 'tiny_mce',
 				'option_category' => 'basic_option',
 				'description'     => esc_html__( 'Here you can create the content that will be used within the module.', 'et_builder' ),
 				'toggle_slug'     => 'main_content',
 				'dynamic_content' => 'text',
+				'mobile_options'  => true,
+				'hover'           => 'tabs',
 			),
 			'ul_type' => array(
 				'label'             => esc_html__( 'Unordered List Style Type', 'et_builder' ),
+				'description'       => esc_html__( 'This setting adjusts the shape of the bullet point that begins each list item.', 'et_builder' ),
 				'type'              => 'select',
 				'option_category'   => 'configuration',
 				'options'           => array(
@@ -310,9 +313,11 @@ class ET_Builder_Module_Text extends ET_Builder_Module {
 				'tab_slug'          => 'advanced',
 				'toggle_slug'       => 'text',
 				'sub_toggle'        => 'ul',
+				'mobile_options'    => true,
 			),
 			'ul_position' => array(
 				'label'             => esc_html__( 'Unordered List Style Position', 'et_builder' ),
+				'description'       => esc_html__( 'The bullet point that begins each list item can be placed either inside or outside the parent list wrapper. Placing list items inside will indent them further within the list.', 'et_builder' ),
 				'type'              => 'select',
 				'option_category'   => 'configuration',
 				'options'           => array(
@@ -325,9 +330,11 @@ class ET_Builder_Module_Text extends ET_Builder_Module {
 				'tab_slug'          => 'advanced',
 				'toggle_slug'       => 'text',
 				'sub_toggle'        => 'ul',
+				'mobile_options'    => true,
 			),
 			'ul_item_indent' => array(
 				'label'           => esc_html__( 'Unordered List Item Indent', 'et_builder' ),
+				'description'     => esc_html__( 'Increasing indentation will push list items further towards the center of the text content, giving the list more visible separation from the the rest of the text.', 'et_builder' ),
 				'type'            => 'range',
 				'option_category' => 'configuration',
 				'tab_slug'        => 'advanced',
@@ -337,14 +344,17 @@ class ET_Builder_Module_Text extends ET_Builder_Module {
 				'default'         => '0px',
 				'default_unit'    => 'px',
 				'default_on_front' => '',
+				'allowed_units'    => array( '%', 'em', 'rem', 'px', 'cm', 'mm', 'in', 'pt', 'pc', 'ex', 'vh', 'vw' ),
 				'range_settings'  => array(
 					'min'  => '0',
 					'max'  => '100',
 					'step' => '1',
 				),
+				'mobile_options'   => true,
 			),
 			'ol_type' => array(
 				'label'             => esc_html__( 'Ordered List Style Type', 'et_builder' ),
+				'description'       => esc_html__( 'Here you can choose which types of characters are used to distinguish between each item in the ordered list.', 'et_builder' ),
 				'type'              => 'select',
 				'option_category'   => 'configuration',
 				'options'           => array(
@@ -374,9 +384,11 @@ class ET_Builder_Module_Text extends ET_Builder_Module {
 				'tab_slug'          => 'advanced',
 				'toggle_slug'       => 'text',
 				'sub_toggle'        => 'ol',
+				'mobile_options'    => true,
 			),
 			'ol_position' => array(
 				'label'             => esc_html__( 'Ordered List Style Position', 'et_builder' ),
+				'description'       => esc_html__( 'The characters that begins each list item can be placed either inside or outside the parent list wrapper. Placing list items inside will indent them further within the list.', 'et_builder' ),
 				'type'              => 'select',
 				'option_category'   => 'configuration',
 				'options'           => array(
@@ -389,9 +401,11 @@ class ET_Builder_Module_Text extends ET_Builder_Module {
 				'tab_slug'          => 'advanced',
 				'toggle_slug'       => 'text',
 				'sub_toggle'        => 'ol',
+				'mobile_options'    => true,
 			),
 			'ol_item_indent' => array(
 				'label'           => esc_html__( 'Ordered List Item Indent', 'et_builder' ),
+				'description'     => esc_html__( 'Increasing indentation will push list items further towards the center of the text content, giving the list more visible separation from the the rest of the text.', 'et_builder' ),
 				'type'            => 'range',
 				'option_category' => 'configuration',
 				'tab_slug'        => 'advanced',
@@ -401,14 +415,17 @@ class ET_Builder_Module_Text extends ET_Builder_Module {
 				'default'         => '0px',
 				'default_unit'    => 'px',
 				'default_on_front' => '',
+				'allowed_units'    => array( '%', 'em', 'rem', 'px', 'cm', 'mm', 'in', 'pt', 'pc', 'ex', 'vh', 'vw' ),
 				'range_settings'  => array(
 					'min'  => '0',
 					'max'  => '100',
 					'step' => '1',
 				),
+				'mobile_options'   => true,
 			),
 			'quote_border_weight' => array(
 				'label'           => esc_html__( 'Blockquote Border Weight', 'et_builder' ),
+				'description'     => esc_html__( 'Block quotes are given a border to separate them from normal text. You can increase or decrease the size of that border using this setting.', 'et_builder' ),
 				'type'            => 'range',
 				'option_category' => 'configuration',
 				'tab_slug'        => 'advanced',
@@ -418,14 +435,18 @@ class ET_Builder_Module_Text extends ET_Builder_Module {
 				'default'         => '5px',
 				'default_unit'    => 'px',
 				'default_on_front' => '',
+				'allowed_units'    => array( 'em', 'rem', 'px', 'cm', 'mm', 'in', 'pt', 'pc', 'ex', 'vh', 'vw' ),
 				'range_settings'  => array(
 					'min'  => '0',
 					'max'  => '100',
 					'step' => '1',
 				),
+				'mobile_options'   => true,
+				'hover'            => 'tabs',
 			),
 			'quote_border_color' => array(
 				'label'           => esc_html__( 'Blockquote Border Color', 'et_builder' ),
+				'description'     => esc_html__( 'Block quotes are given a border to separate them from normal text. Pick a color to use for that border.', 'et_builder' ),
 				'type'            => 'color-alpha',
 				'option_category' => 'configuration',
 				'custom_color'    => true,
@@ -434,6 +455,8 @@ class ET_Builder_Module_Text extends ET_Builder_Module {
 				'sub_toggle'      => 'quote',
 				'field_template'  => 'color',
 				'priority'        => 90,
+				'mobile_options'  => true,
+				'hover'           => 'tabs',
 			),
 		);
 
@@ -449,18 +472,41 @@ class ET_Builder_Module_Text extends ET_Builder_Module {
 		);
 	}
 
+	/**
+	 * Transition fields for Text module.
+	 *
+	 * @since 3.26
+	 *
+	 * @return array Fields list in array.
+	 */
+	public function get_transition_fields_css_props() {
+		$fields = parent::get_transition_fields_css_props();
+
+		$fields['quote_border_weight'] = array( 'border-width' => '%%order_class%% blockquote' );
+		$fields['quote_border_color']  = array( 'border-color' => '%%order_class%% blockquote' );
+
+		return $fields;
+	}
+
 	function render( $attrs, $content = null, $render_slug ) {
+		$multi_view                      = et_pb_multi_view_options( $this );
+		$ul_type_values                  = et_pb_responsive_options()->get_property_values( $this->props, 'ul_type' );
+		$ul_position_values              = et_pb_responsive_options()->get_property_values( $this->props, 'ul_position' );
+		$ul_item_indent_values           = et_pb_responsive_options()->get_property_values( $this->props, 'ul_item_indent' );
+		$ol_type_values                  = et_pb_responsive_options()->get_property_values( $this->props, 'ol_type' );
+		$ol_position_values              = et_pb_responsive_options()->get_property_values( $this->props, 'ol_position' );
+		$ol_item_indent_values           = et_pb_responsive_options()->get_property_values( $this->props, 'ol_item_indent' );
+		$quote_border_weight_values      = et_pb_responsive_options()->get_property_values( $this->props, 'quote_border_weight' );
+		$quote_border_weight_hover       = et_pb_hover_options()->get_value( 'quote_border_weight', $this->props );
+		$quote_border_color_values       = et_pb_responsive_options()->get_property_values( $this->props, 'quote_border_color' );
+		$quote_border_color_hover        = et_pb_hover_options()->get_value( 'quote_border_color', $this->props );
+
 		$background_layout               = $this->props['background_layout'];
 		$background_layout_hover         = et_pb_hover_options()->get_value( 'background_layout', $this->props, 'light' );
 		$background_layout_hover_enabled = et_pb_hover_options()->is_enabled( 'background_layout', $this->props );
-		$ul_type                         = $this->props['ul_type'];
-		$ul_position                     = $this->props['ul_position'];
-		$ul_item_indent                  = $this->props['ul_item_indent'];
-		$ol_type                         = $this->props['ol_type'];
-		$ol_position                     = $this->props['ol_position'];
-		$ol_item_indent                  = $this->props['ol_item_indent'];
-		$quote_border_weight             = $this->props['quote_border_weight'];
-		$quote_border_color              = $this->props['quote_border_color'];
+		$background_layout_values        = et_pb_responsive_options()->get_property_values( $this->props, 'background_layout' );
+		$background_layout_tablet        = isset( $background_layout_values['tablet'] ) ? $background_layout_values['tablet'] : '';
+		$background_layout_phone         = isset( $background_layout_values['phone'] ) ? $background_layout_values['phone'] : '';
 
 		$this->content = et_builder_replace_code_content_entities( $this->content );
 		// Un-autop converted GB block comments
@@ -476,42 +522,36 @@ class ET_Builder_Module_Text extends ET_Builder_Module {
 		$video_background = $this->video_background();
 		$parallax_image_background = $this->get_parallax_image_background();
 
-		if ( '' !== $ul_type || '' !== $ul_position || '' !== $ul_item_indent ) {
-			ET_Builder_Element::set_style( $render_slug, array(
-				'selector'    => '%%order_class%% ul',
+		// UL.
+		et_pb_responsive_options()->generate_responsive_css( $ul_type_values, '%%order_class%% ul', 'list-style-type', $render_slug, ' !important;', 'type' );
+		et_pb_responsive_options()->generate_responsive_css( $ul_position_values, '%%order_class%% ul', 'list-style-position', $render_slug, '', 'type' );
+		et_pb_responsive_options()->generate_responsive_css( $ul_item_indent_values, '%%order_class%% ul', 'padding-left', $render_slug, ' !important;' );
+
+		// OL.
+		et_pb_responsive_options()->generate_responsive_css( $ol_type_values, '%%order_class%% ol', 'list-style-type', $render_slug, ' !important;', 'type' );
+		et_pb_responsive_options()->generate_responsive_css( $ol_position_values, '%%order_class%% ol', 'list-style-position', $render_slug, ' !important;', 'type' );
+		et_pb_responsive_options()->generate_responsive_css( $ol_item_indent_values, '%%order_class%% ol', 'padding-left', $render_slug, ' !important;' );
+
+		// Quote.
+		et_pb_responsive_options()->generate_responsive_css( $quote_border_weight_values, '%%order_class%% blockquote', 'border-width', $render_slug );
+		et_pb_responsive_options()->generate_responsive_css( $quote_border_color_values, '%%order_class%% blockquote', 'border-color', $render_slug, '', 'color' );
+
+		if ( '' !== $quote_border_color_hover && et_builder_is_hover_enabled( 'quote_border_color', $this->props ) ) {
+			self::set_style( $render_slug, array(
+				'selector'    => '%%order_class%% blockquote:hover',
 				'declaration' => sprintf(
-					'%1$s
-					%2$s
-					%3$s',
-					'' !== $ul_type ? sprintf( 'list-style-type: %1$s !important;', esc_html( $ul_type ) ) : '',
-					'' !== $ul_position ? sprintf( 'list-style-position: %1$s;', esc_html( $ul_position ) ) : '',
-					'' !== $ul_item_indent ? sprintf( 'padding-left: %1$s !important;', esc_html( $ul_item_indent ) ) : ''
+					'border-color: %1$s !important;',
+					esc_html( $quote_border_color_hover )
 				),
 			) );
 		}
 
-		if ( '' !== $ol_type || '' !== $ol_position || '' !== $ol_item_indent ) {
-			ET_Builder_Element::set_style( $render_slug, array(
-				'selector'    => '%%order_class%% ol',
+		if ( '' !== $quote_border_weight_hover && et_builder_is_hover_enabled( 'quote_border_weight', $this->props ) ) {
+			self::set_style( $render_slug, array(
+				'selector'    => '%%order_class%% blockquote:hover',
 				'declaration' => sprintf(
-					'%1$s
-					%2$s
-					%3$s',
-					'' !== $ol_type ? sprintf( 'list-style-type: %1$s !important;', esc_html( $ol_type ) ) : '',
-					'' !== $ol_position ? sprintf( 'list-style-position: %1$s !important;', esc_html( $ol_position ) ) : '',
-					'' !== $ol_item_indent ? sprintf( 'padding-left: %1$s !important;', esc_html( $ol_item_indent ) ) : ''
-				),
-			) );
-		}
-
-		if ( '' !== $quote_border_weight || '' !== $quote_border_color ) {
-			ET_Builder_Element::set_style( $render_slug, array(
-				'selector'    => '%%order_class%% blockquote',
-				'declaration' => sprintf(
-					'%1$s
-					%2$s',
-					'' !== $quote_border_weight ? sprintf( 'border-width: %1$s;', esc_html( $quote_border_weight ) ) : '',
-					'' !== $quote_border_color ? sprintf( 'border-color: %1$s;', esc_html( $quote_border_color ) ) : ''
+					'border-width: %1$s !important;',
+					esc_html( $quote_border_weight_hover )
 				),
 			) );
 		}
@@ -521,6 +561,14 @@ class ET_Builder_Module_Text extends ET_Builder_Module {
 			"et_pb_bg_layout_{$background_layout}",
 			$this->get_text_orientation_classname(),
 		) );
+
+		if ( ! empty( $background_layout_tablet ) ) {
+			$this->add_classname( "et_pb_bg_layout_{$background_layout_tablet}_tablet" );
+		}
+
+		if ( ! empty( $background_layout_phone ) ) {
+			$this->add_classname( "et_pb_bg_layout_{$background_layout_phone}_phone" );
+		}
 
 		$data_background_layout       = '';
 		$data_background_layout_hover = '';
@@ -537,15 +585,21 @@ class ET_Builder_Module_Text extends ET_Builder_Module {
 			);
 		}
 
+		$content = $multi_view->render_element( array(
+			'tag'     => 'div',
+			'content' => '{{content}}',
+			'attrs'   => array(
+				'class' => 'et_pb_text_inner',
+			),
+		) );
+
 		$output = sprintf(
 			'<div%3$s class="%2$s"%6$s%7$s>
 				%5$s
 				%4$s
-				<div class="et_pb_text_inner">
-					%1$s
-				</div>
+				%1$s
 			</div> <!-- .et_pb_text -->',
-			$this->content,
+			$content,
 			$this->module_classname( $render_slug ),
 			$this->module_id(),
 			$video_background,

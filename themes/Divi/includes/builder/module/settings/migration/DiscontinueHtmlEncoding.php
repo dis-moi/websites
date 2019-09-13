@@ -73,7 +73,7 @@ class ET_Builder_Module_Settings_Migration_DiscontinueHtmlEncoding extends ET_Bu
 		return $content;
 	}
 
-	public function migrate( $field_name, $current_value, $module_slug, $saved_value, $saved_field_name, $attrs, $content ) {
+	public function migrate( $field_name, $current_value, $module_slug, $saved_value, $saved_field_name, $attrs, $content, $module_address ) {
 
 		// code module migration for BB
 		if ( in_array( $module_slug, $this->get_modules( 'code' ) ) && 'raw_content' === $saved_field_name ) {

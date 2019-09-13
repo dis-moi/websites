@@ -29,7 +29,7 @@ class ET_Builder_Module_Settings_Migration_ContactFormItemOptionsSerialization e
 		);
 	}
 
-	public function migrate( $field_name, $current_value, $module_slug, $saved_value, $saved_field_name, $attrs, $content ) {
+	public function migrate( $field_name, $current_value, $module_slug, $saved_value, $saved_field_name, $attrs, $content, $module_address ) {
 		if ( json_decode( $saved_value ) ) {
 			return $saved_value;
 		}

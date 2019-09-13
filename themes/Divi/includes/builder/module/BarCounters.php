@@ -24,7 +24,7 @@ class ET_Builder_Module_Bar_Counters extends ET_Builder_Module {
 						'title'    => esc_html__( 'Text', 'et_builder' ),
 						'priority' => 49,
 					),
-					'bar' => esc_html__( 'Bar Counter', 'et_builder' ),
+					'bar'    => esc_html__( 'Bar', 'et_builder' ),
 				),
 			),
 		);
@@ -75,6 +75,7 @@ class ET_Builder_Module_Bar_Counters extends ET_Builder_Module {
 				),
 			),
 			'margin_padding' => array(
+				'draggable_padding' => false,
 				'css'           => array(
 					'margin'    => "{$this->main_css_element}",
 					'padding'   => "{$this->main_css_element} .et_pb_counter_amount",
@@ -131,9 +132,11 @@ class ET_Builder_Module_Bar_Counters extends ET_Builder_Module {
 				'hover'             => 'tabs',
 				'description'       => esc_html__( 'This will change the fill color for the bar.', 'et_builder' ),
 				'default'           => et_builder_accent_color(),
+				'mobile_options'    => true,
 			),
 			'use_percentages' => array(
-				'label'             => esc_html__( 'Use Percentages', 'et_builder' ),
+				'label'             => esc_html__( 'Show Percentage', 'et_builder' ),
+				'description'       => esc_html__( 'Turning off percentages will remove the percentage text from within the filled portion of the bar.', 'et_builder' ),
 				'type'              => 'yes_no_button',
 				'option_category'   => 'configuration',
 				'options'           => array(
@@ -142,6 +145,8 @@ class ET_Builder_Module_Bar_Counters extends ET_Builder_Module {
 				),
 				'toggle_slug'       => 'elements',
 				'default_on_front'  => 'on',
+				'mobile_options'    => true,
+				'hover'             => 'tabs',
 			),
 		);
 
@@ -160,7 +165,7 @@ class ET_Builder_Module_Bar_Counters extends ET_Builder_Module {
 	function before_render() {
 		global $et_pb_counters_settings;
 
-		$background_color          = $this->props['background_color'];
+		$multi_view                = et_pb_multi_view_options( $this );
 		$background_image          = $this->props['background_image'];
 		$parallax                  = $this->props['parallax'];
 		$parallax_method           = $this->props['parallax_method'];
@@ -169,31 +174,51 @@ class ET_Builder_Module_Bar_Counters extends ET_Builder_Module {
 		$background_video_width    = $this->props['background_video_width'];
 		$background_video_height   = $this->props['background_video_height'];
 		$allow_player_pause        = $this->props['allow_player_pause'];
-		$bar_bg_color              = $this->props['bar_bg_color'];
-		$use_percentages           = $this->props['use_percentages'];
+		$bar_bg_color_values       = et_pb_responsive_options()->get_property_values( $this->props, 'bar_bg_color' );
 		$background_video_pause_outside_viewport = $this->props['background_video_pause_outside_viewport'];
 
+		// Background Color.
+		$background_last_edited        = self::$_->array_get( $this->props, 'background_last_edited', '' );
+		$background_hover_enabled      = self::$_->array_get( $this->props, 'background__hover_enabled', '' );
+		$background_colors             = et_pb_responsive_options()->get_composite_property_values( $this->props, 'background', 'background_color' );
+		$background_enable_colors      = et_pb_responsive_options()->get_composite_property_values( $this->props, 'background', 'background_enable_color' );
+		$background_color_hover        = et_pb_hover_options()->get_compose_value( 'background_color', 'background', $this->props, '' );
+		$background_enable_color_hover = et_pb_hover_options()->get_compose_value( 'background_enable_color', 'background', $this->props, '' );
+
 		$et_pb_counters_settings = array(
-			'background_color'          => $background_color,
-			'background_color_hover'    => self::get_hover_value( 'background_color' ),
-			'background_image'          => $background_image,
-			'parallax'                  => $parallax,
-			'parallax_method'           => $parallax_method,
-			'background_video_mp4'      => $background_video_mp4,
-			'background_video_webm'     => $background_video_webm,
-			'background_video_width'    => $background_video_width,
-			'background_video_height'   => $background_video_height,
-			'allow_player_pause'        => $allow_player_pause,
-			'bar_bg_color'              => $bar_bg_color,
-			'use_percentages'           => $use_percentages,
+			// Background Color.
+			'background_last_edited'         => $background_last_edited,
+			'background__hover_enabled'      => $background_hover_enabled,
+			'background_color'               => $background_colors['desktop'],
+			'background_color_tablet'        => $background_colors['tablet'],
+			'background_color_phone'         => $background_colors['phone'],
+			'background_enable_color'        => $background_enable_colors['desktop'],
+			'background_enable_color_tablet' => $background_enable_colors['tablet'],
+			'background_enable_color_phone'  => $background_enable_colors['phone'],
+			'background_color_hover'         => $background_color_hover,
+			'background_color__hover'        => $background_color_hover,
+			'background_enable_color__hover' => $background_enable_color_hover,
+			'background_image'               => $background_image,
+			'parallax'                       => $parallax,
+			'parallax_method'                => $parallax_method,
+			'background_video_mp4'           => $background_video_mp4,
+			'background_video_webm'          => $background_video_webm,
+			'background_video_width'         => $background_video_width,
+			'background_video_height'        => $background_video_height,
+			'allow_player_pause'             => $allow_player_pause,
+			'bar_bg_color'                   => isset( $bar_bg_color_values['desktop'] ) ? $bar_bg_color_values['desktop'] : '',
+			'bar_bg_color_tablet'            => isset( $bar_bg_color_values['tablet'] ) ? $bar_bg_color_values['tablet'] : '',
+			'bar_bg_color_phone'             => isset( $bar_bg_color_values['phone'] ) ? $bar_bg_color_values['phone'] : '',
+			'use_percentages'                => $multi_view->get_values( 'use_percentages' ),
 			'background_video_pause_outside_viewport' => $background_video_pause_outside_viewport,
 		);
 	}
 
 	function render( $attrs, $content = null, $render_slug ) {
 		$background_layout               = $this->props['background_layout'];
-		$bar_bg_hover_color              = et_pb_hover_options()->get_value( 'bar_bg_color', $this->props );
+		$background_layout_values        = et_pb_responsive_options()->get_property_values( $this->props, 'background_layout' );
 		$background_layout_hover         = et_pb_hover_options()->get_value( 'background_layout', $this->props, 'light' );
+		$bar_bg_hover_color              = et_pb_hover_options()->get_value( 'bar_bg_color', $this->props );
 		$video_background = $this->video_background();
 
 		// Module classname
@@ -201,6 +226,16 @@ class ET_Builder_Module_Bar_Counters extends ET_Builder_Module {
 			'et-waypoint',
 			"et_pb_bg_layout_{$background_layout}",
 		) );
+
+		$background_layout_tablet = isset( $background_layout_values['tablet'] ) ? $background_layout_values['tablet'] : '';
+		if ( ! empty( $background_layout_tablet ) ) {
+			$this->add_classname( "et_pb_bg_layout_{$background_layout_tablet}_tablet" );
+		}
+
+		$background_layout_phone = isset( $background_layout_values['phone'] ) ? $background_layout_values['phone'] : '';
+		if ( ! empty( $background_layout_phone ) ) {
+			$this->add_classname( "et_pb_bg_layout_{$background_layout_phone}_phone" );
+		}
 
 		$this->add_classname( $this->get_text_orientation_classname() );
 

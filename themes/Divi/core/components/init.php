@@ -226,7 +226,7 @@ function et_core_page_resource_fallback() {
 		return;
 	}
 
-	/** @see ET_Support_Center::toggle_safe_mode */
+	/** @see ET_Core_SupportCenter::toggle_safe_mode */
 	if ( et_core_is_safe_mode_active() ) {
 		return;
 	}
@@ -290,7 +290,7 @@ function et_core_page_resource_maybe_output_fallback_script() {
 		return;
 	}
 
-	/** @see ET_Support_Center::toggle_safe_mode */
+	/** @see ET_Core_SupportCenter::toggle_safe_mode */
 	if ( et_core_is_safe_mode_active() ) {
 		return;
 	}

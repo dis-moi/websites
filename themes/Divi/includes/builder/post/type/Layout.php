@@ -157,8 +157,15 @@ class ET_Builder_Post_Type_Layout extends ET_Core_Post_Type {
 	 * @return bool
 	 */
 	public static function is_publicly_queryable() {
-		$get      = $_GET;
-		$is_VB    = '1' === self::$_->array_get( $get, 'et_fb' ) && et_pb_is_allowed( 'use_visual_builder' );
+		// phpcs:disable WordPress.Security.NonceVerification.NoNonceVerification
+		$get     = $_GET;
+		$actions = array(
+			'et_fb_update_builder_assets',
+			'et_fb_retrieve_builder_data',
+		);
+		$is_ajax = isset( $_REQUEST['action'] ) && in_array( $_REQUEST['action'], $actions );
+		$is_VB   = ( '1' === self::$_->array_get( $get, 'et_fb' ) || $is_ajax ) && et_pb_is_allowed( 'use_visual_builder' );
+		// phpcs:enable
 		$is_wpcli = defined( 'WP_CLI' ) && WP_CLI;
 
 		$has_preview = ! $is_VB && ! is_null( self::$_->array_get( $get, 'et_pb_preview', null ) );

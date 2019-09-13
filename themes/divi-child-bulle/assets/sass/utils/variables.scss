@@ -1,10 +1,36 @@
 
+// -----------------------------------------------------------------------------
+//
+// Colors (mostly handled in DIVI)
+//
+// -----------------------------------------------------------------------------
+
+
+$color_white: #ffffff;
+$color_gray: #333333;
+$color_gray_mid: #303030;
+$color_gray_dark: #272727;
+$color_gray_light: #535353;
+$color_gray_brushed_metal: #F4F4F4;
+$color_gray_cement: #d0d0d0;
+$color_black: #000;
+
+$color_border: $color_gray_cement;
+$color_border_focus: $color_gray_light;
+$color_body: $color_gray_mid;
+$color_body_light: $color_gray_brushed_metal;
+
+// -----------------------------------------------------------------------------
+//
+// Responsive
+//
+// -----------------------------------------------------------------------------
+
 $mq-small-less : '<small';
 $mq-small : 'small';
 $mq-medium : 'medium';
 $mq-xmedium : 'xmedium';
 $mq-large : 'large';
-
 
 $breakpoints: (
 		$mq-small-less:  ( max-width:  767px ),
@@ -13,3 +39,21 @@ $breakpoints: (
 		$mq-xmedium: ( min-width:  1024px ),
 		$mq-large:  ( min-width: 1200px )
 ) !default;
+
+// -----------------------------------------------------------------------------
+//
+// Spacers
+//
+// -----------------------------------------------------------------------------
+
+$d_spacer_xsm: 5px;
+$d_spacer_sm: 10px;
+$d_spacer_smm: 15px;
+$d_spacer_m: 20px;
+$d_spacer_mm: 30px;
+$d_spacer_lrg: 40px;
+$d_spacer_xlrg: 60px;
+$d_spacer_xxlrg: 80px;
+$d_spacer_hg: 100px;
+$d_spacer_xhg: 130px;
+$d_spacer_xxhg: 50vh;

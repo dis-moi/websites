@@ -7,6 +7,83 @@
  Template:       Divi
  Version:        1.0.0
 */
+/* -----------------------------------------------------------------------------
+ *
+ * Visibility
+ *
+ * ----------------------------------------------------------------------------- */
+.a11y-hidden {
+  display: none !important;
+  visibility: hidden; }
+
+.a11y-visual-hide {
+  border: 0;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px; }
+
+.a11y-visual-show {
+  border: 0;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px; }
+
+form,
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+  font-weight: inherit;
+  line-height: 1.2;
+  font-size: 16px;
+  font-style: normal;
+  color: inherit; }
+
+label,
+.label,
+legend {
+  display: inline-block;
+  margin-bottom: 10px;
+  font-size: 16px;
+  font-weight: inherit; }
+  @media (min-width: 960px) {
+    label,
+    .label,
+    legend {
+      font-size: 18px; } }
+
+.required label:after {
+  content: '*'; }
+
+.required label:after {
+  padding-left: 4px; }
+
+input,
+select {
+  padding: 0 10px;
+  border: 1px solid #d0d0d0;
+  height: 40px; }
+  input:focus,
+  select:focus {
+    border-color: #535353; }
+
+input,
+select {
+  display: inline-block;
+  height: 40px; }
+
+input {
+  line-height: 40px; }
+
 .mobile_menu_bar_toggle:before {
   font-weight: bold; }
 
@@ -31,6 +108,33 @@
 .page-template-page-landing-alternating #main-header {
   box-shadow: none;
   background-color: transparent; }
+
+.custom-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 100; }
+
+.sib_signup_form form,
+.sib_signup_form button,
+.sib_signup_form input,
+.sib_signup_form select,
+.sib_signup_form textarea {
+  line-height: 1.2;
+  font-size: 100%;
+  font-style: normal; }
+
+.sib_signup_form input {
+  border-radius: 4px;
+  padding: 0 10px; }
+  .sib_signup_form input::-webkit-input-placeholder {
+    font-style: italic; }
+  .sib_signup_form input:-moz-placeholder {
+    font-style: italic; }
+  .sib_signup_form input::-moz-placeholder {
+    font-style: italic; }
+  .sib_signup_form input:-ms-input-placeholder {
+    font-style: italic; }
 
 .et_section_regular--with-curve {
   background-color: transparent; }

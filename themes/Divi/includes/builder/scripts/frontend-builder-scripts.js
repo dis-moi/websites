@@ -2521,9 +2521,13 @@ var isBuilder = 'object' === typeof window.ET_Builder;
 						this_map_grayscale = '-' + this_map_grayscale.toString();
 					}
 
+					// Being saved to pass lat and lang of center location.
+					var data_center_lat = parseFloat($this_map.attr('data-center-lat')) || 0;
+					var data_center_lng = parseFloat($this_map.attr('data-center-lng')) || 0;
+
 					$this_map_container.data('map', new google.maps.Map( $this_map[0], {
 						zoom: parseInt( $this_map.attr('data-zoom') ),
-						center: new google.maps.LatLng( parseFloat( $this_map.attr('data-center-lat') ) , parseFloat( $this_map.attr('data-center-lng') )),
+						center: new google.maps.LatLng(data_center_lat, data_center_lng),
 						mapTypeId: google.maps.MapTypeId.ROADMAP,
 						scrollwheel: $this_map.attr('data-mouse-wheel') == 'on' ? true : false,
 						draggable: is_draggable,

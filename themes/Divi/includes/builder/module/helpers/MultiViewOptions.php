@@ -157,24 +157,6 @@ class ET_Builder_Module_Helper_MultiViewOptions {
 	public static $phone_suffix = '_phone';
 
 	/**
-	 * Cache
-	 *
-	 * @since 3.27.1
-	 *
-	 * @var array
-	 */
-	protected static $cache;
-
-	/**
-	 * When true, Cache has to be saved because including new data.
-	 *
-	 * @since 3.27.1
-	 *
-	 * @var bool
-	 */
-	protected static $dirty = false;
-
-	/**
 	 * Class constructor
 	 *
 	 * @since 3.27.1
@@ -189,92 +171,6 @@ class ET_Builder_Module_Helper_MultiViewOptions {
 		$this->set_custom_props( $custom_props );
 		$this->set_conditional_values( $conditional_values );
 		$this->set_default_values( $default_values );
-		self::init_cache();
-	}
-
-	/**
-	 * Returns Cache filename.
-	 *
-	 * @since 3.27.1
-	 *
-	 * @return string
-	 */
-	public static function get_cache_filename() {
-		return sprintf( '%s/%s', ET_Core_PageResource::get_cache_directory(), 'multiviews.data' );
-	}
-
-	/**
-	 * Returns Cache data.
-	 *
-	 * @since 3.27.1
-	 *
-	 * @return array
-	 */
-	public static function get_cache_data() {
-		if ( ! isset( self::$cache ) ) {
-			self::init_cache();
-		}
-
-		return self::$cache;
-	}
-
-	/**
-	 * Set Cache data.
-	 *
-	 * @since 3.27.1
-	 *
-	 * @param array $data The cache data.
-	 *
-	 * @return void
-	 */
-	public static function set_cache_data( $data ) {
-		self::$cache = $data;
-	}
-
-	/**
-	 * Initializes Cache.
-	 *
-	 * @since 3.27.1
-	 *
-	 * @return void
-	 */
-	public static function init_cache() {
-		if ( isset( self::$cache ) ) {
-			return;
-		}
-
-		$file = self::get_cache_filename();
-
-		if ( is_readable( $file ) ) {
-			self::$cache = unserialize( file_get_contents( $file ) );
-		} else {
-			self::$cache = array();
-		}
-
-		add_action( 'shutdown', 'ET_Builder_Module_Helper_MultiViewOptions::save_cache' );
-	}
-
-	/**
-	 * Saves Cache.
-	 *
-	 * @since 3.27.1
-	 *
-	 * @param bool $force_save Force to save the data.
-	 *
-	 * @return void
-	 */
-	public static function save_cache( $force_save = false ) {
-		if ( ! self::$dirty && ! $force_save ) {
-			return;
-		}
-
-		$file = self::get_cache_filename();
-
-		if ( ! is_writable( dirname( $file ) ) ) {
-			return;
-		}
-
-		file_put_contents( $file, serialize( self::$cache ) );
 	}
 
 	/**
@@ -1951,50 +1847,14 @@ class ET_Builder_Module_Helper_MultiViewOptions {
 					continue;
 				}
 
-				$cache     = false;
-				$cache_key = et_()->array_get( $attrs, 'src', 'empty-src' );
+				$attachment_srcset_sizes = et_get_image_srcset_sizes( $attrs['src'] );
 
-				if ( isset( self::$cache[ $cache_key ] ) ) {
-					// Cache exists.
-					$cache                                  = true;
-					list ( $file, $mtime, $srcset, $sizes ) = self::$cache[ $cache_key ];
-
-					if ( $file && file_exists( $file ) && filemtime( $file ) > $mtime ) {
-						// File changed on disk, invalidate cache.
-						$cache = false;
-					}
+				if ( isset( $attachment_srcset_sizes['srcset'] ) ) {
+					$data['attrs'][ $mode ]['srcset'] = $attachment_srcset_sizes['srcset'];
 				}
 
-				if ( $cache ) {
-					if ( $srcset ) {
-						$data['attrs'][ $mode ]['srcset'] = $srcset;
-					}
-					if ( $sizes ) {
-						$data['attrs'][ $mode ]['sizes'] = $sizes;
-					}
-				} else {
-					$image_id = et_get_attachment_id_by_url( $attrs['src'] );
-					$cache    = $defaults;
-
-					if ( $image_id ) {
-						$file       = get_attached_file( $image_id );
-						$mtime      = filemtime( $file );
-						$image_size = et_get_attachment_size_by_url( $attrs['src'] );
-
-						$srcset = wp_get_attachment_image_srcset( $image_id, $image_size );
-						if ( $srcset ) {
-							$data['attrs'][ $mode ]['srcset'] = $srcset;
-						}
-
-						$sizes = wp_get_attachment_image_sizes( $image_id, $image_size );
-						if ( $sizes ) {
-							$data['attrs'][ $mode ]['sizes'] = $sizes;
-						}
-						$cache = array( $file, $mtime, $srcset, $sizes );
-					}
-
-					self::$cache[ $cache_key ] = $cache;
-					self::$dirty               = true;
+				if ( isset( $attachment_srcset_sizes['sizes'] ) ) {
+					$data['attrs'][ $mode ]['sizes'] = $attachment_srcset_sizes['sizes'];
 				}
 
 				if ( ! isset( $data['attrs'][ $mode ]['srcset'] ) ) {

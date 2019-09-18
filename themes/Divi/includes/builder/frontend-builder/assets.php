@@ -192,7 +192,9 @@ function et_fb_app_only_bundle_deps( $deps = null ) {
 			'react-tiny-mce',
 			'et_pb_admin_date_addon_js',
 			'google-maps-api',
-			'et-builder-modules-script',
+
+			// If minified JS is served, minified JS script name is outputted instead
+			apply_filters( 'et_builder_modules_script_handle', 'et-builder-modules-script' )
 		);
 		$_deps = array_diff( $deps, $top );
 	}
@@ -325,9 +327,10 @@ function et_fb_enqueue_assets() {
 	et_fb_enqueue_react();
 
 	// Detect if it's a production build by checking if `bundle.css` exists.
-	$is_production = file_exists( sprintf( '%sfrontend-builder/build/bundle.css', ET_BUILDER_DIR ) );
+	$is_production   = file_exists( sprintf( '%sfrontend-builder/build/bundle.css', ET_BUILDER_DIR ) );
+	$external_assets = wp_script_is( 'et-dynamic-asset-helpers', 'registered' );
 
-	if ( $is_production && ! et_builder_bfb_enabled() ) {
+	if ( $is_production && $external_assets && ! et_builder_bfb_enabled() ) {
 		// Set bundle deps.
 		et_fb_app_only_bundle_deps( $fb_bundle_dependencies );
 		add_filter( 'script_loader_tag', 'et_fb_app_src', 10, 3 );

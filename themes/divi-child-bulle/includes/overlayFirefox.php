@@ -13,9 +13,6 @@
     <div class="title">
       Cliquer<br>pour ajouter Bulle
     </div>
-    <div class="subtitle">
-      et bénéficier des conseils<br>Le Même en Mieux
-    </div>
     <div class="infos">
       Bulle respecte votre vie privée :
       <ul>

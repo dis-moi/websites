@@ -2,8 +2,8 @@
 import $ from 'jquery';
 import Bowser from "bowser";
 
-const LINK_OPERA = 'https://choisir.lmem.net/lopera-en-mieux/';
-const LINK_UNAVAILABLE = 'https://choisir.lmem.net/le-meme-en-mieux-nest-pas-disponible-sur-votre-navigateur/';
+const LINK_UNAVAILABLE = window.bull_config.bulle_non_supporte;
+// const LINK_UNAVAILABLE = '/navigateur-non-supporte/';
 
 const LINK_POPUP_EXTENSION_CHROME = "https://chrome.google.com/webstore/detail/le-m%C3%AAme-en-mieux/fpjlnlnbacohacebkadbbjebbipcknbg?hl=fr";
 const LINK_POPUP_EXTENSION_FF = "https://addons.mozilla.org/fr/firefox/addon/lmem/";
@@ -72,9 +72,10 @@ const openNewTab = (url,target) => {
 const clickInstallHandler = (e) => {
 	if(el.isChrome || el.isFirefox) {
 		openRequestedPopup();
-	} else{
-		const url = el.Opera ? LINK_OPERA : LINK_UNAVAILABLE
-		openNewTab(url,'blank');
+	} else {
+		if (LINK_UNAVAILABLE) {
+			openNewTab(LINK_UNAVAILABLE,'blank');
+		}
 	}
 	e.preventDefault();
 };
@@ -108,6 +109,8 @@ const setUp  = () => {
 
 const start = () => {
 	$('#bulle-installer').click(clickInstallHandler);
+
+	$('#restartInstallButton').click(clickInstallHandler);
 
 	$( ".overlay" ).click((ev) => {
 		if ( ev.target.id !== 'restartInstallButton' ){

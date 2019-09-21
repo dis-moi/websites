@@ -12,13 +12,21 @@ function my_theme_enqueue_styles() {
 		wp_get_theme()->get('Version')
 	);
 
-	wp_enqueue_script(
-		'bulle-child-script',
-		get_stylesheet_directory_uri() . '/dist/main.js',
-		[],
-		wp_get_theme()->get('Version'),
-		true
-	);
+    wp_register_script(
+        'bulle-child-script',
+        get_stylesheet_directory_uri() . '/dist/main.js',
+        [],
+        wp_get_theme()->get('Version'),
+        true
+    );
+
+    $page = get_theme_mod( 'bulle_setting_non_supporte' );
+    $url = (isset($page) && !empty($page)) ? get_permalink($page) : '';
+    $data = [
+        'bulle_non_supporte' => $url
+    ];
+    wp_localize_script( 'bulle-child-script', 'bull_config', $data );
+    wp_enqueue_script( 'bulle-child-script' );
 
 }
 add_action( 'wp_enqueue_scripts', 'my_theme_enqueue_styles' );
@@ -56,4 +64,46 @@ function cc_mime_types($mimes) {
 	return $mimes;
 }
 add_filter('upload_mimes', 'cc_mime_types');
+
+
+
+/**
+ * Add page selector to the customizer.
+ *
+ * @since Theme 1.0.0
+ *
+ * @param WP_Customize_Manager $wp_customize Customizer object.
+ */
+function prefix_customize_register( $wp_customize ) {
+
+    $wp_customize->add_section( 'bulle_section' , array(
+        'title'      => __( 'Bulle', 'divi-child-bulle' ),
+        'priority'   => 30,
+    ) );
+
+
+    $wp_customize->add_setting( 'bulle_setting_non_supporte',
+        array(
+            'type'       => 'theme_mod', //Is this an 'option' or a 'theme_mod'?
+            'capability' => 'edit_theme_options', //Optional. Special permissions for accessing this setting.
+        )
+    );
+
+    $wp_customize->add_control(
+        new WP_Customize_Control(
+            $wp_customize,
+            'bulle_non_supporte',
+            array(
+                'label'          => __( 'Page Extension Non Supporté', 'divi-child-bulle' ),
+                'section'        => 'bulle_section',
+                'settings'       => 'bulle_setting_non_supporte',
+                'type'           => 'dropdown-pages'
+            )
+        )
+    );
+
+
+}
+add_action( 'customize_register', 'prefix_customize_register' );
+
 

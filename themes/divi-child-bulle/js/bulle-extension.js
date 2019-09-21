@@ -61,20 +61,12 @@ const openRequestedPopup = (e) => {
 	}, 500);
 };
 
-const openNewTab = (url,target) => {
-	if(target==='blank'){
-		window.open(url,'_blank');
-	}else{
-		window.location.href = url;
-	}
-};
-
 const clickInstallHandler = (e) => {
 	if(el.isChrome || el.isFirefox) {
 		openRequestedPopup();
 	} else {
 		if (LINK_UNAVAILABLE) {
-			openNewTab(LINK_UNAVAILABLE,'blank');
+			window.location.href = LINK_UNAVAILABLE;
 		}
 	}
 	e.preventDefault();

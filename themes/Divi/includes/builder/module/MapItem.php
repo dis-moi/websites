@@ -34,6 +34,8 @@ class ET_Builder_Module_Map_Item extends ET_Builder_Module {
 				'description'     => esc_html__( 'The title will be used within the tab button for this tab.', 'et_builder' ),
 				'toggle_slug'     => 'main_content',
 				'dynamic_content' => 'text',
+				'mobile_options'  => true,
+				'hover'           => 'tabs',
 			),
 			'pin_address' => array(
 				'label'             => esc_html__( 'Map Pin Address', 'et_builder' ),
@@ -52,14 +54,17 @@ class ET_Builder_Module_Map_Item extends ET_Builder_Module {
 				'class'   => array( 'et_pb_zoom_level' ),
 				'default' => '18',
 				'default_on_front' => '',
+				'option_category'  => 'basic_option',
 			),
 			'pin_address_lat' => array(
 				'type'  => 'hidden',
 				'class' => array( 'et_pb_pin_address_lat' ),
+				'option_category' => 'basic_option',
 			),
 			'pin_address_lng' => array(
 				'type'  => 'hidden',
 				'class' => array( 'et_pb_pin_address_lng' ),
+				'option_category' => 'basic_option',
 			),
 			'map_center_map' => array(
 				'type'                  => 'center_map',
@@ -68,12 +73,14 @@ class ET_Builder_Module_Map_Item extends ET_Builder_Module {
 				'toggle_slug'           => 'map',
 			),
 			'content' => array(
-				'label'           => esc_html__( 'Content', 'et_builder' ),
+				'label'           => esc_html__( 'Body', 'et_builder' ),
 				'type'            => 'tiny_mce',
 				'option_category' => 'basic_option',
 				'description'     => esc_html__( 'Here you can define the content that will be placed within the infobox for the pin.', 'et_builder' ),
 				'toggle_slug'     => 'main_content',
 				'dynamic_content' => 'text',
+				'mobile_options'  => true,
+				'hover'           => 'tabs',
 			),
 		);
 		return $fields;
@@ -82,7 +89,14 @@ class ET_Builder_Module_Map_Item extends ET_Builder_Module {
 	function render( $attrs, $content = null, $render_slug ) {
 		global $et_pb_tab_titles;
 
-		$title           = $this->_esc_attr( 'title' );
+		$multi_view      = et_pb_multi_view_options($this);
+		$title           = $multi_view->render_element( array(
+			'tag' => 'h3',
+			'content' => '{{title}}',
+			'styles' => array(
+				'margin-top' => '10px',
+			),
+		) );
 		$pin_address_lat = $this->props['pin_address_lat'];
 		$pin_address_lng = $this->props['pin_address_lng'];
 
@@ -95,21 +109,71 @@ class ET_Builder_Module_Map_Item extends ET_Builder_Module {
 			$pin_address_lng = strtr( $pin_address_lng, $replace_htmlentities );
 		}
 
-		$content = $this->content;
+		$content = $multi_view->render_element( array(
+			'tag'     => 'div',
+			'content' => '{{content}}',
+			'attrs'   => array(
+				'class' => 'infowindow',
+			),
+			'required' => array( 'title', 'content' ),
+		) );
+
+		$title_multi_view_data_attr = $multi_view->render_attrs( array(
+			'attrs'   => array(
+				'data-title' => '{{title}}',
+			),
+		) );
 
 		$output = sprintf(
-			'<div class="et_pb_map_pin" data-lat="%1$s" data-lng="%2$s" data-title="%5$s">
-				<h3 style="margin-top: 10px;">%3$s</h3>
+			'<div class="et_pb_map_pin" data-lat="%1$s" data-lng="%2$s" data-title="%5$s"%6$s>
+				%3$s
 				%4$s
 			</div>',
 			esc_attr( $pin_address_lat ),
 			esc_attr( $pin_address_lng ),
 			et_core_esc_previously( $title ),
-			( ! ( empty( $content ) && empty( $title ) ) ? sprintf( '<div class="infowindow">%1$s</div>', $content ) : '' ),
-			esc_attr( $title )
+			et_core_esc_previously( $content ),
+			esc_attr( $multi_view->get_value( 'title' ) ),
+			$title_multi_view_data_attr
 		);
 
 		return $output;
+	}
+
+	/**
+	 * Filter multi view value.
+	 *
+	 * @since 3.27.1
+	 * 
+	 * @see ET_Builder_Module_Helper_MultiViewOptions::filter_value
+	 *
+	 * @param mixed $raw_value Props raw value.
+	 * @param array $args {
+	 *     Context data.
+	 *
+	 *     @type string $context      Context param: content, attrs, visibility, classes.
+	 *     @type string $name         Module options props name.
+	 *     @type string $mode         Current data mode: desktop, hover, tablet, phone.
+	 *     @type string $attr_key     Attribute key for attrs context data. Example: src, class, etc.
+	 *     @type string $attr_sub_key Attribute sub key that availabe when passing attrs value as array such as styes. Example: padding-top, margin-botton, etc.
+	 * }
+	 * @param ET_Builder_Module_Helper_MultiViewOptions $multi_view Multiview object instance.
+	 *
+	 * @return mixed
+	 */
+	public function multi_view_filter_value( $raw_value, $args, $multi_view ) {
+		$name = isset( $args['name'] ) ? $args['name'] : '';
+		$mode = isset( $args['mode'] ) ? $args['mode'] : '';
+
+		$fields_need_escape = array(
+			'title',
+		);
+
+		if ( $raw_value && in_array( $name, $fields_need_escape, true ) ) {
+			return $this->_esc_attr( $multi_view->get_name_by_mode( $name, $mode ) );
+		}
+
+		return $raw_value;
 	}
 }
 

@@ -65,7 +65,7 @@ class ET_Builder_Module_Settings_Migration_UIImprovement extends ET_Builder_Modu
 		);
 	}
 
-	public function migrate( $field_name, $current_value, $module_slug, $saved_value, $saved_field_name, $attrs, $content ) {
+	public function migrate( $field_name, $current_value, $module_slug, $saved_value, $saved_field_name, $attrs, $content, $module_address ) {
 		$is_current_value_empty = '' === $current_value;
 
 		if ( $is_current_value_empty ) {

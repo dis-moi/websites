@@ -28,3 +28,14 @@ if ( is_array( $et_theme_image_sizes ) ){
 		$crop = apply_filters( 'et_post_thumbnails_crop', true );
 	}
 }
+
+if ( et_is_responsive_images_enabled() ) {
+	// Register responsive image sizes.
+	$et_screen_sizes = et_screen_sizes();
+	if ( $et_screen_sizes && is_array( $et_screen_sizes ) ) {
+		foreach ( $et_screen_sizes as $breakpoint => $width ) {
+			$height = round( ( $width * ( 56.25/100 ) ) ); // 16:9 aspect ratio.
+			add_image_size( "et-pb-image--responsive--{$breakpoint}", $width, $height, $crop );
+		}
+	}
+}

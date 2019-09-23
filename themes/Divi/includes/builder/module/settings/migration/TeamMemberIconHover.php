@@ -27,7 +27,7 @@ class ET_Builder_Module_Settings_Migration_TeamMemberIconHover extends ET_Builde
 		return $modules;
 	}
 
-	public function migrate( $field_name, $current_value, $module_slug, $saved_value, $saved_field_name, $attrs, $content ) {
+	public function migrate( $field_name, $current_value, $module_slug, $saved_value, $saved_field_name, $attrs, $content, $module_address ) {
 
 		if ( empty( $current_value ) ) {
 			return $saved_value;

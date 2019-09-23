@@ -22,6 +22,11 @@ class ET_Core_Portability {
 	public $instance;
 
 	/**
+	 * @var ET_Core_Data_Utils
+	 */
+	protected static $_;
+
+	/**
 	 * Whether or not an import is in progress.
 	 *
 	 * @since 3.0.99
@@ -37,6 +42,8 @@ class ET_Core_Portability {
 	 */
 	public function __construct( $context ) {
 		$this->instance = et_core_cache_get( $context, 'et_core_portability' );
+
+		self::$_ = ET_Core_Data_Utils::instance();
 
 		if ( $this->instance && $this->instance->view ) {
 			if ( et_core_is_fb_enabled() ) {
@@ -70,10 +77,12 @@ class ET_Core_Portability {
 
 		self::$_doing_import = true;
 
-		$timestamp = $this->get_timestamp();
-		$filesystem = $this->set_filesystem();
-		$temp_file_id = sanitize_file_name( $timestamp );
-		$temp_file = $this->has_temp_file( $temp_file_id, 'et_core_import' );
+		$timestamp               = $this->get_timestamp();
+		$filesystem              = $this->set_filesystem();
+		$temp_file_id            = sanitize_file_name( $timestamp );
+		$temp_file               = $this->has_temp_file( $temp_file_id, 'et_core_import' );
+		$include_custom_defaults = isset( $_POST['include_custom_defaults'] ) ? wp_validate_boolean( $_POST['include_custom_defaults'] ) : false;
+		$custom_defaults         = '';
 
 		if ( $temp_file ) {
 			$import = json_decode( $filesystem->get_contents( $temp_file ), true );
@@ -147,22 +156,50 @@ class ET_Core_Portability {
 		// Pass the post content and let js save the post.
 		if ( 'post' === $this->instance->type ) {
 			$success['postContent'] = reset( $data );
+			do_shortcode( $success['postContent'] );
+			$success['migrations']  = ET_Builder_Module_Settings_Migration::$migrated;
+			$success['defaults']    = isset( $import['defaults'] ) && is_array( $import['defaults'] ) ? $import['defaults'] : (object) array();
 		}
 
-		if ( 'post_type' === $this->instance->type && ! $this->import_posts( $data ) ) {
-			/**
-			 * Filters the error message when {@see ET_Core_Portability::import()} fails.
-			 *
-			 * @since 3.0.99
-			 *
-			 * @param mixed $error_message Default is `null`.
-			 */
-			if ( $error_message = apply_filters( 'et_core_portability_import_error_message', false ) ) {
-				$error_message = array( 'message' => $error_message );
+		if ( 'post_type' === $this->instance->type ) {
+			if ( ! $include_custom_defaults ) {
+				foreach ( $data as &$post ) {
+					$shortcode_object = et_fb_process_shortcode( $post['post_content'] );
+
+					$this->apply_custom_defaults( $shortcode_object, $import['defaults'] );
+
+					$post['post_content'] = et_fb_process_to_shortcode( $shortcode_object, array(), '', false );
+				}
+			} else {
+				$custom_defaults = $import['defaults'];
 			}
 
-			return $error_message;
+			if ( ! $this->import_posts( $data ) ) {
+				/**
+				 * Filters the error message when {@see ET_Core_Portability::import()} fails.
+				 *
+				 * @since 3.0.99
+				 *
+				 * @param mixed $error_message Default is `null`.
+				 */
+				if ( $error_message = apply_filters( 'et_core_portability_import_error_message', false ) ) {
+					$error_message = array( 'message' => $error_message );
+				}
+
+				return $error_message;
+			}
 		}
+
+		if ( ! empty( $custom_defaults ) ) {
+			if ( ! $this->import_custom_defaults( $custom_defaults ) ) {
+				if ( $error_message = apply_filters( 'et_core_portability_import_error_message', false ) ) {
+					$error_message = array( 'message' => $error_message );
+				}
+
+				return $error_message;
+			}
+		}
+
 
 		return $success;
 	}
@@ -173,18 +210,23 @@ class ET_Core_Portability {
 	 * @since 2.7.0
 	 *
 	 * @param bool $return
+	 *
+	 * @return null|array
 	 */
 	public function export( $return = false ) {
 		$this->prevent_failure();
 		et_core_nonce_verified_previously();
 
-		$timestamp = $this->get_timestamp();
-		$filesystem = $this->set_filesystem();
-		$temp_file_id = sanitize_file_name( $timestamp );
-		$temp_file = $this->has_temp_file( $temp_file_id, 'et_core_export' );
+		$timestamp               = $this->get_timestamp();
+		$filesystem              = $this->set_filesystem();
+		$temp_file_id            = sanitize_file_name( $timestamp );
+		$temp_file               = $this->has_temp_file( $temp_file_id, 'et_core_export' );
+		$custom_defaults         = '';
 
 		if ( $temp_file ) {
-			$data = json_decode( $filesystem->get_contents( $temp_file ), true );
+			$file_data       = json_decode( $filesystem->get_contents( $temp_file ) );
+			$data            = (array) $file_data->data;
+			$custom_defaults = $file_data->defaults;
 		} else {
 			$temp_file = $this->temp_file( $temp_file_id, 'et_core_export' );
 
@@ -215,6 +257,10 @@ class ET_Core_Portability {
 				$post_data = $this->validate( $post_data, $fields_validatation );
 
 				$data = array( $post_data['ID'] => $post_data['post_content'] );
+
+				if ( isset( $_POST['custom_defaults'] ) ) {
+					$custom_defaults = json_decode( stripslashes( $_POST['custom_defaults'] ) );
+				}
 			}
 
 			if ( 'post_type' === $this->instance->type ) {
@@ -223,17 +269,39 @@ class ET_Core_Portability {
 
 			$data = $this->apply_query( $data, 'set' );
 
+			if ( 'post_type' === $this->instance->type ) {
+				$used_custom_defaults  = array();
+
+				foreach ( $data as $post ) {
+					$shortcode_object = et_fb_process_shortcode( $post->post_content );
+
+					$used_custom_defaults = array_merge(
+						$this->get_used_custom_defaults( $shortcode_object, $used_custom_defaults ),
+						$used_custom_defaults
+					);
+				}
+
+				if ( ! empty ( $used_custom_defaults ) ) {
+					$custom_defaults = (object) $used_custom_defaults;
+				}
+			}
+
 			// put contents into file, this is temporary,
 			// if images get paginated, this content will be brought back out
 			// of a temp file in paginated request
-			$filesystem->put_contents( $temp_file, wp_json_encode( (array) $data ) );
+			$file_data = array(
+				'data'     => $data,
+				'defaults' => $custom_defaults,
+			);
+			$filesystem->put_contents( $temp_file, wp_json_encode( $file_data ) );
 		}
 
 		$images = $this->get_data_images( $data );
 		$data = array(
-			'context' => $this->instance->context,
-			'data'    => $data,
-			'images'  => $this->maybe_paginate_images( $images, 'encode_images', $timestamp ),
+			'context'  => $this->instance->context,
+			'data'     => $data,
+			'defaults' => $custom_defaults,
+			'images'   => $this->maybe_paginate_images( $images, 'encode_images', $timestamp ),
 		);
 
 		// Return exported content instead of printing it
@@ -480,6 +548,40 @@ class ET_Core_Portability {
 	}
 
 	/**
+	 * Imports custom defaults
+	 *
+	 * @param array $defaults - The array of the modules custom defaults
+	 *
+	 * @return boolean
+	 */
+	protected function import_custom_defaults( $defaults ) {
+		if ( ! is_array( $defaults ) ) {
+			return false;
+		}
+
+		$custom_defaults_manager = ET_Builder_Custom_Defaults_Settings::instance();
+		$custom_defaults         = $custom_defaults_manager->get_custom_defaults();
+
+		// Merge existing custom defaults with imported
+		foreach ( $defaults as $module => $settings ) {
+			foreach ( $settings as $setting_name => $value ) {
+				$module_sanitized       = sanitize_text_field( $module );
+				$setting_name_sanitized = sanitize_text_field( $setting_name );
+				$value_sanitized        = sanitize_text_field( $value );
+
+				$custom_defaults->$module_sanitized->$setting_name_sanitized = $value_sanitized;
+			}
+		}
+
+		et_update_option( ET_Builder_Custom_Defaults_Settings::CUSTOM_DEFAULTS_OPTION, $custom_defaults );
+
+		$custom_defaults_history = ET_Builder_Custom_Defaults_History::instance();
+		$custom_defaults_history->add_history_record( $custom_defaults );
+
+		return true;
+	}
+
+	/**
 	 * Import post.
 	 *
 	 * @since 2.7.0
@@ -641,6 +743,29 @@ class ET_Core_Portability {
 	}
 
 	/**
+	 * Injects the given custom default settings into the imported layout
+	 *
+	 * @since 3.26
+	 *
+	 * @param array $shortcode_object - The multidimensional array representing a page/module structure
+	 * @param array $custom_defaults  - The array of modules custom defaults
+	 */
+	protected function apply_custom_defaults( &$shortcode_object, $custom_defaults ) {
+		$custom_defaults_manager = ET_Builder_Custom_Defaults_Settings::instance();
+
+		foreach ( $shortcode_object as &$module ) {
+			$module_type = $custom_defaults_manager->maybe_convert_module_type( $module['type'], $module['attrs'] );
+			if ( array_key_exists( $module_type, $custom_defaults ) ) {
+				$module['attrs'] = array_merge( $custom_defaults[ $module_type ], $module['attrs'] );
+			}
+
+			if ( is_array( $module['content'] ) ) {
+				$this->apply_custom_defaults( $module['content'], $custom_defaults );
+			}
+		}
+	}
+
+	/**
 	 * Restrict data according the argument registered.
 	 *
 	 * @since 2.7.0
@@ -735,7 +860,28 @@ class ET_Core_Portability {
 	 * @return array
 	 */
 	protected function get_data_images( $data, $force = false ) {
-		$images = array();
+		$images     = array();
+		$images_src = array();
+		$basenames  = array(
+			'src',
+			'image_url',
+			'background_image',
+			'image',
+			'url',
+			'bg_img_?\d?',
+		);
+		$suffixes  = array(
+			'__hover',
+			'_tablet',
+			'_phone'
+		);
+
+		foreach ( $basenames as $basename ) {
+			$images_src[] = $basename;
+			foreach ( $suffixes as $suffix ) {
+				$images_src[] = $basename . $suffix;
+			}
+		}
 
 		foreach ( $data as $value ) {
 			if ( is_array( $value ) || is_object( $value ) ) {
@@ -744,7 +890,7 @@ class ET_Core_Portability {
 			}
 
 			// Extract images from html or shortcodes.
-			if ( preg_match_all( '/(src|image_url|image|url|bg_img_?\d?)="(?P<src>\w+[^"]*)"/i', $value, $matches ) ) {
+			if ( preg_match_all( '/(' . implode( '|', $images_src ) . ')="(?P<src>\w+[^"]*)"/i', $value, $matches ) ) {
 				foreach ( array_unique( $matches['src'] ) as $key => $src ) {
 					$images = array_merge( $images, $this->get_data_images( array( $key => $src ) ) );
 				}
@@ -777,6 +923,40 @@ class ET_Core_Portability {
 	}
 
 	/**
+	 * Get the attachment post id for the given url.
+	 *
+	 * @since 3.22.3
+	 *
+	 * @param string $url The url of an attachment file.
+	 *
+	 * @return int
+	 */
+	protected function _get_attachment_id_by_url( $url ) {
+		global $wpdb;
+
+		// Remove any thumbnail size suffix from the filename and use that as a fallback.
+		$fallback_url = preg_replace( '/-\d+x\d+(\.[^.]+)$/i', '$1', $url );
+
+		// Scenario: Trying to find the attachment for a file called x-150x150.jpg.
+		// 1. Since WordPress adds the -150x150 suffix for thumbnail sizes we cannot be
+		//    sure if this is an attachment or an attachment's generated thumbnail.
+		// 2. Since both x.jpg and x-150x150.jpg can be uploaded as separate attachments
+		//    we must decide which is a better match.
+		// 3. The above is why we order by guid length and use the first result.
+		$attachments_query = $wpdb->prepare( "
+			SELECT id
+			FROM $wpdb->posts
+			WHERE `post_type` = %s
+				AND `guid` IN ( %s, %s )
+			ORDER BY CHAR_LENGTH( `guid` ) DESC
+		", 'attachment', esc_url_raw( $url ), esc_url_raw( $fallback_url ) );
+
+		$attachment_id = (int) $wpdb->get_var( $attachments_query );
+
+		return $attachment_id;
+	}
+
+	/**
 	 * Encode image in a base64 format.
 	 *
 	 * @since 2.7.0
@@ -789,33 +969,109 @@ class ET_Core_Portability {
 		$encoded = array();
 
 		foreach ( $images as $url ) {
+			$id = 0;
+			$image = '';
 
 			if ( is_int( $url ) ) {
 				$id = $url;
-				$url = wp_get_attachment_url( $url );
+				$url = wp_get_attachment_url( $id );
+			} else {
+				$id = $this->_get_attachment_id_by_url( $url );
 			}
 
-			$request = wp_remote_get( esc_url_raw( $url ), array(
-				'timeout' => 2,
-				'redirection' => 2,
-			) );
+			if ( $id > 0 ) {
+				$image = $this->_encode_attachment_image( $id );
+			}
 
-			if ( is_array( $request ) && ! is_wp_error( $request ) ) {
-				if ( stripos( $request['headers']['content-type'], 'image' ) !== false && ( $image = wp_remote_retrieve_body( $request ) ) ) {
-					$encoded[$url] = array(
-						'encoded'  => base64_encode( $image ),
-						'url'      => $url,
-					);
+			if ( empty( $image ) ) {
+				// Case 1: No attachment found.
+				// Case 2: Attachment found, but file does not exist (may be stored on a CDN, for example).
+				$image = $this->_encode_remote_image( $url );
+			}
 
-					// Add image id for replacement purposes
-					if ( isset( $id ) ) {
-						$encoded[$url]['id'] = $id;
-					}
-				}
+			if ( empty( $image ) ) {
+				// All fetching methods have failed - bail on encoding.
+				continue;
+			}
+
+			$encoded[ $url ] = array(
+				'encoded' => $image,
+				'url'     => $url,
+			);
+
+			// Add image id for replacement purposes.
+			if ( $id > 0 ) {
+				$encoded[ $url ]['id'] = $id;
 			}
 		}
 
 		return $encoded;
+	}
+
+	/**
+	 * Encode an image attachment.
+	 *
+	 * @since 3.22.3
+	 *
+	 * @param int $id
+	 *
+	 * @return string
+	 */
+	protected function _encode_attachment_image( $id ) {
+		/**
+		 * @var WP_Filesystem_Base $wp_filesystem
+		 */
+		global $wp_filesystem;
+
+		if ( ! current_user_can( 'read_post', $id ) ) {
+			return '';
+		}
+
+		$file = get_attached_file( $id );
+
+		if ( ! $wp_filesystem->exists( $file ) ) {
+			return '';
+		}
+
+		$image = $wp_filesystem->get_contents( $file );
+
+		if ( empty( $image ) ) {
+			return '';
+		}
+
+		return base64_encode( $image );
+	}
+
+	/**
+	 * Encode a remote image.
+	 *
+	 * @since 3.22.3
+	 *
+	 * @param string $url
+	 *
+	 * @return string
+	 */
+	protected function _encode_remote_image( $url ) {
+		$request = wp_remote_get( esc_url_raw( $url ), array(
+			'timeout'     => 2,
+			'redirection' => 2,
+		) );
+
+		if ( ! is_array( $request ) || is_wp_error( $request ) ) {
+			return '';
+		}
+
+		if ( ! self::$_->includes( $request['headers']['content-type'], 'image' ) ) {
+			return '';
+		}
+
+		$image = wp_remote_retrieve_body( $request );
+
+		if ( ! $image ) {
+			return '';
+		}
+
+		return base64_encode( $image );
 	}
 
 	/**
@@ -831,30 +1087,36 @@ class ET_Core_Portability {
 		$filesystem = $this->set_filesystem();
 
 		foreach ( $images as $key => $image ) {
-			$basename = sanitize_file_name( wp_basename( $image['url'] ) );
-			$attachment = get_posts( array(
-				'post_per_page' => 1,
-				'post_type'     => 'attachment',
-				'pagename'      => pathinfo( $basename, PATHINFO_FILENAME ),
+			$basename    = sanitize_file_name( wp_basename( $image['url'] ) );
+			$attachments = get_posts( array(
+				'posts_per_page' => -1,
+				'post_type'      => 'attachment',
+				'meta_key'       => '_wp_attached_file',
+				'meta_value'     => pathinfo( $basename, PATHINFO_FILENAME ),
+				'meta_compare'   => 'LIKE',
 			) );
+			$id = 0;
+			$url = '';
 
 			// Avoid duplicates.
-			if ( ! is_wp_error( $attachment ) && ! empty( $attachment ) ) {
-				$attachment_url = wp_get_attachment_url( $attachment[0]->ID );
-				$file = get_attached_file( $attachment[0]->ID );
-				$filename = sanitize_file_name( wp_basename( $file ) );
+			if ( ! is_wp_error( $attachments ) && ! empty( $attachments ) ) {
+				foreach ( $attachments as $attachment ) {
+					$attachment_url = wp_get_attachment_url( $attachment->ID );
+					$file           = get_attached_file( $attachment->ID );
+					$filename       = sanitize_file_name( wp_basename( $file ) );
 
-				// Allow new image if the basenames don't match.
-				if ( $filename === $basename ) {
-					// Use existing image only if the basenames and content match.
+					// Use existing image only if the content matches.
 					if ( $filesystem->get_contents( $file ) === base64_decode( $image['encoded'] ) ) {
-						$url = isset( $image['id'] ) ? $attachment[0]->ID : $attachment_url;
+						$id = isset( $image['id'] ) ? $attachment->ID : 0;
+						$url = $attachment_url;
+
+						break;
 					}
 				}
 			}
 
 			// Create new image.
-			if ( ! isset( $url ) ) {
+			if ( empty( $url ) ) {
 				$temp_file = wp_tempnam();
 				$filesystem->put_contents( $temp_file, base64_decode( $image['encoded'] ) );
 				$filetype = wp_check_filetype_and_ext( $temp_file, $basename );
@@ -878,7 +1140,8 @@ class ET_Core_Portability {
 
 				if ( ! is_wp_error( $upload ) ) {
 					// Set the replacement as an id if the original image was set as an id (for gallery).
-					$url = isset( $image['id'] ) ? $upload : wp_get_attachment_url( $upload );
+					$id = isset( $image['id'] ) ? $upload : 0;
+					$url = wp_get_attachment_url( $upload );
 				} else {
 					// Make sure the temporary file is removed if media_handle_sideload didn't take care of it.
 					$filesystem->delete( $temp_file );
@@ -886,7 +1149,11 @@ class ET_Core_Portability {
 			}
 
 			// Only declare the replace if a url is set.
-			if ( isset( $url ) ) {
+			if ( $id > 0 ) {
+				$images[$key]['replacement_id'] = $id;
+			}
+
+			if ( ! empty( $url ) ) {
 				$images[$key]['replacement_url'] = $url;
 			}
 
@@ -894,6 +1161,30 @@ class ET_Core_Portability {
 		}
 
 		return $images;
+	}
+
+	/**
+	 * Replace encoded image url with a real url
+	 *
+	 * @param $subject     - The string to perform replacing for
+	 * @param array $image - The image settings
+	 *
+	 * @return string|string[]|null
+	 */
+	protected function replace_image_url( $subject, $image ) {
+		if ( isset( $image['replacement_id'] ) && isset( $image['id'] ) ) {
+			$search      = $image['id'];
+			$replacement = $image['replacement_id'];
+			$subject     = preg_replace( "/(gallery_ids=.*){$search}(.*\")/", "\${1}{$replacement}\${2}", $subject );
+		}
+
+		if ( isset( $image['url'] ) && isset( $image['replacement_url'] ) && $image['url'] !== $image['replacement_url'] ) {
+			$search      = $image['url'];
+			$replacement = $image['replacement_url'];
+			$subject     = str_replace( $search, $replacement, $subject );
+		}
+
+		return $subject;
 	}
 
 	/**
@@ -907,23 +1198,23 @@ class ET_Core_Portability {
 	 * @return array|mixed|object
 	 */
 	protected function replace_images_urls( $images, $data ) {
-		$data = wp_json_encode( $data );
-
-		foreach ( $images as $image ) {
-			if ( isset( $image['replacement_url'] ) ) {
-				if ( isset( $image['id'] ) && is_int( $image['replacement_url'] ) ) {
-					$search = $image['id'];
-					$replacement = $image['replacement_url'];
-					$data = preg_replace( "/(gallery_ids=.*){$search}(.*\")/", "\${1}{$replacement}\${2}", $data );
+		foreach ( $data as $post_id => &$post_data ) {
+			foreach ( $images as $image ) {
+				if ( is_array( $post_data ) ) {
+					foreach ( $post_data as $post_param => &$param_value ) {
+						if ( ! is_array( $param_value ) ) {
+							$data[ $post_id ][ $post_param ] = $this->replace_image_url( $param_value, $image );
+						}
+					}
+					unset($param_value);
 				} else {
-					$url = str_replace( '/', '\/', $image['url'] );
-					$replacement = str_replace( '/', '\/', $image['replacement_url'] );
-					$data = str_replace( $url, $replacement, $data );
+					$data[ $post_id ] = $this->replace_image_url( $post_data, $image );
 				}
 			}
 		}
+		unset($post_data);
 
-		return json_decode( $data, true );
+		return $data;
 	}
 
 	/**
@@ -1104,6 +1395,37 @@ class ET_Core_Portability {
 	}
 
 	/**
+	 * Returns Custom Defaults used for a given shortcode only
+	 *
+	 * @since 3.26
+	 *
+	 * @param array $shortcode_object     - The multidimensional array representing a page structure
+	 * @param array $used_custom_defaults
+	 *
+	 * @return array - The list of the Custom Defaults
+	 *
+	 */
+	protected function get_used_custom_defaults( $shortcode_object, $used_custom_defaults = array() ) {
+		$custom_defaults_manager = ET_Builder_Custom_Defaults_Settings::instance();
+
+		foreach ( $shortcode_object as $module ) {
+			$module_type = $custom_defaults_manager->maybe_convert_module_type( $module['type'], $module['attrs'] );
+			if ( ! array_key_exists( $module_type, $used_custom_defaults ) ) {
+				$module_custom_defaults = $custom_defaults_manager->get_module_custom_defaults( $module_type );
+				if ( ! empty( $module_custom_defaults ) ) {
+					$used_custom_defaults[ $module_type ] = (object) $module_custom_defaults;
+				}
+			}
+
+			if ( is_array( $module['content'] ) ) {
+				$used_custom_defaults = array_merge( $used_custom_defaults, $this->get_used_custom_defaults( $module['content'], $used_custom_defaults ) );
+			}
+		}
+
+		return $used_custom_defaults;
+	}
+
+	/**
 	 * Enqueue assets.
 	 *
 	 * @since 2.7.0
@@ -1196,9 +1518,12 @@ class ET_Core_Portability {
 								<span class="et-core-portability-import-placeholder"><?php esc_html_e( 'No File Selected', ET_CORE_TEXTDOMAIN ); ?></span>
 								<button class="et-core-button"><?php esc_html_e( 'Choose File', ET_CORE_TEXTDOMAIN ); ?></button>
 								<input type="file">
+								<div class="et-core-clearfix"></div>
 								<?php if ( 'post_type' !== $this->instance->type ) : ?>
-									<div class="et-core-clearfix"></div>
 									<label><input type="checkbox" name="et-core-portability-import-backup" /><?php esc_html_e( 'Download backup before importing', ET_CORE_TEXTDOMAIN ); ?></label>
+								<?php endif; ?>
+								<?php if ( 'post_type' === $this->instance->type ) : ?>
+									<label><input type="checkbox" name="et-core-portability-import-include-custom-defaults" /><?php esc_html_e( 'Apply Layout\'s Defaults To This Website', ET_CORE_TEXTDOMAIN ); ?></label>
 								<?php endif; ?>
 							</form>
 						</div>

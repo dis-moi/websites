@@ -1,0 +1,38 @@
+
+// -----------------------------------------------------------------------------
+//
+// Sendinblue
+//
+// -----------------------------------------------------------------------------
+
+.sib_signup_form {
+
+
+  form,
+  button,
+  input,
+  select,
+  textarea {
+    //font-family: $font_body;
+    // font-weight: $font_weight_normal;
+    line-height: 1.2;
+    font-size: 100%;
+    font-style: normal;
+    // color: $color_gray_dark;
+  }
+
+
+  input {
+    border-radius: 4px;
+    padding: 0 10px;
+
+    @include placeholder {
+      font-style: italic;
+    }
+  }
+
+}
+
+.sib-email-area {
+
+}

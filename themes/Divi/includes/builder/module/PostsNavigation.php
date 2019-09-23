@@ -107,7 +107,7 @@ class ET_Builder_Module_Posts_Navigation extends ET_Builder_Module {
 	function get_fields() {
 		$fields = array(
 			'in_same_term' => array(
-				'label'           => esc_html__( 'In the same category', 'et_builder' ),
+				'label'           => esc_html__( 'Navigate Within Current Category', 'et_builder' ),
 				'type'            => 'yes_no_button',
 				'option_category' => 'configuration',
 				'options'         => array(
@@ -148,6 +148,8 @@ class ET_Builder_Module_Posts_Navigation extends ET_Builder_Module {
 				),
 				'toggle_slug'       => 'navigation',
 				'description'       => esc_html__( 'Turn this on to show the previous post link', 'et_builder' ),
+				'mobile_options'    => true,
+				'hover'             => 'tabs',
 			),
 			'show_next' => array(
 				'label'           => esc_html__( 'Show Next Post Link', 'et_builder' ),
@@ -163,9 +165,11 @@ class ET_Builder_Module_Posts_Navigation extends ET_Builder_Module {
 				),
 				'toggle_slug'       => 'navigation',
 				'description'       => esc_html__( 'Turn this on to show the next post link', 'et_builder' ),
+				'mobile_options'    => true,
+				'hover'             => 'tabs',
 			),
 			'prev_text' => array(
-				'label'           => esc_html__( 'Previous Link Text', 'et_builder' ),
+				'label'           => esc_html__( 'Previous Link', 'et_builder' ),
 				'type'            => 'text',
 				'option_category' => 'configuration',
 				'depends_show_if' => 'on',
@@ -174,9 +178,11 @@ class ET_Builder_Module_Posts_Navigation extends ET_Builder_Module {
 				),
 				'description'     => et_get_safe_localization( __( 'Define custom text for the previous link. You can use the <strong>%title</strong> variable to include the post title. Leave blank for default.', 'et_builder' ) ),
 				'toggle_slug'     => 'main_content',
+				'mobile_options'  => true,
+				'hover'           => 'tabs',
 			),
 			'next_text' => array(
-				'label'           => esc_html__( 'Next Link Text', 'et_builder' ),
+				'label'           => esc_html__( 'Next Link', 'et_builder' ),
 				'type'            => 'text',
 				'option_category' => 'configuration',
 				'depends_show_if' => 'on',
@@ -185,6 +191,8 @@ class ET_Builder_Module_Posts_Navigation extends ET_Builder_Module {
 				),
 				'description'     => et_get_safe_localization( __( 'Define custom text for the next link. You can use the <strong>%title</strong> variable to include the post title. Leave blank for default.', 'et_builder' ) ),
 				'toggle_slug'     => 'main_content',
+				'mobile_options'  => true,
+				'hover'           => 'tabs',
 			),
 			'__posts_navigation' => array(
 				'type' => 'computed',
@@ -307,6 +315,7 @@ class ET_Builder_Module_Posts_Navigation extends ET_Builder_Module {
 	}
 
 	function render( $attrs, $content = null, $render_slug ) {
+		$multi_view    = et_pb_multi_view_options( $this );
 		$in_same_term  = $this->props['in_same_term'];
 		$taxonomy_name = $this->props['taxonomy_name'];
 		$show_prev     = $this->props['show_prev'];
@@ -315,7 +324,7 @@ class ET_Builder_Module_Posts_Navigation extends ET_Builder_Module {
 		$next_text     = $this->props['next_text'];
 
 		// do not output anything if both prev and next links are disabled
-		if ( 'on' !== $show_prev && 'on' !== $show_next ) {
+		if ( ! $multi_view->has_value( 'show_prev', 'on' ) && ! $multi_view->has_value( 'show_next', 'on' ) ) {
 			return;
 		}
 
@@ -345,31 +354,37 @@ class ET_Builder_Module_Posts_Navigation extends ET_Builder_Module {
 
 		$background_class_attr = empty( $background_classname ) ? '' : sprintf( ' class="%s"', esc_attr( implode( ' ', $background_classname ) ) );
 
-		if ( 'on' === $show_prev && ! empty( $posts_navigation['prev']->permalink ) ) {
-			$prev_link_text = '' !== $prev_text ? $prev_text : $posts_navigation['prev']->title;
+		if ( $multi_view->has_value( 'show_prev', 'on' ) && ! empty( $posts_navigation['prev']->permalink ) ) {
 			?>
-				<span class="nav-previous">
+				<span class="nav-previous"<?php $multi_view->render_attrs( array(
+						'visibility' => array(
+							'show_prev' => 'on',
+						),
+					), true ); ?>>
 					<a href="<?php echo esc_url( $posts_navigation['prev']->permalink ); ?>" rel="prev"<?php echo et_core_esc_previously( $background_class_attr ); ?>>
 						<?php
 							echo et_core_esc_previously( $parallax_image_background );
 							echo et_core_esc_previously( $video_background );
 						?>
-						<span class="meta-nav">&larr; </span><span class="nav-label"><?php echo esc_html( $posts_navigation['prev']->title ); ?></span>
+						<span class="meta-nav">&larr; </span><span class="nav-label"<?php $multi_view->render_attrs( array( 'content' => '{{prev_text}}' ), true ); ?>><?php echo esc_html( $posts_navigation['prev']->title ); ?></span>
 					</a>
 				</span>
 			<?php
 		}
 
-		if ( 'on' === $show_next && ! empty( $posts_navigation['next']->permalink ) ) {
-			$next_link_text = '' !== $next_text ? $next_text : $posts_navigation['next']->title;
+		if ( $multi_view->has_value( 'show_next', 'on' ) && ! empty( $posts_navigation['next']->permalink ) ) {
 			?>
-				<span class="nav-next">
+				<span class="nav-next"<?php $multi_view->render_attrs( array( 
+						'visibility' => array(
+							'show_next' => 'on',
+						),
+					), true ); ?>>
 					<a href="<?php echo esc_url( $posts_navigation['next']->permalink ); ?>" rel="next"<?php echo et_core_esc_previously( $background_class_attr ); ?>>
 						<?php
 							echo et_core_esc_previously( $parallax_image_background );
 							echo et_core_esc_previously( $video_background );
 						?>
-						<span class="nav-label"><?php echo esc_html( $posts_navigation['next']->title ); ?></span><span class="meta-nav"> &rarr;</span>
+						<span class="nav-label"<?php $multi_view->render_attrs( array( 'content' => '{{next_text}}' ), true ); ?>><?php echo esc_html( $posts_navigation['next']->title ); ?></span><span class="meta-nav"> &rarr;</span>
 					</a>
 				</span>
 			<?php

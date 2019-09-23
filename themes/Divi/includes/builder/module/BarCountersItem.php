@@ -53,6 +53,8 @@ class ET_Builder_Module_Bar_Counters_Item extends ET_Builder_Module {
 				),
 			),
 			'margin_padding' => array(
+				'draggable_margin'  => false,
+				'draggable_padding' => false,
 				'css' => array(
 					'margin'  => ".et_pb_counters {$this->main_css_element}",
 					'padding' => ".et_pb_counters {$this->main_css_element} .et_pb_counter_amount",
@@ -69,6 +71,11 @@ class ET_Builder_Module_Bar_Counters_Item extends ET_Builder_Module {
 				),
 			),
 			'button'                => false,
+			'height'                => array(
+				'css' => array(
+					'main' => '%%order_class%% .et_pb_counter_container, %%order_class%% .et_pb_counter_container .et_pb_counter_amount'
+				)
+			),
 		);
 
 		$this->settings_modal_toggles = array(
@@ -109,6 +116,8 @@ class ET_Builder_Module_Bar_Counters_Item extends ET_Builder_Module {
 				'description'     => esc_html__( 'Input a title for your bar.', 'et_builder' ),
 				'toggle_slug'     => 'main_content',
 				'dynamic_content' => 'text',
+				'mobile_options'  => true,
+				'hover'           => 'tabs',
 			),
 			'percent' => array(
 				'label'            => esc_html__( 'Percent', 'et_builder' ),
@@ -117,14 +126,18 @@ class ET_Builder_Module_Bar_Counters_Item extends ET_Builder_Module {
 				'description'      => esc_html__( 'Define a percentage for this bar.', 'et_builder' ),
 				'toggle_slug'      => 'main_content',
 				'default_on_front' => '0',
+				'mobile_options'   => true,
+				'hover'            => 'tabs',
 			),
 			'bar_background_color' => array(
-				'label'        => esc_html__( 'Bar Background Color', 'et_builder' ),
-				'type'         => 'color-alpha',
-				'custom_color' => true,
-				'hover'        => 'tabs',
-				'tab_slug'     => 'advanced',
-				'toggle_slug'  => 'bar',
+				'label'          => esc_html__( 'Bar Background Color', 'et_builder' ),
+				'description'    => esc_html__( 'This will change the fill color for the bar.', 'et_builder' ),
+				'type'           => 'color-alpha',
+				'custom_color'   => true,
+				'hover'          => 'tabs',
+				'tab_slug'       => 'advanced',
+				'toggle_slug'    => 'bar',
+				'mobile_options' => true,
 			),
 		);
 
@@ -159,10 +172,10 @@ class ET_Builder_Module_Bar_Counters_Item extends ET_Builder_Module {
 				$parallax_classname[] = 'et_pb_parallax_css';
 			}
 
-			$parallax_background = sprintf( '<div
+			$parallax_background = sprintf( '<div class="et_parallax_bg_wrap"><div
 					class="%1$s"
 					style="background-image: url(%2$s);"
-					></div>',
+					></div></div>',
 				esc_attr( implode( ' ', $parallax_classname ) ),
 				esc_attr( $background_image )
 			);
@@ -221,28 +234,92 @@ class ET_Builder_Module_Bar_Counters_Item extends ET_Builder_Module {
 		return $video_background;
 	}
 
+	/**
+	 * Set inheritance value for bar counters item.
+	 *
+	 * This method is introduced to inherit background colors values. There are some situations where not
+	 * all inheritance process done here.
+	 *
+	 * @since 3.27.4
+	 */
+	function maybe_inherit_values() {
+		global $et_pb_counters_settings;
+
+		// To avoid unnecessary inheritance process, ensure to run this action on FE only.
+		if ( ! empty( $et_pb_counters_settings ) && ! is_admin() && ! et_fb_is_enabled() ) {
+			// Get parent and item background hover & responsive status.
+			$is_background_hover             = et_pb_hover_options()->is_enabled( 'background', $this->props );
+			$is_background_parent_hover      = et_pb_hover_options()->is_enabled( 'background', $et_pb_counters_settings );
+			$is_background_responsive        = et_pb_responsive_options()->is_responsive_enabled( $this->props, 'background' );
+			$is_background_parent_responsive = et_pb_responsive_options()->is_responsive_enabled( $et_pb_counters_settings, 'background' );
+			$is_inherit_parent_hover         = ! $is_background_hover && $is_background_parent_hover;
+			$is_inherit_parent_responsive    = ! $is_background_responsive && $is_background_parent_responsive;
+
+			// Background hover status.
+			if ( $is_inherit_parent_hover ) {
+				$this->props['background__hover_enabled'] = self::$_->array_get( $et_pb_counters_settings, 'background__hover_enabled', '' );
+			}
+
+			// Background responsive status.
+			if ( $is_inherit_parent_responsive ) {
+				$this->props['background_last_edited'] = self::$_->array_get( $et_pb_counters_settings, 'background_last_edited', '' );
+			}
+
+			// Background color and background color enable status.
+			foreach( array( 'background_color', 'background_enable_color' ) as $field ) {
+				// Desktop. Simple inherit parent value if current item value is empty.
+				$value                 = self::$_->array_get( $this->props, $field, '' );
+				$parent_value          = self::$_->array_get( $et_pb_counters_settings, $field, '' );
+				$this->props[ $field ] = empty( $value ) ? $parent_value : $value;
+
+				// Hover. Inherit parent value only if current item hover is disabled.
+				if ( $is_inherit_parent_hover ) {
+					$this->props["{$field}__hover"] = self::$_->array_get( $et_pb_counters_settings, "{$field}__hover", '' );
+				}
+
+				// Responsive. Inherit parent value only if current item responsive is disabled.
+				if ( $is_inherit_parent_responsive ) {
+					$this->props["{$field}_tablet"] = self::$_->array_get( $et_pb_counters_settings, "{$field}_tablet", '' );
+					$this->props["{$field}_phone"]  = self::$_->array_get( $et_pb_counters_settings, "{$field}_phone", '' );
+				}
+			}
+		}
+	}
+
 	function render( $attrs, $content = null, $render_slug ) {
 		global $et_pb_counters_settings;
 
-		$percent                       = $this->props['percent'];
-		$background_color              = self::$_->array_get( $this->props, 'background_color' );
-		$background_color              = empty( $background_color ) ? $et_pb_counters_settings['background_color'] : $background_color;
-		$background_color_hover        = self::get_hover_value( 'background_color' );
+		$multi_view = et_pb_multi_view_options( $this );
+		$multi_view->set_custom_prop( 'use_percentages', $et_pb_counters_settings['use_percentages'] );
+
+		$percent                       = $multi_view->get_value( 'percent' );
 		$bar_background_color          = self::$_->array_get( $this->props, 'bar_background_color' );
 		$bar_background_color          = empty( $bar_background_color ) ? $et_pb_counters_settings['bar_bg_color'] : $bar_background_color;
 		$bar_background_hover_color    = et_pb_hover_options()->get_value( 'bar_background_color', $this->props );
 		$background_image              = $this->props['background_image'];
 		$use_background_color_gradient = $this->props['use_background_color_gradient'];
 
+		// Background Color.
+		$background_color        = et_pb_responsive_options()->get_inheritance_background_value( $this->props, 'background_color', 'desktop' );
+		$background_color_tablet = et_pb_responsive_options()->get_inheritance_background_value( $this->props, 'background_color', 'tablet' );
+		$background_color_phone  = et_pb_responsive_options()->get_inheritance_background_value( $this->props, 'background_color', 'phone' );
+		$background_color_hover  = et_pb_responsive_options()->get_inheritance_background_value( $this->props, 'background_color', 'hover' );
+
+		// Bar background color responsive. First of all, check if value from bar counters item is
+		// exist and responsive setting is enabled. If it doesn't exist, get it from bar counters
+		// and also ensure responsive setting is enabled.
+		$is_bar_background_color_responsive = et_pb_responsive_options()->is_responsive_enabled( $this->props, 'bar_background_color' );
+
+		$bar_background_color_tablet = $is_bar_background_color_responsive ? et_pb_responsive_options()->get_any_value( $this->props, 'bar_background_color_tablet' ) : '';
+		$bar_background_color_tablet = '' === $bar_background_color_tablet ? $et_pb_counters_settings['bar_bg_color_tablet'] : $bar_background_color_tablet;
+
+		$bar_background_color_phone = $is_bar_background_color_responsive ? et_pb_responsive_options()->get_any_value( $this->props, 'bar_background_color_phone' ) : '';
+		$bar_background_color_phone = '' === $bar_background_color_phone ? $et_pb_counters_settings['bar_bg_color_phone'] : $bar_background_color_phone;
+
 		// Add % only if it hasn't been added to the attribute
 		if ( '%' !== substr( trim( $percent ), -1 ) ) {
 			$percent .= '%';
 		}
-
-		if ( empty( $background_color_hover ) ) {
-			$background_color_hover = $et_pb_counters_settings['background_color_hover'];
-		}
-
 
 		$background_color_style = $bar_bg_color_style = '';
 
@@ -255,15 +332,13 @@ class ET_Builder_Module_Bar_Counters_Item extends ET_Builder_Module {
 			}
 		}
 
-		if ( '' !== $background_color ) {
-			ET_Builder_Element::set_style( $render_slug, array(
-				'selector'    => '%%order_class%% .et_pb_counter_container',
-				'declaration' => sprintf(
-					'background-color: %1$s;',
-					esc_html( $background_color )
-				),
-			) );
-		}
+		// Background color.
+		$background_color_values = array(
+			'desktop' => esc_html( $background_color ),
+			'tablet'  => esc_html( $background_color_tablet ),
+			'phone'   => esc_html( $background_color_phone ),
+		);
+		et_pb_responsive_options()->generate_responsive_css( $background_color_values, '%%order_class%% .et_pb_counter_container', 'background-color', $render_slug, '', 'color' );
 
 		if ( '' !== $background_color_hover ) {
 			ET_Builder_Element::set_style( $render_slug, array(
@@ -275,27 +350,18 @@ class ET_Builder_Module_Bar_Counters_Item extends ET_Builder_Module {
 			) );
 		}
 
-		if ( '' !== $bar_background_color ) {
-			ET_Builder_Element::set_style( $render_slug, array(
-				'selector'    => '%%order_class%% .et_pb_counter_amount',
-				'declaration' => sprintf(
-					'background-color: %1$s;',
-					esc_html( $bar_background_color )
-				),
-			) );
-
-			ET_Builder_Element::set_style( $render_slug, array(
-				'selector'    => '%%order_class%% .et_pb_counter_amount.overlay',
-				'declaration' => sprintf(
-					'color: %1$s;',
-					esc_html( $bar_background_color )
-				),
-			) );
-		}
+		// Bar background color.
+		$bar_background_color_values = array(
+			'desktop' => esc_html( $bar_background_color ),
+			'tablet'  => esc_html( $bar_background_color_tablet ),
+			'phone'   => esc_html( $bar_background_color_phone ),
+		);
+		et_pb_responsive_options()->generate_responsive_css( $bar_background_color_values, '%%order_class%% .et_pb_counter_amount', 'background-color', $render_slug, '', 'color' );
+		et_pb_responsive_options()->generate_responsive_css( $bar_background_color_values, '%%order_class%% .et_pb_counter_amount.overlay', 'color', $render_slug, '', 'color' );
 
 		if ( '' !== $bar_background_hover_color ) {
 			ET_Builder_Element::set_style( $render_slug, array(
-				'selector'    => '.et_pb_counters %%order_class%% .et_pb_counter_amount',
+				'selector'    => '.et_pb_counters %%order_class%%:hover .et_pb_counter_amount',
 				'declaration' => sprintf(
 					'background-color: %1$s;',
 					esc_html( $bar_background_hover_color )
@@ -323,27 +389,80 @@ class ET_Builder_Module_Bar_Counters_Item extends ET_Builder_Module {
 			$render_slug,
 		) );
 
+		$multi_view_data_title = $multi_view->render_attrs( array(
+			'content' => '{{content}}',
+		) );
+
+		$multi_view_data_percent_attrs = $multi_view->render_attrs( array(
+			'attrs'   => array(
+				'data-width' => '{{percent}}',
+			),
+			'target' => '%%order_class%% .et_pb_counter_amount',
+		) );
+
+		$multi_view_data_percent_content = $multi_view->render_attrs( array(
+			'content' => '{{percent}}',
+			'visibility' => array(
+				'use_percentages' => 'on',
+			),
+		) );
+
 		$output = sprintf(
 			'<li class="%6$s">
-				<span class="et_pb_counter_title">%1$s</span>
-				<span class="et_pb_counter_container"%4$s>
+				<span class="et_pb_counter_title"%9$s>%1$s</span>
+				<span class="et_pb_counter_container"%4$s%10$s>
 					%8$s
 					%7$s
-					<span class="et_pb_counter_amount" style="%5$s" data-width="%3$s"><span class="et_pb_counter_amount_number">%2$s</span></span>
-					<span class="et_pb_counter_amount overlay" style="%5$s" data-width="%3$s"><span class="et_pb_counter_amount_number">%2$s</span></span>
+					<span class="et_pb_counter_amount" style="%5$s" data-width="%3$s"><span class="et_pb_counter_amount_number"><span class="et_pb_counter_amount_number_inner"%11$s>%2$s</span></span></span>
+					<span class="et_pb_counter_amount overlay" style="%5$s" data-width="%3$s"><span class="et_pb_counter_amount_number"><span class="et_pb_counter_amount_number_inner"%11$s>%2$s</span></span></span>
 				</span>
 			</li>',
-			sanitize_text_field( $content ),
-			( isset( $et_pb_counters_settings['use_percentages'] ) && 'on' === $et_pb_counters_settings['use_percentages'] ? esc_html( $percent ) : '' ),
+			sanitize_text_field( $content ), // #1
+			$multi_view->has_value( 'use_percentages', 'on' ) ? esc_html( $percent ) : '',
 			esc_attr( $percent ),
 			$background_color_style,
-			$bar_bg_color_style,
+			$bar_bg_color_style, // #5
 			$this->module_classname( $render_slug ),
 			$video_background,
-			$parallax_image_background
+			$parallax_image_background,
+			$multi_view_data_title,
+			$multi_view_data_percent_attrs, // #10
+			$multi_view_data_percent_content
 		);
 
 		return $output;
+	}
+
+	/**
+	 * Filter multi view value.
+	 *
+	 * @since 3.27.1
+	 *
+	 * @see ET_Builder_Module_Helper_MultiViewOptions::filter_value
+	 *
+	 * @param mixed $raw_value Props raw value.
+	 * @param array $args {
+	 *     Context data.
+	 *
+	 *     @type string $context      Context param: content, attrs, visibility, classes.
+	 *     @type string $name         Module options props name.
+	 *     @type string $mode         Current data mode: desktop, hover, tablet, phone.
+	 *     @type string $attr_key     Attribute key for attrs context data. Example: src, class, etc.
+	 *     @type string $attr_sub_key Attribute sub key that availabe when passing attrs value as array such as styes. Example: padding-top, margin-botton, etc.
+	 * }
+	 *
+	 * @return mixed
+	 */
+	public function multi_view_filter_value( $raw_value, $args ) {
+		$name = isset( $args['name'] ) ? $args['name'] : '';
+
+		if ( $raw_value && 'percent' === $name ) {
+			if ( '%' !== substr( trim( $raw_value ), -1 ) ) {
+				$raw_value .= '%';
+			}
+		}
+
+		return $raw_value;
 	}
 }
 

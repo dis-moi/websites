@@ -59,7 +59,7 @@ $show_navigation = get_post_meta( get_the_ID(), '_et_pb_project_nav', true );
 				<?php if ( ! $is_page_builder_used ) : ?>
 
 					<?php
-						if ( in_array( $page_layout, array( 'et_full_width_page', 'et_no_sidebar' ) ) ) {
+						if ( ! in_array( $page_layout, array( 'et_full_width_page', 'et_no_sidebar' ) ) ) {
 							et_pb_portfolio_meta_box();
 						}
 					?>

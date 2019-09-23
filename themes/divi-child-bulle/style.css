@@ -7,8 +7,294 @@
  Template:       Divi
  Version:        1.0.0
 */
+/* -----------------------------------------------------------------------------
+ *
+ * Visibility
+ *
+ * ----------------------------------------------------------------------------- */
+.a11y-hidden {
+  display: none !important;
+  visibility: hidden; }
 
+.a11y-visual-hide {
+  border: 0;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px; }
 
-/* =Theme customization starts here
-------------------------------------------------------- */
+.a11y-visual-show {
+  border: 0;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px; }
 
+form,
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+  font-weight: inherit;
+  line-height: 1.2;
+  font-size: 16px;
+  font-style: normal;
+  color: inherit; }
+
+label,
+.label,
+legend {
+  display: inline-block;
+  margin-bottom: 10px;
+  font-size: 16px;
+  font-weight: inherit; }
+  @media (min-width: 960px) {
+    label,
+    .label,
+    legend {
+      font-size: 18px; } }
+
+.required label:after {
+  content: '*'; }
+
+.required label:after {
+  padding-left: 4px; }
+
+input,
+select {
+  padding: 0 10px;
+  border: 1px solid #d0d0d0;
+  height: 40px; }
+  input:focus,
+  select:focus {
+    border-color: #535353; }
+
+input,
+select {
+  display: inline-block;
+  height: 40px; }
+
+input {
+  line-height: 40px; }
+
+.mobile_menu_bar_toggle:before {
+  font-weight: bold; }
+
+#main-footer .footer-logo {
+  max-width: 150px !important;
+  width: 100%;
+  height: auto; }
+
+#main-footer .menu {
+  list-style-type: none;
+  margin: 0;
+  padding: 0; }
+  #main-footer .menu li {
+    display: inline;
+    padding-left: 0;
+    margin-right: 10px; }
+    #main-footer .menu li:before {
+      content: none; }
+    #main-footer .menu li a:hover, #main-footer .menu li a:focus {
+      text-decoration: underline; }
+
+.page-template-page-landing-alternating #main-header {
+  box-shadow: none;
+  background-color: transparent; }
+
+.custom-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 100; }
+
+.sib_signup_form form,
+.sib_signup_form button,
+.sib_signup_form input,
+.sib_signup_form select,
+.sib_signup_form textarea {
+  line-height: 1.2;
+  font-size: 100%;
+  font-style: normal; }
+
+.sib_signup_form input {
+  border-radius: 4px;
+  padding: 0 10px; }
+  .sib_signup_form input::-webkit-input-placeholder {
+    font-style: italic; }
+  .sib_signup_form input:-moz-placeholder {
+    font-style: italic; }
+  .sib_signup_form input::-moz-placeholder {
+    font-style: italic; }
+  .sib_signup_form input:-ms-input-placeholder {
+    font-style: italic; }
+
+.et_section_regular--with-curve {
+  background-color: transparent; }
+  .et_section_regular--with-curve:after {
+    content: '';
+    display: block;
+    width: 100%;
+    height: 50px;
+    position: absolute;
+    bottom: 0;
+    z-index: 1;
+    background-image: url(./dist/assets/img/bottom-curve.svg);
+    background-repeat: no-repeat;
+    background-size: 100% 50px; }
+
+/* Case: bg transparent */
+.et_section_regular--transparent {
+  background-color: transparent; }
+
+body:not(.et-fb) .u-display-none-small-less {
+  display: block; }
+  @media (min-width: 768px) {
+    body:not(.et-fb) .u-display-none-small-less {
+      display: none; } }
+
+body:not(.et-fb) .u-display-block-small {
+  display: none; }
+  @media (min-width: 768px) {
+    body:not(.et-fb) .u-display-block-small {
+      display: block; } }
+
+.overlay {
+  display: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 999999;
+  position: fixed;
+  background-color: rgba(255, 255, 255, 0.95); }
+  .overlay .contentOverlay {
+    top: 80px;
+    left: 52%;
+    position: absolute;
+    text-align: left;
+    max-width: 430px; }
+  .overlay .contentReloadOverlay {
+    top: 50px;
+    color: #505050;
+    right: 53%;
+    padding: 15px 26px 12px 26px;
+    position: absolute;
+    font-size: 16px;
+    background: #ffffff;
+    box-shadow: 0px 2px 35px 0px rgba(0, 0, 0, 0.25);
+    font-weight: 600;
+    border-radius: 3px; }
+  .overlay .contentReloadOverlay span {
+    display: block;
+    font-size: 18px !important;
+    color: #707070 !important;
+    font-weight: 400 !important;
+    margin-bottom: 10px; }
+  .overlay .containreRestartButtons {
+    display: block;
+    position: relative; }
+  .overlay .restartButtons {
+    float: right;
+    display: flex;
+    line-height: initial;
+    display: inline-block; }
+  .overlay .restartButton,
+  .overlay .notNowButton {
+    display: inline-block;
+    cursor: pointer;
+    padding: 8px 25px;
+    font-size: 12px;
+    text-align: center;
+    transition: 0.2s;
+    border-radius: 3px; }
+  .overlay .notNowButton {
+    color: #c0c0c0;
+    border: 1px solid #fafafa;
+    margin: 0px 14px 0px 47px;
+    font-weight: 500; }
+  .overlay .notNowButton:hover {
+    color: #ffffff;
+    background-color: #c0c0c0; }
+  .overlay .restartInstallButton {
+    color: #0C52B4;
+    border: 1px solid #0C52B4;
+    padding: 8px 62px;
+    font-weight: 600; }
+  .overlay .restartInstallButton:hover {
+    color: #ffffff;
+    background-color: #0C52B4; }
+  .overlay .restartPlus {
+    margin-right: 6px;
+    display: inline-block;
+    position: relative;
+    top: 1px; }
+  .overlay .restartPlus .h-icon {
+    background-image: url(./dist/assets/img/bulle/icon-add.png);
+    width: 11px;
+    height: 11px;
+    background-size: cover;
+    background-repeat: no-repeat; }
+  .overlay .restartInstallButton:hover .restartPlus .h-icon {
+    background-image: url(./dist/assets/img/bulle/icon-add-white.png); }
+  .overlay .contentOverlay .imgChrome {
+    background-image: url(./dist/assets/img/bulle/imgOverlayChrome.png);
+    width: 230px;
+    height: 250px; }
+  .overlay .contentOverlay .imgFirefox {
+    background-image: url(./dist/assets/img/bulle/imgOverlayFirefox.png);
+    width: 273px;
+    height: 222px;
+    margin-top: -50px; }
+  .overlay .contentOverlay .title {
+    color: #0C52B4;
+    font-size: 45px;
+    line-height: 1.2; }
+  .overlay .contentOverlay .subtitle {
+    color: #707070;
+    font-size: 35px;
+    line-height: 1.1;
+    margin-top: 18px; }
+  .overlay .contentOverlay .infos {
+    margin-top: 30px;
+    color: #404243;
+    font-size: 25px; }
+    .overlay .contentOverlay .infos ul {
+      margin-top: 10px;
+      padding-left: 21px; }
+    .overlay .contentOverlay .infos li {
+      color: #707070;
+      font-size: 18px;
+      padding: 0; }
+      .overlay .contentOverlay .infos li:before {
+        position: absolute;
+        left: -21px;
+        top: 2px; }
+
+.overlayFirefox .contentOverlay {
+  top: 30px; }
+
+.overlayFirefox .contentReloadOverlay {
+  top: 330px; }
+
+.overlayFirefox .contentReloadOverlay span {
+  display: block; }
+
+.overlayFirefox .containreRestartButtons {
+  display: block;
+  top: 0;
+  margin-top: 25px;
+  margin-bottom: 10px; }
+
+.overlayFirefox .notNowButton {
+  margin: 0 14px 0 0; }
+
+.widget_search #searchsubmit {
+  width: auto; }

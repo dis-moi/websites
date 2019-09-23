@@ -22,8 +22,15 @@ function my_theme_enqueue_styles() {
 
     $page = get_theme_mod( 'bulle_setting_non_supporte' );
     $url = (isset($page) && !empty($page)) ? get_permalink($page) : '';
+
+    $page_installe = get_theme_mod( 'bulle_setting_deja_installe' );
+    $url_installe = (isset($page_installe) && !empty($page_installe)) ? get_permalink($page_installe) : '';
     $data = [
-        'bulle_non_supporte' => $url
+        'bulle_non_supporte' => $url,
+        'bulle_deja_installe' => $url_installe,
+        'bulle_lien_extension_chrome' => get_theme_mod( 'bulle_setting_extension_chrome', 'https://chrome.google.com/webstore/detail/le-m%C3%AAme-en-mieux/fpjlnlnbacohacebkadbbjebbipcknbg?hl=fr' ),
+        'bulle_lien_extension_firefox' => get_theme_mod( 'bulle_setting_extension_firefox', 'https://addons.mozilla.org/fr/firefox/addon/lmem/' ),
+        'bulle_extension_id_chrome' => get_theme_mod( 'bulle_setting_extension_id_chrome', 'cifabmmlclhhhlhhabmbhhfocdgglljb' ),
     ];
     wp_localize_script( 'bulle-child-script', 'bull_config', $data );
     wp_enqueue_script( 'bulle-child-script' );
@@ -77,11 +84,12 @@ add_filter('upload_mimes', 'cc_mime_types');
 function prefix_customize_register( $wp_customize ) {
 
     $wp_customize->add_section( 'bulle_section' , array(
-        'title'      => __( 'Bulle', 'divi-child-bulle' ),
+        'title'      => __( 'Configuration Bulles', 'divi-child-bulle' ),
         'priority'   => 30,
     ) );
 
 
+    // non supporté
     $wp_customize->add_setting( 'bulle_setting_non_supporte',
         array(
             'type'       => 'theme_mod', //Is this an 'option' or a 'theme_mod'?
@@ -92,7 +100,7 @@ function prefix_customize_register( $wp_customize ) {
     $wp_customize->add_control(
         new WP_Customize_Control(
             $wp_customize,
-            'bulle_non_supporte',
+            'bulle_control_non_supporte',
             array(
                 'label'          => __( 'Page Extension Non Supporté', 'divi-child-bulle' ),
                 'section'        => 'bulle_section',
@@ -102,6 +110,96 @@ function prefix_customize_register( $wp_customize ) {
         )
     );
 
+    // extension chrome
+    $wp_customize->add_setting( 'bulle_setting_extension_chrome',
+        array(
+            'type'       => 'theme_mod',
+            'capability' => 'edit_theme_options',
+            'default'    => 'https://chrome.google.com/webstore/detail/le-m%C3%AAme-en-mieux/fpjlnlnbacohacebkadbbjebbipcknbg?hl=fr'
+        )
+    );
+
+    $wp_customize->add_control(
+        new WP_Customize_Control(
+            $wp_customize,
+            'bulle_control_extension_chrome',
+            array(
+                'label'          => __( 'Lien Extension Chrome', 'divi-child-bulle' ),
+                'section'        => 'bulle_section',
+                'settings'       => 'bulle_setting_extension_chrome'
+            )
+        )
+    );
+
+    // extension FF
+    $wp_customize->add_setting( 'bulle_setting_extension_firefox',
+        array(
+            'type'       => 'theme_mod',
+            'capability' => 'edit_theme_options',
+            'default'    => 'https://addons.mozilla.org/fr/firefox/addon/lmem/'
+        )
+    );
+
+    $wp_customize->add_control(
+        new WP_Customize_Control(
+            $wp_customize,
+            'bulle_control_extension_firefox',
+            array(
+                'label'          => __( 'Lien Extension Firefox', 'divi-child-bulle' ),
+                'section'        => 'bulle_section',
+                'settings'       => 'bulle_setting_extension_firefox'
+            )
+        )
+    );
+
+    // EXTENSION_ID CHROME
+    $wp_customize->add_setting( 'bulle_setting_extension_id_chrome',
+        array(
+            'type'       => 'theme_mod',
+            'capability' => 'edit_theme_options',
+            'default'    => 'cifabmmlclhhhlhhabmbhhfocdgglljb'
+        )
+    );
+
+    $wp_customize->add_control(
+        new WP_Customize_Control(
+            $wp_customize,
+            'bulle_control_extension_id_chrome',
+            array(
+                'label'          => __( 'Identifiant Extension Chrome (pour détection JS)', 'divi-child-bulle' ),
+                'section'        => 'bulle_section',
+                'settings'       => 'bulle_setting_extension_id_chrome'
+            )
+        )
+    );
+
+
+    // deja installé
+    $wp_customize->add_setting( 'bulle_setting_deja_installe',
+        array(
+            'type'       => 'theme_mod', //Is this an 'option' or a 'theme_mod'?
+            'capability' => 'edit_theme_options', //Optional. Special permissions for accessing this setting.
+        )
+    );
+
+    $wp_customize->add_control(
+        new WP_Customize_Control(
+            $wp_customize,
+            'bulle_control_deja_installe',
+            array(
+                'label'          => __( 'Page Déjà Installé', 'divi-child-bulle' ),
+                'section'        => 'bulle_section',
+                'settings'       => 'bulle_setting_deja_installe',
+                'type'           => 'dropdown-pages'
+            )
+        )
+    );
+
+    // LINK_POPUP_EXTENSION_CHROME = "https://chrome.google.com/webstore/detail/le-m%C3%AAme-en-mieux/fpjlnlnbacohacebkadbbjebbipcknbg?hl=fr";
+    // LINK_POPUP_EXTENSION_FF = "https://addons.mozilla.org/fr/firefox/addon/lmem/";
+    // EXTENSION_ID = cifabmmlclhhhlhhabmbhhfocdgglljb
+
+    // non supporté
 
 }
 add_action( 'customize_register', 'prefix_customize_register' );

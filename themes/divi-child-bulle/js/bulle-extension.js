@@ -3,12 +3,10 @@ import $ from 'jquery';
 import Bowser from "bowser";
 
 const LINK_UNAVAILABLE = window.bull_config.bulle_non_supporte;
-// const LINK_UNAVAILABLE = '/navigateur-non-supporte/';
-
-const LINK_POPUP_EXTENSION_CHROME = "https://chrome.google.com/webstore/detail/le-m%C3%AAme-en-mieux/fpjlnlnbacohacebkadbbjebbipcknbg?hl=fr";
-const LINK_POPUP_EXTENSION_FF = "https://addons.mozilla.org/fr/firefox/addon/lmem/";
-
-const EXTENSION_ID = 'cifabmmlclhhhlhhabmbhhfocdgglljb';
+const LINK_POPUP_EXTENSION_CHROME = window.bull_config.bulle_lien_extension_chrome;
+const LINK_POPUP_EXTENSION_FF = window.bull_config.bulle_lien_extension_firefox;
+const EXTENSION_ID = window.bull_config.bulle_extension_id_chrome;
+const LINK_DEJA_INSTALLE = window.bull_config.bulle_deja_installe;
 
 const el = {
 	windowObjectReference: null,
@@ -78,12 +76,14 @@ const testExtension = () => {
 	}
 	chrome.runtime.sendMessage(EXTENSION_ID, 'version', response => {
 		if (!response) {
-			console.log('No extension');
+			console.info('No extension');
 			return;
 		}
-		console.log('Extension version: ', response.version);
-		// ToDO: handle case
+		console.info('Extension version: ', response.version);
 		// https://www.twilio.com/blog/2018/03/detect-chrome-extension-installed.html
+		if (LINK_DEJA_INSTALLE) {
+			window.location.href = LINK_DEJA_INSTALLE;
+		}
 	});
 };
 
@@ -118,7 +118,10 @@ const start = () => {
 		}
 	});
 
-	// testExtension();
+	if ($('#bulle-installer').length) {
+		testExtension();
+	}
+
 };
 
 const initExtensionInstaller  = () => {

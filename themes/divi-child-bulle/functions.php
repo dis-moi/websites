@@ -195,11 +195,6 @@ function prefix_customize_register( $wp_customize ) {
         )
     );
 
-    // LINK_POPUP_EXTENSION_CHROME = "https://chrome.google.com/webstore/detail/le-m%C3%AAme-en-mieux/fpjlnlnbacohacebkadbbjebbipcknbg?hl=fr";
-    // LINK_POPUP_EXTENSION_FF = "https://addons.mozilla.org/fr/firefox/addon/lmem/";
-    // EXTENSION_ID = cifabmmlclhhhlhhabmbhhfocdgglljb
-
-    // non supporté
 
 }
 add_action( 'customize_register', 'prefix_customize_register' );

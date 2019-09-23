@@ -14,7 +14,8 @@ const el = {
 	isChrome: null,
 	isFirefox: null,
 	isOpera: null,
-	timer: null
+	timer: null,
+	dejaInstalle: false
 };
 
 const closeWin = () => {
@@ -60,11 +61,15 @@ const openRequestedPopup = (e) => {
 };
 
 const clickInstallHandler = (e) => {
-	if(el.isChrome || el.isFirefox) {
-		openRequestedPopup();
+	if (el.dejaInstalle && LINK_DEJA_INSTALLE) {
+		window.location.href = LINK_DEJA_INSTALLE;
 	} else {
-		if (LINK_UNAVAILABLE) {
-			window.location.href = LINK_UNAVAILABLE;
+		if(el.isChrome || el.isFirefox) {
+			openRequestedPopup();
+		} else {
+			if (LINK_UNAVAILABLE) {
+				window.location.href = LINK_UNAVAILABLE;
+			}
 		}
 	}
 	e.preventDefault();
@@ -81,9 +86,7 @@ const testExtension = () => {
 		}
 		console.info('Extension version: ', response.version);
 		// https://www.twilio.com/blog/2018/03/detect-chrome-extension-installed.html
-		if (LINK_DEJA_INSTALLE) {
-			window.location.href = LINK_DEJA_INSTALLE;
-		}
+		el.dejaInstalle = true;
 	});
 };
 

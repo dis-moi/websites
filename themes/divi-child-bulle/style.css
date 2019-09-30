@@ -148,7 +148,8 @@ input {
     z-index: 1;
     background-image: url(./dist/assets/img/bottom-curve.svg);
     background-repeat: no-repeat;
-    background-size: 100% 50px; }
+    background-size: 100% 50px;
+    background-position: 0 0; }
 
 /* Case: bg transparent */
 .et_section_regular--transparent {

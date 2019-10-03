@@ -109,6 +109,21 @@ input {
   box-shadow: none;
   background-color: transparent; }
 
+.page-template-default .entry-content h1,
+.page-template-default .entry-content h2,
+.page-template-default .entry-content h3,
+.page-template-default .entry-content h4,
+.page-template-default .entry-content h5,
+.page-template-default .entry-content h6,
+.post-template-default .entry-content h1,
+.post-template-default .entry-content h2,
+.post-template-default .entry-content h3,
+.post-template-default .entry-content h4,
+.post-template-default .entry-content h5,
+.post-template-default .entry-content h6 {
+  margin-top: 0.5em;
+  padding-bottom: 0.2em; }
+
 .custom-overlay {
   position: absolute;
   top: 0;

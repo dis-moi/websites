@@ -103,7 +103,7 @@ const setUp  = () => {
 
 
 const start = () => {
-	$('#bulle-installer').click(clickInstallHandler);
+	$('.bulle-installer').click(clickInstallHandler);
 
 	$('#restartInstallButton').click(clickInstallHandler);
 
@@ -121,11 +121,12 @@ const start = () => {
 		}
 	});
 
-	if ($('#bulle-installer').length) {
+	if ($('.bulle-installer').length) {
 		testExtension();
 	}
 
 };
+
 
 const initExtensionInstaller  = () => {
 

@@ -4,7 +4,7 @@ require_once 'module/helpers/Overflow.php';
 
 if ( ! defined( 'ET_BUILDER_PRODUCT_VERSION' ) ) {
 	// Note, this will be updated automatically during grunt release task.
-	define( 'ET_BUILDER_PRODUCT_VERSION', '3.29.1' );
+	define( 'ET_BUILDER_PRODUCT_VERSION', '3.29.3' );
 }
 
 if ( ! defined( 'ET_BUILDER_VERSION' ) ) {
@@ -2924,6 +2924,15 @@ function et_builder_set_post_type( $post_type = '' ) {
 	$et_builder_post_type = ! empty( $post_type ) ? $post_type : $post->post_type;
 }
 
+/**
+ * Saves Metabox settings.
+ *
+ * @since 3.29.2 Included check to verify if constant exists before use.
+ *           Throws error otherwise from PHP7.2.x
+ *
+ * @param int     $post_id
+ * @param WP_Post $post
+ */
 function et_pb_metabox_settings_save_details( $post_id, $post ){
 	global $pagenow;
 
@@ -2981,12 +2990,16 @@ function et_pb_metabox_settings_save_details( $post_id, $post ){
 		}
 
 		if ( 'on' !== $et_pb_use_builder_input ) {
-			delete_post_meta( $post_id, ET_BUILDER_WC_PRODUCT_PAGE_CONTENT_STATUS_META_KEY );
+			if ( defined( 'ET_BUILDER_WC_PRODUCT_PAGE_CONTENT_STATUS_META_KEY' ) ) {
+				delete_post_meta( $post_id, ET_BUILDER_WC_PRODUCT_PAGE_CONTENT_STATUS_META_KEY );
+			}
 		}
 	} else {
 		delete_post_meta( $post_id, '_et_pb_use_builder' );
 		delete_post_meta( $post_id, '_et_builder_version' );
-		delete_post_meta( $post_id, ET_BUILDER_WC_PRODUCT_PAGE_CONTENT_STATUS_META_KEY );
+		if ( defined( 'ET_BUILDER_WC_PRODUCT_PAGE_CONTENT_STATUS_META_KEY' ) ) {
+			delete_post_meta( $post_id, ET_BUILDER_WC_PRODUCT_PAGE_CONTENT_STATUS_META_KEY );
+		}
 	}
 
 	/**

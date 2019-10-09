@@ -63,12 +63,6 @@ class ET_Builder_Module_Woocommerce_Price extends ET_Builder_Module {
 						'default' => '26px',
 					),
 					'hide_text_align' => true,
-
-					/*
-					 * Manually assign `text` toggle to avoid `Text Text` toggle defined by advanced
-					 * field font which automatically append ` Text` by default.
-					 */
-					'toggle_slug'     => 'text',
 				),
 				'before_sale_price' => array(
 					'label'           => esc_html__( 'Sale Old Price', 'et_builder' ),
@@ -127,6 +121,9 @@ class ET_Builder_Module_Woocommerce_Price extends ET_Builder_Module {
 						'hover'   => 'tabs',
 					),
 				),
+
+				// Assign to main font advanced field (body), keeping things simplified
+				'toggle_slug' => 'body',
 			),
 			'text_shadow'    => array(
 				// Don't add text-shadow fields since they already are via font-options

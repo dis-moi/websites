@@ -1179,21 +1179,89 @@ if ( ! function_exists( 'et_get_attachment_size_by_url' ) ) :
  * @return array|string Detected image size width and height or 'full' on failure.
  */
 function et_get_attachment_size_by_url( $url, $default_size = 'full' ) {
+	$cache = ET_Core_Cache_File::get( 'attachment_size_by_url' );
+
 	// Normalize image URL.
 	$url = et_attachment_normalize_url( $url );
+
+	$cache_key = $url ? $url : 'empty-url';
+
+	if ( isset( $cache[ $cache_key ] ) ) {
+		return $cache[ $cache_key ];
+	}
 
 	// Bail eraly if URL is invalid.
 	if ( ! $url ) {
 		return $default_size;
 	}
 
-	// Get the image width and height.
-	// Example: https://regex101.com/r/7JwGz7/1.
-	if ( preg_match( '/-(\d+)x(\d+)\.(jpg|jpeg|gif|png)$/', $url, $match ) ) {
-		return array( $match[1], $match[2] );
+	$attachment_id = et_get_attachment_id_by_url( $url );
+
+	if ( ! $attachment_id ) {
+		return $default_size;
 	}
 
-	return $default_size;
+	$metadata = wp_get_attachment_metadata( $attachment_id );
+
+	if ( ! $metadata ) {
+		return $default_size;
+	}
+
+	$size = $default_size;
+
+	if ( strpos( $url, $metadata['file'] ) === ( strlen( $url ) - strlen( $metadata['file'] ) ) ) {
+		$size = array( $metadata['width'], $metadata['height'] );
+	} else if ( preg_match( '/-(\d+)x(\d+)\.(jpg|jpeg|gif|png)$/', $url, $match ) ) {
+		// Get the image width and height.
+		// Example: https://regex101.com/r/7JwGz7/1.
+		$size = array( $match[1], $match[2] );
+	}
+
+	$cache[ $cache_key ] = $attachment_id;
+	ET_Core_Cache_File::set( 'attachment_size_by_url', $cache );
+
+	return $size;
+}
+endif;
+
+if ( ! function_exists( 'et_get_image_srcset_sizes' ) ) :
+/**
+ * Get image srcset & sizes attributes.
+ *
+ * @since 3.29.3
+ *
+ * @param string $img_src Image source attribute value.
+ *
+ * @return (array|bool) Associative array of srcset & sizes attributes. False on failure.
+ */
+function et_get_image_srcset_sizes( $img_src ) {
+	$cache = ET_Core_Cache_File::get( 'image_srcset_sizes' );
+
+	$cache_key = $img_src ? $img_src : 'empty-src';
+
+	if ( isset( $cache[ $cache_key ] ) ) {
+		return $cache[ $cache_key ];
+	}
+
+	$attachment_id = et_get_attachment_id_by_url( $img_src );
+	if ( ! $attachment_id ) {
+		return false;
+	}
+
+	$image_size = et_get_attachment_size_by_url( $img_src );
+	if ( ! $image_size ) {
+		return false;
+	}
+
+	$data = array(
+		'srcset' => wp_get_attachment_image_srcset( $attachment_id, $image_size ),
+		'sizes'  => wp_get_attachment_image_sizes( $attachment_id, $image_size ),
+	);
+
+	$cache[ $cache_key ] = $data;
+	ET_Core_Cache_File::set( 'image_srcset_sizes', $cache );
+
+	return $data;
 }
 endif;
 

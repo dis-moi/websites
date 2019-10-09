@@ -6421,6 +6421,7 @@ require_once( get_template_directory() . '/et-pagebuilder/et-pagebuilder.php' );
  * @return array
  */
 function et_divi_sidebar_class( $classes ) {
+	$page_layout           = '';
 	$default_sidebar_class = et_get_option( 'divi_sidebar' );
 	$post_id = get_queried_object_id();
 	$is_builder_active = 'on' === get_post_meta( $post_id, '_et_pb_use_builder', true ) || ( function_exists( 'et_fb_is_enabled' ) && et_fb_is_enabled() );
@@ -6440,7 +6441,7 @@ function et_divi_sidebar_class( $classes ) {
 	} elseif ( ! is_singular() || ( ! ( $page_layout = get_post_meta( $post_id, '_et_pb_page_layout', true ) ) && ! $is_builder_active ) ) { // check for the falsy value not for boolean `false`
 		// Set post meta layout which will work for all third party plugins.
 		$page_layout = $default_sidebar_class;
-	} elseif ( $is_builder_active ) {
+	} elseif ( $is_builder_active && ! $page_layout ) {
 		$page_layout = 'et_no_sidebar';
 	}
 

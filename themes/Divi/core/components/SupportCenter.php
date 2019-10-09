@@ -287,15 +287,16 @@ class ET_Core_SupportCenter {
 	}
 
 	/**
-	 * Add User capabilities to the Administrator Role on first run
+	 * Add User capabilities to the Administrator Role (if it exists) on first run
 	 *
+	 * @since 3.29.2 Added check to verify the Administrator Role exists before attempting to run `add_cap()`.
 	 * @since 3.28
 	 */
 	public function support_center_capabilities_setup() {
 		$support_capabilities = get_option( 'et_support_center_setup_done' );
-		if ( ! $support_capabilities ) {
-			$administrator_role  = get_role( 'administrator' );
+		$administrator_role   = get_role( 'administrator' );
 
+		if ( $administrator_role && ! $support_capabilities ) {
 			foreach ( $this->support_center_administrator_caps as $cap ) {
 				$administrator_role->add_cap( $cap );
 			}
@@ -306,13 +307,14 @@ class ET_Core_SupportCenter {
 	/**
 	 * Remove User capabilities from the Administrator Role when product with Support Center is removed
 	 *
+	 * @since 3.29.2 Added check to verify the Administrator Role exists before attempting to run `remove_cap()`.
 	 * @since 3.28
 	 */
 	public function support_center_capabilities_teardown() {
 		$support_capabilities = get_option( 'et_support_center_setup_done' );
-		if ( $support_capabilities ) {
-			$administrator_role  = get_role( 'administrator' );
+		$administrator_role   = get_role( 'administrator' );
 
+		if ( $administrator_role && $support_capabilities ) {
 			foreach ( $this->support_center_administrator_caps as $cap ) {
 				$administrator_role->remove_cap( $cap );
 			}

@@ -1,3 +1,48 @@
+version 3.29.3 ( updated 09-17-2019 )
+- Fixed a case where wrong file permission would cause Visual Builder not to work correctly.
+- Fixed map module not working in visual builder when minified JS is used.
+- Fixed missing trash icon on image uploader on all modules with image element.
+- Fixed unwanted anchor tag on tab nav of tabs module.
+- Fixed error when no value is set for center location on Maps module.
+- Fixed endless switching to The New Builder Experience after enabling/disabling plugins or themes.
+- Fixed error when editing numeric input option then quickly move to another options group on settings modal.
+- Fixed button background styles inability to be extended.
+- Make WooCommerce Price' module's price, sale old price, and sale new price groups' copy paste style interchangeable.
+- Fixed image size rendering incorrectly when having name like WordPress image re-sized file name.
+- Improved file based cache data handler.
+- Fixed a case where Visual Builder would reload itself after a short while.
+	* core/components/SupportCenter.php
+	* core/components/cache/File.php
+	* core/functions.php
+	* et-pagebuilder/et-pagebuilder.php
+	* includes/builder/core.php
+	* includes/builder/frontend-builder/assets.php
+	* includes/builder/frontend-builder/bundle.js
+	* includes/builder/functions.php
+	* includes/builder/module/Tabs.php
+	* includes/builder/module/helpers/MultiViewOptions.php
+	* includes/builder/module/woocommerce/Price.php
+	* includes/builder/module/woocommerce/Rating.php
+	* includes/builder/scripts/builder.js
+	* includes/builder/scripts/frontend-builder-scripts.js
+
+version 3.29.2 ( updated 09-13-2019 )
+- Fixed compatibility issue with Cloudinary plugin.
+- Fixed margin settings by moving default margin bottom of product rating to module wrapper on Woo Rating module.
+- Fixed window.et_pb_init_woo_star_rating is not a function error.
+- Fixed warning shown on use of undefined constants.
+- Fixed the issue when a Custom CSS setting may not display the color icon either after the field reset or after the copy and paste a value.
+- Fixed image box shadow styles not being rendered on Woo Images.
+- Updated the Support Center to handle a case where an expected User Role does not exist.
+- Fixed a regression that caused posts created with the builder and configured to use the fullwidth page layout to not render correctly as fullwidth on the frontend.
+	* core/components/SupportCenter.php
+	* functions.php
+	* includes/builder/core.php
+	* includes/builder/frontend-builder/bundle.js
+	* includes/builder/functions.php
+	* includes/builder/module/woocommerce/Images.php
+	* includes/builder/module/woocommerce/Rating.php
+
 version 3.29.1 ( updated 09-12-2019 )
 - Fixed unnecessary data being passed in save payload.
 	* includes/builder/frontend-builder/bundle.js

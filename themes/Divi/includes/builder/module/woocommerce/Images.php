@@ -59,7 +59,7 @@ class ET_Builder_Module_Woocommerce_Images extends ET_Builder_Module {
 					'tab_slug'        => 'advanced',
 					'toggle_slug'     => 'image',
 					'css'             => array(
-						'main'      => '%%order_class%% .flex-control-nav li, %%order_class%% .flex-viewport',
+						'main'      => '%%order_class%% .flex-control-nav li, %%order_class%% .flex-viewport, %%order_class%% .woocommerce-product-gallery__wrapper',
 						'overlay'   => 'inset',
 						'important' => true,
 					),

@@ -39,20 +39,17 @@ function et_divi_maybe_adjust_row_advanced_options_config( $advanced_options ) {
 
 	// Divi has custom styling added for row if fullwidth or no sidebar layout is used. To ensure
 	// custom style not overwritten builder's output, builder's row selector need to be more specific
-	if ( in_array( $page_layout, array( 'et_full_width_page', 'et_no_sidebar' ) ) ) {
-		if ( 'project' !== $module->get_post_type() ) {
-			// Builder automatically adds `#et-boc` on selector on non official post type; hence
-			// alternative selector wrapper for non official post type
-			if ( et_builder_post_is_of_custom_post_type( $post_id ) ) {
-				$selector[] = 'body.et_pb_pagebuilder_layout.single.et_full_width_page #page-container %%order_class%%.et_pb_row';
-			} else {
-				$selector[] = 'body.et_pb_pagebuilder_layout.single.et_full_width_page #page-container #et-boc %%order_class%%.et_pb_row';
-			}
+	if ( 'project' !== $module->get_post_type() ) {
+		// Builder automatically adds `#et-boc` on selector on non official post type; hence
+		// alternative selector wrapper for non official post type
+		if ( et_builder_post_is_of_custom_post_type( $post_id ) ) {
+			$selector[] = 'body.et_pb_pagebuilder_layout.single.et_full_width_page #page-container %%order_class%%.et_pb_row';
 		} else {
-			// `project` post type has its own specific selector
-			$selector[] = 'body.et_pb_pagebuilder_layout.single.et_full_width_portfolio_page #page-container #et-boc %%order_class%%.et_pb_row';
-
+			$selector[] = 'body.et_pb_pagebuilder_layout.single.et_full_width_page #page-container #et-boc %%order_class%%.et_pb_row';
 		}
+	} else {
+		// `project` post type has its own specific selector
+		$selector[] = 'body.et_pb_pagebuilder_layout.single.et_full_width_portfolio_page #page-container #et-boc %%order_class%%.et_pb_row';
 	}
 
 	$selector = implode( ', ', $selector );

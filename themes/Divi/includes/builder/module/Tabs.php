@@ -165,7 +165,7 @@ class ET_Builder_Module_Tabs extends ET_Builder_Module {
 		if ( ! empty( $et_pb_tab_titles ) ) {
 			foreach ( $et_pb_tab_titles as $tab_title ){
 				++$i;
-				$tabs .= sprintf( '<li class="%3$s%1$s"><a href="#">%2$s</a></li>',
+				$tabs .= sprintf( '<li class="%3$s%1$s">%2$s</li>',
 					( 1 === $i ? ' et_pb_tab_active' : '' ),
 					et_pb_multi_view_options( $this )->render_element( array(
 						'tag'     => 'a',

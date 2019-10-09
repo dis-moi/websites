@@ -7,7 +7,7 @@
  *
  * @package Divi\Builder
  *
- * @since   ??
+ * @since   3.29
  */
 
 /**
@@ -16,6 +16,8 @@
 class ET_Builder_Module_Woocommerce_Rating extends ET_Builder_Module {
 	/**
 	 * Initialize.
+	 *
+	 * @since 3.29.2 Added custom margin default.
 	 */
 	public function init() {
 		$this->name       = esc_html__( 'Woo Rating', 'et_builder' );
@@ -89,6 +91,9 @@ class ET_Builder_Module_Woocommerce_Rating extends ET_Builder_Module {
 			'margin_padding' => array(
 				'css' => array(
 					'important' => 'all',
+				),
+				'custom_margin' => array(
+					'default' => '0em|0em|1.618em|0em|false|false',
 				),
 			),
 			'text'           => array(),

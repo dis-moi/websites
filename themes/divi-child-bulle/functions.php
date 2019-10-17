@@ -245,10 +245,7 @@ add_action( 'customize_register', 'prefix_customize_register' );
 function hook_matomo_tag() {
     $tracking_url = get_theme_mod( 'bulle_setting_matomo_tracker_url', '//stats.lmem.net/');
     $site_id = get_theme_mod( 'bulle_setting_matomo_site_id', '4');
-
-    var_dump($tracking_url);
-    var_dump($site_id);
-
+    
     if (empty($tracking_url) || empty($site_id)) {
         return;
     }

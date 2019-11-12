@@ -5,7 +5,7 @@
  Author:         Graeme Hoffman
  Author URI:     https://www.graemehoffman.com
  Template:       Divi
- Version:        1.0.1
+ Version:        1.0.2
 */
 /* -----------------------------------------------------------------------------
  *
@@ -296,9 +296,15 @@ body:not(.et-fb) .u-display-block-small {
 
 .overlayFirefox .contentOverlay {
   top: 30px; }
+  @media (min-width: 1200px) {
+    .overlayFirefox .contentOverlay {
+      left: calc(53% - 300px); } }
 
 .overlayFirefox .contentReloadOverlay {
   top: 330px; }
+  @media (min-width: 1200px) {
+    .overlayFirefox .contentReloadOverlay {
+      right: calc(53% + 300px); } }
 
 .overlayFirefox .contentReloadOverlay span {
   display: block; }

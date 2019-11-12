@@ -165,10 +165,18 @@
 
 	.contentOverlay {
 		top: 30px;
+
+		@include respond-to($mq-large) {
+			left: calc(53% - 300px);
+		}
 	}
 
 	.contentReloadOverlay{
 		top: 330px;
+
+		@include respond-to($mq-large) {
+			right: calc(53% + 300px);
+		}
 	}
 
 	.contentReloadOverlay span {

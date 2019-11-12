@@ -39,7 +39,17 @@ const openRequestedPopup = (e) => {
 	const popUpURL = el.isChrome ? LINK_POPUP_EXTENSION_CHROME : LINK_POPUP_EXTENSION_FF;
 	let strWindowFeatures = "width="+windowsWidth+",height="+windowsHeight+",resizable=yes,scrollbars=yes,status=1";
 	if(el.isFirefox){
-		const windowsLeft = ($(window).width()/2)-480;
+
+		let offset = 480;
+		if ($(window).width() > 1200) {
+			offset = 780;
+		}
+		const windowsLeft = window.screenX + ($(window).width()/2)-offset;
+		if ($(window).width() > 1200) {
+			$('body').addClass('bulles-installer-wide');
+		} else {
+			$('body').removeClass('bulles-installer-wide');
+		}
 		strWindowFeatures = "width=480,height="+windowsHeight+",left="+windowsLeft+",resizable=yes,scrollbars=yes,status=1";
 	}
 

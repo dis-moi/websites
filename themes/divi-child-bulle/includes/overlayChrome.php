@@ -12,10 +12,10 @@
   <div class="contentOverlay">
     <div class="imgChrome"></div>
     <div class="title">
-      Cliquer<br>pour ajouter Bulle
+      Cliquer<br>pour ajouter Bulles
     </div>
     <div class="infos">
-      Bulle respecte votre vie privée :
+      Bulles respecte votre vie privée :
       <ul>
         <li>Aucune publicité, aucune vente de données</li>
         <li>Les données utilisées servent uniquement à afficher les messages et à améliorer l‘outil.</li>

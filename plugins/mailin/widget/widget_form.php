@@ -15,10 +15,10 @@ class SIB_Widget_Subscribe extends WP_Widget {
 	 */
 	function __construct() {
 		parent::__construct(
-			'sib_subscribe_form', 'SendinBlue Widget',
+			'sib_subscribe_form', 'Sendinblue Widget',
 			array(
 				'description' =>
-					'Display SendinBlue Widget',
+					'Display Sendinblue Widget',
 			)
 		);
 	}
@@ -35,7 +35,7 @@ class SIB_Widget_Subscribe extends WP_Widget {
 		if ( isset( $instance['widget_title'] ) && '' !== $instance['widget_title'] ) {
 			$widget_title = esc_attr( $instance['widget_title'] );
 		} else {
-			$widget_title = __( 'SendinBlue Newsletter', 'sib_lang' );
+			$widget_title = __( 'Sendinblue Newsletter', 'sib_lang' );
 		}
 		if ( isset( $instance['sib_form_list'] ) ) {
 			$sib_form_list = esc_attr( $instance['sib_form_list'] );
@@ -99,7 +99,7 @@ class SIB_Widget_Subscribe extends WP_Widget {
 		extract( $args );
 		$widget_title = ( ! empty( $instance['widget_title'] ) ?
 			esc_attr( $instance['widget_title'] ) :
-			'SendinBlue Newsletter' );
+			'Sendinblue Newsletter' );
 		// Display widget title.
 		echo $before_widget ;
 		echo $before_title ;

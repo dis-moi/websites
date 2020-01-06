@@ -1,7 +1,7 @@
 <?php
 
 /**
- * SendinBlue REST client
+ * Sendinblue REST client
  */
 
 class Mailin
@@ -186,7 +186,7 @@ class Mailin
         @options data {String} subject: Subject of the campaign [Mandatory]
         @options data {String} from_email: Sender email from which the campaign emails are sent [Mandatory: for Dedicated IP clients, please make sure that the sender details are defined here, and in case of no sender, you can add them also via API & for Shared IP clients, if sender exists]
         @options data {String} reply_to: The reply to email in the campaign emails [Optional]
-        @options data {String} to_field: This is to personalize the «To» Field. If you want to include the first name and last name of your recipient, add [PRENOM] [NOM] To use the contact attributes here, these should already exist in SendinBlue account [Optional]
+        @options data {String} to_field: This is to personalize the «To» Field. If you want to include the first name and last name of your recipient, add [PRENOM] [NOM] To use the contact attributes here, these should already exist in Sendinblue account [Optional]
         @options data {Array} exclude_list: These are the lists which must be excluded from the campaign [Optional]
         @options data {String} attachment_url: Provide the absolute url of the attachment [Optional]
         @options data {Integer} inline_image: Status of inline image. Possible values = 0 (default) & 1. inline_image = 0 means image can’t be embedded, & inline_image = 1 means image can be embedded, in the email [Optional]
@@ -214,7 +214,7 @@ class Mailin
         @options data {String} subject: Subject of the campaign.
         @options data {String} from_email: Sender email from which the campaign emails are sent [Mandatory: for Dedicated IP clients, please make sure that the sender details are defined here, and in case of no sender, you can add them also via API & for Shared IP clients, if sender exists]
         @options data {String} reply_to: The reply to email in the campaign emails [Optional]
-        @options data {String} to_field: This is to personalize the «To» Field. If you want to include the first name and last name of your recipient, add [PRENOM] [NOM]. To use the contact attributes here, these should already exist in SendinBlue account [Optional]
+        @options data {String} to_field: This is to personalize the «To» Field. If you want to include the first name and last name of your recipient, add [PRENOM] [NOM]. To use the contact attributes here, these should already exist in Sendinblue account [Optional]
         @options data {Array} exclude_list: These are the lists which must be excluded from the campaign [Optional]
         @options data {String} attachment_url: Provide the absolute url of the attachment [Optional]
         @options data {Integer} inline_image: Status of inline image. Possible values = 0 (default) & 1. inline_image = 0 means image can’t be embedded, & inline_image = 1 means image can be embedded, in the email [Optional]
@@ -322,7 +322,7 @@ class Mailin
         @options data {String} subject: Subject of the campaign [Mandatory]
         @options data {String} from_email: Sender email from which the campaign emails are sent [Mandatory: for Dedicated IP clients, please make sure that the sender details are defined here, and in case of no sender, you can add them also via API & for Shared IP clients, if sender exists]
         @options data {String} reply_to: The reply to email in the campaign emails [Optional]
-        @options data {String} to_field: This is to personalize the «To» Field. If you want to include the first name and last name of your recipient, add [PRENOM] [NOM]. To use the contact attributes here, these should already exist in SendinBlue account [Optional]
+        @options data {String} to_field: This is to personalize the «To» Field. If you want to include the first name and last name of your recipient, add [PRENOM] [NOM]. To use the contact attributes here, these should already exist in Sendinblue account [Optional]
         @options data {Array} exclude_list: These are the lists which must be excluded from the campaign [Optional]
         @options data {Integer} recurring: Type of trigger campaign. Possible values = 0 (default) & 1. recurring = 0 means contact can receive the same Trigger campaign only once, & recurring = 1 means contact can receive the same Trigger campaign several times [Optional]
         @options data {String} attachment_url: Provide the absolute url of the attachment [Optional]
@@ -350,7 +350,7 @@ class Mailin
         @options data {String} subject: Subject of the campaign [Mandatory]
         @options data {String} from_email: Sender email from which the campaign emails are sent [Mandatory: for Dedicated IP clients, please make sure that the sender details are defined here, and in case of no sender, you can add them also via API & for Shared IP clients, if sender exists]
         @options data {String} reply_to: The reply to email in the campaign emails [Optional]
-        @options data {String} to_field: This is to personalize the «To» Field. If you want to include the first name and last name of your recipient, add [PRENOM] [NOM]. To use the contact attributes here, these should already exist in SendinBlue account [Optional]
+        @options data {String} to_field: This is to personalize the «To» Field. If you want to include the first name and last name of your recipient, add [PRENOM] [NOM]. To use the contact attributes here, these should already exist in Sendinblue account [Optional]
         @options data {Array} exclude_list: These are the lists which must be excluded from the campaign [Optional]
         @options data {Integer} recurring: Type of trigger campaign. Possible values = 0 (default) & 1. recurring = 0 means contact can receive the same Trigger campaign only once, & recurring = 1 means contact can receive the same Trigger campaign several times [Optional]
         @options data {String} attachment_url: Provide the absolute url of the attachment [Optional]
@@ -490,10 +490,10 @@ class Mailin
     }
 
     /*
-        Add already existing users in the SendinBlue contacts to the list.
+        Add already existing users in the Sendinblue contacts to the list.
         @param {Array} data contains php array with key value pair.
         @options data {Integer} id: Id of list to link users in it [Mandatory]
-        @options data {Array} users: Email address of the already existing user(s) in the SendinBlue contacts. Example: "test@example.net". You can use commas to separate multiple users [Mandatory]
+        @options data {Array} users: Email address of the already existing user(s) in the Sendinblue contacts. Example: "test@example.net". You can use commas to separate multiple users [Mandatory]
     */
 
     public function add_users_list($data)
@@ -504,10 +504,10 @@ class Mailin
     }
 
     /*
-        Delete already existing users in the SendinBlue contacts from the list.
+        Delete already existing users in the Sendinblue contacts from the list.
         @param {Array} data contains php array with key value pair.
         @options data {Integer} id: Id of list to unlink users from it [Mandatory]
-        @options data {Array} users: Email address of the already existing user(s) in the SendinBlue contacts to be modified. Example: "test@example.net". You can use commas to separate multiple users [Mandatory]
+        @options data {Array} users: Email address of the already existing user(s) in the Sendinblue contacts to be modified. Example: "test@example.net". You can use commas to separate multiple users [Mandatory]
     */
     public function delete_users_list($data)
     {
@@ -539,7 +539,7 @@ class Mailin
         Create an Attribute.
         @param {Array} data contains php array with key value pair.
         @options data {String} type: Type of attribute. Possible values – normal, transactional, category, calculated & global ( case sensitive ) [Mandatory]
-        @options data {Array} data: The name and data type of ‘normal’ & ‘transactional’ attribute to be created in your SendinBlue account. It should be sent as an associative array. Example: array(‘ATTRIBUTE_NAME1′ => ‘DATA_TYPE1′, ‘ATTRIBUTE_NAME2’=> ‘DATA_TYPE2′).
+        @options data {Array} data: The name and data type of ‘normal’ & ‘transactional’ attribute to be created in your Sendinblue account. It should be sent as an associative array. Example: array(‘ATTRIBUTE_NAME1′ => ‘DATA_TYPE1′, ‘ATTRIBUTE_NAME2’=> ‘DATA_TYPE2′).
         The name and data value of ‘category’, ‘calculated’ & ‘global’, should be sent as JSON string. Example: ‘[{ "name":"ATTRIBUTE_NAME1", "value":"Attribute_value1" }, { "name":"ATTRIBUTE_NAME2", "value":"Attribute_value2" }]’. You can use commas to separate multiple attributes [Mandatory]
     */
     public function create_attribute($data)
@@ -560,10 +560,10 @@ class Mailin
     }
 
     /*
-        Create a new user if an email provided as input, doesn’t exists in the contact list of your SendinBlue account, otherwise it will update the existing user.
+        Create a new user if an email provided as input, doesn’t exists in the contact list of your Sendinblue account, otherwise it will update the existing user.
         @param {Array} data contains php array with key value pair.
-        @options data {String} email: Email address of the user to be created in SendinBlue contacts. Already existing email address of user in the SendinBlue contacts to be modified [Mandatory]
-        @options data {Array} attributes: The name of attribute present in your SendinBlue account. It should be sent as an associative array. Example: array("NAME"=>"name"). You can use commas to separate multiple attributes [Optional]
+        @options data {String} email: Email address of the user to be created in Sendinblue contacts. Already existing email address of user in the Sendinblue contacts to be modified [Mandatory]
+        @options data {Array} attributes: The name of attribute present in your Sendinblue account. It should be sent as an associative array. Example: array("NAME"=>"name"). You can use commas to separate multiple attributes [Optional]
         @options data {Integer} blacklisted: This is used to blacklist/ Unblacklist a user. Possible values – 0 & 1. blacklisted = 1 means user has been blacklisted [Optional]
         @options data {Array} listid: The list id(s) to be linked from user [Optional]
         @options data {Array} listid_unlink: The list id(s) to be unlinked from user [Optional]
@@ -577,7 +577,7 @@ class Mailin
     /*
         Get Access a specific user Information.
         @param {Array} data contains php array with key value pair.
-        @options data {String} email: Email address of the already existing user in the SendinBlue contacts [Mandatory]
+        @options data {String} email: Email address of the already existing user in the Sendinblue contacts [Mandatory]
     */
     public function get_user($data)
     {
@@ -587,7 +587,7 @@ class Mailin
     /*
         Unlink existing user from all lists.
         @param {Array} data contains php array with key value pair.
-        @options data {String} email: Email address of the already existing user in the SendinBlue contacts to be unlinked from all lists [Mandatory]
+        @options data {String} email: Email address of the already existing user in the Sendinblue contacts to be unlinked from all lists [Mandatory]
     */
     public function delete_user($data)
     {
@@ -612,7 +612,7 @@ class Mailin
     /*
         Export Users Information.
         @param {Array} data contains php array with key value pair.
-        @options data {String} export_attrib: The name of attribute present in your SendinBlue account. You can use commas to separate multiple attributes. Example: "EMAIL,NAME,SMS" [Optional]
+        @options data {String} export_attrib: The name of attribute present in your Sendinblue account. You can use commas to separate multiple attributes. Example: "EMAIL,NAME,SMS" [Optional]
         @options data {String} filter: Filter can be added to export users. Example: "{\"blacklisted\":1}", will export all blacklisted users [Mandatory]
         @options data {String} notify_url: URL that will be called once the export process is finished [Optional]
     */
@@ -767,7 +767,7 @@ class Mailin
     }
 
     /*
-        Aggregate / date-wise report of the SendinBlue SMTP account.
+        Aggregate / date-wise report of the Sendinblue SMTP account.
         @param {Array} data contains php array with key value pair.
         @options data {Integer} aggregate: This is used to indicate, you are interested in all-time totals. Possible values – 0 & 1. aggregate = 0 means it will not aggregate records, and will show stats per day/date wise [Optional]
         @options data {String} start_date: The start date to look up statistics. Date must be in YYYY-MM-DD format and should be before the end_date [Optional]
@@ -809,13 +809,13 @@ class Mailin
     }
 
     /*
-        Send templates created on SendinBlue, through SendinBlue SMTP (transactional mails).
+        Send templates created on Sendinblue, through Sendinblue SMTP (transactional mails).
         @param {Array} data contains php array with key value pair.
-        @options data {Integer} id: Id of the template created on SendinBlue account [Mandatory]
+        @options data {Integer} id: Id of the template created on Sendinblue account [Mandatory]
         @options data {String} to: Email address of the recipient(s). You can use pipe ( | ) to separate multiple recipients. Example: "to-example@example.net|to2-example@example.net" [Mandatory]
         @options data {String} cc: Same as to but for Cc [Optional]
         @options data {String} bcc: Same as to but for Bcc [Optional]
-        @options data {Array} attrv The name of attribute present in your SendinBlue account. It should be sent as an associative array. Example: array("NAME"=>"name"). You can use commas to separate multiple attributes [Optional]
+        @options data {Array} attrv The name of attribute present in your Sendinblue account. It should be sent as an associative array. Example: array("NAME"=>"name"). You can use commas to separate multiple attributes [Optional]
         @options data {String} attachment_url: Provide the absolute url of the attachment. Url not allowed from local machine. File must be hosted somewhere [Optional]
         @options data {Array} attachment: To send attachment/s generated on the fly you have to pass your attachment/s filename & its base64 encoded chunk data as an associative array [Optional]
     */
@@ -837,7 +837,7 @@ class Mailin
         @options data {String} subject: Subject of the campaign [Mandatory]
         @options data {String} from_email: Sender email from which the campaign emails are sent [Mandatory: for Dedicated IP clients & for Shared IP clients, if sender exists]
         @options data {String} reply_to: The reply to email in the campaign emails [Optional]
-        @options data {String} to_fieldv This is to personalize the «To» Field. If you want to include the first name and last name of your recipient, add [PRENOM] [NOM]. To use the contact attributes here, these should already exist in SendinBlue account [Optional]
+        @options data {String} to_fieldv This is to personalize the «To» Field. If you want to include the first name and last name of your recipient, add [PRENOM] [NOM]. To use the contact attributes here, these should already exist in Sendinblue account [Optional]
         @options data {Integer} status: Status of template. Possible values = 0 (default) & 1. status = 0 means template is inactive, & status = 1 means template is active [Optional]
         @options data {Integer} attachment: Status of attachment. Possible values = 0 (default) & 1. attach = 0 means an attachment can’t be sent, & attach = 1 means an attachment can be sent, in the email [Optional]
     */
@@ -858,7 +858,7 @@ class Mailin
         @options data {String} subject: Subject of the campaign [Mandatory]
         @options data {String} from_email: Sender email from which the campaign emails are sent [Mandatory: for Dedicated IP clients & for Shared IP clients, if sender exists]
         @options data {String} reply_to: The reply to email in the campaign emails [Optional]
-        @options data {String} to_field: This is to personalize the «To» Field. If you want to include the first name and last name of your recipient, add [PRENOM] [NOM]. To use the contact attributes here, these should already exist in SendinBlue account [Optional]
+        @options data {String} to_field: This is to personalize the «To» Field. If you want to include the first name and last name of your recipient, add [PRENOM] [NOM]. To use the contact attributes here, these should already exist in Sendinblue account [Optional]
         @options data {Integer} status: Status of template. Possible values = 0 (default) & 1. status = 0 means template is inactive, & status = 1 means template is active [Optional]
         @options data {Integer} attachment: Status of attachment. Possible values = 0 (default) & 1. attach = 0 means an attachment can’t be sent, & attach = 1 means an attachment can be sent, in the email [Optional]
     */
@@ -890,7 +890,7 @@ class Mailin
         @options data {String} name: Name of the SMS campaign [Mandatory]
         @options data {String} sender: This allows you to customize the SMS sender. The number of characters is limited to 11 ( alphanumeric format ) [Optional]
         @options data {String} content: Content of the message. The maximum characters used per SMS is 160, if used more than that, it will be counted as more than one SMS [Optional]
-        @options data {String} bat: Mobile number with the country code to send test SMS. The mobile number defined here should belong to one of your contacts in SendinBlue account and should not be blacklisted [Optional]
+        @options data {String} bat: Mobile number with the country code to send test SMS. The mobile number defined here should belong to one of your contacts in Sendinblue account and should not be blacklisted [Optional]
         @options data {Array} listid: These are the list ids to which the SMS campaign is sent [Mandatory: if scheduled_date is not empty]
         @options data {Array} exclude_list: These are the list ids which will be excluded from the SMS campaign [Optional]
         @options data {String} scheduled_date: The day on which the SMS campaign is supposed to run [Optional]
@@ -908,7 +908,7 @@ class Mailin
         @options data {String} name: Name of the SMS campaign [Optional]
         @options data {String} sender: This allows you to customize the SMS sender. The number of characters is limited to 11 ( alphanumeric format ) [Optional]
         @options data {String} content: Content of the message. The maximum characters used per SMS is 160, if used more than that, it will be counted as more than one SMS [Optional]
-        @options data {String} bat: Mobile number with the country code to send test SMS. The mobile number defined here should belong to one of your contacts in SendinBlue account and should not be blacklisted [Optional]
+        @options data {String} bat: Mobile number with the country code to send test SMS. The mobile number defined here should belong to one of your contacts in Sendinblue account and should not be blacklisted [Optional]
         @options data {Array} listid: hese are the list ids to which the SMS campaign is sent [Mandatory: if scheduled_date is not empty]
         @options data {Array} exclude_list: These are the list ids which will be excluded from the SMS campaign [Optional]
         @options data {String} scheduled_date: The day on which the SMS campaign is supposed to run [Optional]
@@ -925,7 +925,7 @@ class Mailin
         Send a Test SMS.
         @param {Array} data contains php array with key value pair.
         @options data {Integer} id: Id of the SMS campaign [Mandatory]
-        @options data {String} to: Mobile number with the country code to send test SMS. The mobile number defined here should belong to one of your contacts in SendinBlue account and should not be blacklisted [Mandatory]
+        @options data {String} to: Mobile number with the country code to send test SMS. The mobile number defined here should belong to one of your contacts in Sendinblue account and should not be blacklisted [Mandatory]
     */
     public function send_bat_sms($data)
     {
@@ -945,7 +945,7 @@ class Mailin
     }
 
     /**
-     * Method is used to update the user info using web service in SendinBlue.
+     * Method is used to update the user info using web service in Sendinblue.
      */
     public function updateUser($data=array()) {
         $data['key'] = $this->api_key;
@@ -956,7 +956,7 @@ class Mailin
     }
 
     /**
-     * Method is used to add the partner's name in SendinBlue.
+     * Method is used to add the partner's name in Sendinblue.
      * In this case its "WORDPRESS".
      */
     public function partnerWordpress() {
@@ -974,7 +974,7 @@ class Mailin
         return $this->get("account/plugin_config", "");
     }
     /**
-     *  CURL function to send request to the SendinBlue API server
+     *  CURL function to send request to the Sendinblue API server
      */
     public function curlRequest($data)
     {

@@ -132,8 +132,7 @@ Don't fret - you have options!
 - You can try to get one of the local converters working. Check out [this page](https://github.com/rosell-dk/webp-convert/wiki/Meeting-the-requirements-of-the-converters) on the webp-convert wiki. There is also this [test/troubleshooting script](https://github.com/rosell-dk/webp-convert/wiki/A-PHP-script-for-the-webhost) which is handy when messing around with this.
 - Finally, if you have access to another server and are comfortable with installing projects with composer, you can install [webp-convert-cloud-service](https://github.com/rosell-dk/webp-convert-cloud-service). It's open source.
 
-Of course, there is also the option of using another plugin altogether. I can recommend [Optimole](https://optimole.pxf.io/20b0M).
-
+Of course, there is also the option of using another plugin altogether. I can recommend Optimole. If you want to try that out and want to support me in the process, [follow this link](https://optimole.pxf.io/20b0M). It is an affiliate link and will give me a reward in case you decide to sign up.
 
 ### It doesn't work - Although test conversions work, it still serves jpeg images.
 Actually, you might be mistaking, so first, make sure that you didn't make the very common mistake of thinking that something with the URL *example.com/image.jpg* must be a jpeg image. The plugin serves webp images on same URL as the original (unconverted) images, so do not let appearances fool you! Confused? See next FAQ item.
@@ -237,7 +236,7 @@ location ~* ^/?wp-content/.*\.(png|jpe?g)$ {
 location ~* ^/?wp-content/.*\.(png|jpe?g)\.webp$ {
     try_files
       $uri
-      /wp-content/plugins/webp-express/wod/webp-realizer.php?wp-content=wp-content
+      /wp-content/plugins/webp-express/wod/webp-realizer.php?xdestination=x$request_filename&wp-content=wp-content
       ;
 }
 # ------------------- (WebP Express rules ends here)
@@ -491,6 +490,20 @@ To make *WebP Express* work on a free Cloudflare account, you have the following
 
 3. You can switch operation mode to "CDN friendly" and use HTML altering.
 
+### I am on WP Engine
+From version 0.17.1 on WebP Express works with WP engine and this combination will be tested before each release.
+
+You can use the plugin both in "Varied image responses" mode and in "CDN friendly mode".
+
+To make the redirection work, you must:
+1) Grab the nginx configuration found in the "I am on Nginx/OpenResty" section in this FAQ. Use the "try_files" variant.
+2) Contact help center and ask them to insert that configuration.
+3) Make sure the settings match this configuration. Follow the "beware" statements in the "I am on Nginx/OpenResty" section.
+
+WebP Express tweaks the workings of "Redirect to converter" a bit for WP engine. That PHP script usually serves the webp directly, along with a Vary:Accept header. This header is however overwritten by the caching machinery on WP engine. As a work-around, I modified the response of the script for WP engine. Instead of serving the image, it serves a redirect to itself. As there now IS a corresponding webp, this repeated request will not be redirected to the PHP script, but directly to the webp. And headers are OK for those redirects. You can hit the "Live test" button next to "Enable redirection to converter?" to verify that this works as just described.
+
+If you (contrary to this headline!) are in fact not on WP Engine, but might want to be, I have an affiliate link for you. It will give you 3 months free and it will give me a reward too, if you should decide to stay there. Here you go: [Get 3 months free when you sign up for WP Engine.](https://shareasale.com/r.cfm?b=1343154&u=2194916&m=41388&urllink=&afftrack=)
+
 ### WebP Express / ShortPixel setup
 Here is a recipe for using WebP Express together with ShortPixel, such that WebP Express generates the webp's, and ShortPixel only is used to create `<picture>` tags, when it detects a webp image in the same folder as an original.
 
@@ -638,11 +651,30 @@ Here are my current plans ahead: 0.17 will probably be a file manager-like inter
 
 If you wish to affect priorities, it is certainly possible. You can try to argue your case in the forum or you can simply let the money do the talking. By donating as little as a cup of coffee on [ko-fi.com/rosell](https://ko-fi.com/rosell), you can leave a wish. I shall take these wishes into account when prioritizing between new features.
 
+## Changes in 0.17.2
+*(released: 5 Oct 2019)*
+
+* Fixed bug: Updating plugin failed on some systems (in the unzip phase). Problem was introduced in 0.17.0 with the updated binaries.
+* Fixed bug: Alter HTML used the protocol (http/https) for the site for generated links (rather than keeping the protocol for the link). Thanks to Jacob Gullberg from Sweden for discovering this bug.
+
+For more info, see the closed issues on the 0.17.2 milestone on the github repository: https://github.com/rosell-dk/webp-express/milestone/29?closed=1
+
+## Changes in 0.17.1
+*(released: 3 Oct 2019)*
+
+- Fixed NGINX rules in FAQ (added xdestination for the create webp upon request functionality)
+- Fixed issue with Alter HTML. Thanks to @jonathanernst for discovering issue and supplying the patch.
+- WebP Express now works on WP Engine. Check out the new "I am on WP Engine" section in the FAQ
+- Miscellaneous bug fixes
+
+For more info, see the closed issues on the 0.17.1 milestone on the github repository: https://github.com/rosell-dk/webp-express/milestone/27?closed=1
+
 ## Changes in 0.17.0
 *(released: 27 sep 2019)*
 
 * Cwebp conversion method runs on more systems (not subject to open_basedir restrictions and also tries "pure" cwebp command). Thanks to cng11 for reaching out so I spotted this.
 * Ewww conversion method no longer does a remote api-key check for each conversion - so it is faster. If an ewww conversions fails due to a non-functional key, the key will not be tried again (until next time the options are saved)
+* Updated cwebp binaries to version 1.0.3
 
 ## Changes in 0.16.0
 *(released: 24 sep 2019)*

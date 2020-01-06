@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: SendinBlue plugin\n"
+"Project-Id-Version: Sendinblue plugin\n"
 "POT-Creation-Date: 2016-07-29 16:45+0700\n"
 "PO-Revision-Date: 2016-07-29 16:45+0700\n"
 "Last-Translator: \n"
@@ -29,8 +29,8 @@ msgstr "no-reply@sendinblue.com"
 
 #: ../inc/sib-api-manager.php:460 ../page/page-home.php:39
 #: ../page/page-home.php:465 ../page/page-home.php:617
-msgid "SendinBlue"
-msgstr "SendinBlue"
+msgid "Sendinblue"
+msgstr "Sendinblue"
 
 #: ../inc/sib-api-manager.php:616
 msgid "Thank you for subscribing"
@@ -41,8 +41,8 @@ msgid "You have just subscribed to the newsletter of "
 msgstr "Vous vous êtes inscrit à la newsletter de "
 
 #: ../inc/sib-api-manager.php:638
-msgid "-SendinBlue"
-msgstr "-SendinBlue"
+msgid "-Sendinblue"
+msgstr "-Sendinblue"
 
 #: ../inc/sib-api-manager.php:716
 msgid "Unsubscribe"
@@ -167,16 +167,16 @@ msgid "Subscribe"
 msgstr "S'inscrire"
 
 #: ../page/page-form.php:208
-msgid "Select SendinBlue Attribute"
-msgstr "Sélectionner un attribut SendinBlue"
+msgid "Select Sendinblue Attribute"
+msgstr "Sélectionner un attribut Sendinblue"
 
 #: ../page/page-form.php:210
-msgid "SendinBlue merge fields : Normal"
-msgstr "Champs synchronisé avec SendinBlue : normal"
+msgid "Sendinblue merge fields : Normal"
+msgstr "Champs synchronisé avec Sendinblue : normal"
 
 #: ../page/page-form.php:212
-msgid "SendinBlue merge fields : Category"
-msgstr "Champs synchronisé avec SendinBlue : catégorie"
+msgid "Sendinblue merge fields : Category"
+msgstr "Champs synchronisé avec Sendinblue : catégorie"
 
 #: ../page/page-form.php:214
 msgid "Other"
@@ -266,7 +266,7 @@ msgid ""
 "Confirmation emails will be sent through your own email server, but you have "
 "no guarantees on their deliverability. <br/> <a href=\"https://app-smtp."
 "sendinblue.com/\" target=\"_blank\">Click here</a> to send your emails "
-"through SendinBlue in order to improve your deliverability and get statistics"
+"through Sendinblue in order to improve your deliverability and get statistics"
 msgstr ""
 "Les emails de confirmations seront envoyé via votre propre serveur mail, "
 "mais vous n'aurez pasde garanties concernant la délivrabilité <br/> <a href="
@@ -447,11 +447,11 @@ msgid "Step"
 msgstr "Etape"
 
 #: ../page/page-home.php:112
-msgid "Create a SendinBlue Account"
-msgstr "Créer un compte SendinBlue"
+msgid "Create a Sendinblue Account"
+msgstr "Créer un compte Sendinblue"
 
 #: ../page/page-home.php:116
-msgid "By creating a free SendinBlue account, you will be able to send confirmation emails and:"
+msgid "By creating a free Sendinblue account, you will be able to send confirmation emails and:"
 msgstr "En créant un compte gratuit Sendinblue, vous pourrez envoyer vos emails de confirmations d'inscription et :"
 
 #: ../page/page-home.php:118
@@ -459,8 +459,8 @@ msgid "Collect your contacts and upload your lists"
 msgstr "Collecter vos contacts et importer vos listes"
 
 #: ../page/page-home.php:119
-msgid "Use SendinBlue SMTP to send your transactional emails"
-msgstr "Utiliser le SMTP SendinBlue pour vos emails transactionnels"
+msgid "Use Sendinblue SMTP to send your transactional emails"
+msgstr "Utiliser le SMTP Sendinblue pour vos emails transactionnels"
 
 #: ../page/page-home.php:120
 msgid "Email marketing builders"
@@ -475,7 +475,7 @@ msgid "Try all of"
 msgstr "Essayer toutes les"
 
 #: ../page/page-home.php:122
-msgid "SendinBlue's features"
+msgid "Sendinblue's features"
 msgstr "fonctionnalités de Sendinblue"
 
 #: ../page/page-home.php:124
@@ -503,8 +503,8 @@ msgid "Curl error."
 msgstr "Erreur Curl."
 
 #: ../page/page-home.php:140
-msgid "Once you have created a SendinBlue account, activate this plugin to send all of your transactional emails via SendinBlue SMTP. SendinBlue optimizes email delivery to ensure emails reach the inbox."
-msgstr "Une fois votre compte SendinBlue créé, activez ce plugin pour envoyer tous vos emails transactionnels avec SendinBlue SMTP afin d'optimiser la délivrabilité de vos emails."
+msgid "Once you have created a Sendinblue account, activate this plugin to send all of your transactional emails via Sendinblue SMTP. Sendinblue optimizes email delivery to ensure emails reach the inbox."
+msgstr "Une fois votre compte Sendinblue créé, activez ce plugin pour envoyer tous vos emails transactionnels avec Sendinblue SMTP afin d'optimiser la délivrabilité de vos emails."
 
 #: ../page/page-home.php:141
 msgid "To activate your plugin, enter your API Access key."
@@ -600,11 +600,11 @@ msgstr "Emails transactionnels"
 #: ../page/page-home.php:312
 msgid ""
 "Unfortunately, your \"Transactional emails\" are not activated because your "
-"SendinBlue SMTP account is not active. Please send an email to "
+"Sendinblue SMTP account is not active. Please send an email to "
 "contact@sendinblue.com in order to ask for SMTP account activation"
 msgstr ""
 "Malheureusement, vous ne pouvez pas activer \"Emails transactionnels\" parce "
-"que votre compte SMTP SendinBlue n'a pas été validé. Merci d'envoyer un "
+"que votre compte SMTP Sendinblue n'a pas été validé. Merci d'envoyer un "
 "email à contact@sendinblue.com afin de demander l'activation de votre compte "
 "SMTP"
 
@@ -617,15 +617,15 @@ msgid "Please input valid email."
 msgstr "Insérer une adresse valide"
 
 #: ../page/page-home.php:319
-msgid "Activate email through SendinBlue"
-msgstr "Activer les emails avec SendinBlue "
+msgid "Activate email through Sendinblue"
+msgstr "Activer les emails avec Sendinblue "
 
 #: ../page/page-home.php:329
 msgid ""
-"Choose \"Yes\" if you want to use SendinBlue SMTP to send transactional "
+"Choose \"Yes\" if you want to use Sendinblue SMTP to send transactional "
 "emails"
 msgstr ""
-"Choisir \"Oui\" pour utiliser SMTP SendinBlue pour envoyer vos emails "
+"Choisir \"Oui\" pour utiliser SMTP Sendinblue pour envoyer vos emails "
 "transactionnels"
 
 #: ../page/page-home.php:338
@@ -664,11 +664,11 @@ msgstr "Le script Marketing Automation a été désinstallé"
 
 #: ../page/page-home.php:373
 msgid ""
-"To activate Marketing Automation (beta), please go to your SendinBlue's "
+"To activate Marketing Automation (beta), please go to your Sendinblue's "
 "account or contact us at contact@sendinblue.com"
 msgstr ""
 "Pour activer Marketing Automation (beta), veuillez vous connecter à votre "
-"compte SendinBlue ou contactez-nous à contact@sendinblue.com"
+"compte Sendinblue ou contactez-nous à contact@sendinblue.com"
 
 #: ../page/page-home.php:374
 msgid ""
@@ -679,12 +679,12 @@ msgstr ""
 "aux données Marketing Automation et aux scénarios."
 
 #: ../page/page-home.php:376
-msgid "Activate Marketing Automation through SendinBlue"
+msgid "Activate Marketing Automation through Sendinblue"
 msgstr "Activer Marketing Automation via Sendinblue"
 
 #: ../page/page-home.php:383
 msgid ""
-"Choose \"Yes\" if you want to use SendinBlue Automation to track your "
+"Choose \"Yes\" if you want to use Sendinblue Automation to track your "
 "website activity"
 msgstr ""
 "Choisissez \"Oui\" si vous souhaitez utiliser Sendinblue Automation "
@@ -692,17 +692,17 @@ msgstr ""
 
 #: ../page/page-home.php:387
 #, php-format
-msgid "%s Explore our resource %s to learn more about SendinBlue Automation"
+msgid "%s Explore our resource %s to learn more about Sendinblue Automation"
 msgstr ""
 "%s Explorez nos resources %s pour en savoir plus sur l'Automation Sendinblue"
 
 #: ../page/page-home.php:407
-msgid "About SendinBlue"
-msgstr "A propos de SendinBlue"
+msgid "About Sendinblue"
+msgstr "A propos de Sendinblue"
 
 #: ../page/page-home.php:409
-msgid "SendinBlue is an online software that helps you build and grow relationships through marketing and transactional emails, marketing automation, and text messages."
-msgstr "SendinBlue est une plateforme tout-en-un qui permet de gérer votre marketing relationnel : gérez de manière simple et efficace vos campagnes marketing, SMS et emails transactionnels."
+msgid "Sendinblue is an online software that helps you build and grow relationships through marketing and transactional emails, marketing automation, and text messages."
+msgstr "Sendinblue est une plateforme tout-en-un qui permet de gérer votre marketing relationnel : gérez de manière simple et efficace vos campagnes marketing, SMS et emails transactionnels."
 
 #: ../page/page-home.php:412
 msgid "Who we are"
@@ -734,10 +734,10 @@ msgstr "FAQ"
 
 #: ../page/page-home.php:433
 msgid ""
-"Please click on below link if you can't see updated setting on SendinBlue."
+"Please click on below link if you can't see updated setting on Sendinblue."
 msgstr ""
 "Veuillez cliquez sur le lien ci-dessous si vous ne voyez pas vos settings "
-"mis à jour sur SendinBlue"
+"mis à jour sur Sendinblue"
 
 #: ../page/page-home.php:434
 msgid "Sync"
@@ -754,10 +754,10 @@ msgstr "Noter ce plugin"
 #: ../page/page-home.php:469
 msgid ""
 "You are currently not logged in. Create an account or log in to benefit from "
-"all of SendinBlue's features an your Wordpress site."
+"all of Sendinblue's features an your Wordpress site."
 msgstr ""
 "Vous n'êtes actuellement pas connecté. Créez un compte ou connectez vous "
-"pour bénéficier de toutes les fonctionnalités de SendinBlue pour votre site "
+"pour bénéficier de toutes les fonctionnalités de Sendinblue pour votre site "
 "Wordpress"
 
 #: ../page/page-home.php:472
@@ -785,8 +785,8 @@ msgid "Free Subscribe Now"
 msgstr "S'inscrire gratuitement"
 
 #: ../page/page-home.php:609
-msgid "[SendinBlue SMTP] test email"
-msgstr "email de test [SendinBlue SMTP]"
+msgid "[Sendinblue SMTP] test email"
+msgstr "email de test [Sendinblue SMTP]"
 
 #: ../page/page-lists.php:39
 msgid "Lists"
@@ -895,15 +895,15 @@ msgstr "Statistiques"
 
 #: ../sendinblue.php:767
 msgid ""
-"You cannot to use SendinBlue SMTP now because wp_mail has been declared by "
+"You cannot to use Sendinblue SMTP now because wp_mail has been declared by "
 "another process or plugin. "
 msgstr ""
 "Vous ne pouvez pas utilisez le SMTP Sendinblue car wp_mail a été déclaré par "
 "un autre process ou plugin"
 
 #: ../widget/widget_form.php:31
-msgid "SendinBlue Newsletter"
-msgstr "Newsletter SendinBlue"
+msgid "Sendinblue Newsletter"
+msgstr "Newsletter Sendinblue"
 
 #: ../widget/widget_form.php:43
 msgid "Widget Title"
@@ -950,7 +950,7 @@ msgid "Add Terms URL"
 msgstr "Ajouter l'URL de consultation des CGU"
 
 #: ../page/page-form.php:123
-msgid "Note: Forms created in SendinBlue plugin for WordPress won't be displayed in Forms section in SendinBlue application"
+msgid "Note: Forms created in Sendinblue plugin for WordPress won't be displayed in Forms section in Sendinblue application"
 msgstr "Note : Les formulaires créés avec le plugin Sendinblue pour Wordpress ne seront pas présents sur la page Formulaires de votre compte Sendinblue"
 
 #: ../page/page-home.php:464
@@ -966,8 +966,8 @@ msgid "Recommend this plugin"
 msgstr "Recommander ce plugin"
 
 #: ../page/page-home.php:466
-msgid "Recommend the SendinBlue plugin"
-msgstr "Recommander le plugin SendinBlue"
+msgid "Recommend the Sendinblue plugin"
+msgstr "Recommander le plugin Sendinblue"
 
 #: ../sendinblue.php:311
 msgid "Please fill out valid email address"
@@ -1058,13 +1058,13 @@ msgid ""
 "Confirmation emails will be sent through your own email server, but you "
 "have no guarantees on their deliverability. <br/> <a href=\"https://app-"
 "smtp.sendinblue.com\" target=\"_blank\">Click here</a> to send your "
-"emails through SendinBlue in order to improve your deliverability and get "
+"emails through Sendinblue in order to improve your deliverability and get "
 "statistics"
 msgstr ""
 "Les emails de confirmation seront envoyés par votre propre serveur email. "
 "Vous n'avez donc aucune garantie sur la délivrabilité de vos emails. <br/"
 "> Pour améliorer la délivrabilité et obtenir des statistiques, activez "
-"l'envoi des emails via le serveur SMTP de SendinBlue en <a href=\"https://"
+"l'envoi des emails via le serveur SMTP de Sendinblue en <a href=\"https://"
 "app-smtp.sendinblue.com\" target=\"_blank\">cliquant ici</a>"
 
 msgid "Sign up"
@@ -1084,16 +1084,16 @@ msgstr "Liste"
 
 msgid ""
 "Unfortunately, you wannot activate \"Transactional emails\"  because your "
-"SendinBlue SMTP account is not valid. Please send an email to "
+"Sendinblue SMTP account is not valid. Please send an email to "
 "contact@sendinblue.com in order to ask for SMTP account activation"
 msgstr ""
 "Malheureusement, vous ne pouvez pas activer \"Emails transactionnels\" "
-"parce que votre compte SMTP SendinBlue n'a pas été validé. Merci "
+"parce que votre compte SMTP Sendinblue n'a pas été validé. Merci "
 "d'envoyer un email à contact@sendinblue.com afin de demander l'activation "
 "de votre compte SMTP"
 
-msgid "SendinBlue merge fields"
-msgstr "Champs synchronisé avec SendinBlue"
+msgid "Sendinblue merge fields"
+msgstr "Champs synchronisé avec Sendinblue"
 
 msgid "Double Optin"
 msgstr "Double Optin"
@@ -1118,13 +1118,13 @@ msgid ""
 "Confirmation emails will be sent through your own email server, but you "
 "have no guarantees on their deliverability. <a href=\"https://app-smtp."
 "sendinblue.com\" target=\"_blank\">Click here</a> to send your emails "
-"through SendinBlue in order to improve your deliverability and get "
+"through Sendinblue in order to improve your deliverability and get "
 "statistics"
 msgstr ""
 "Les emails de confirmation seront envoyés par votre propre serveur email. "
 "Vous n'avez donc aucune garantie sur la délivrabilité de vos emails. Pour "
 "améliorer la délivrabilité et obtenir des statistiques, activez l'envoi "
-"des emails via le serveur SMTP de SendinBlue en <a href=\"https://app-"
+"des emails via le serveur SMTP de Sendinblue en <a href=\"https://app-"
 "smtp.sendinblue.com\" target=\"_blank\">cliquant ici</a>"
 
 msgid ""
@@ -1145,7 +1145,7 @@ msgstr ""
 "Les emails de confirmation seront envoyés par votre propre serveur email. "
 "Vous n'avez donc aucune garantie sur la délivrabilité de vos emails. Pour "
 "améliorer la délivrabilité et obtenir des statistiques, activez l'envoi "
-"des emails via le serveur SMTP de SendinBlue en"
+"des emails via le serveur SMTP de Sendinblue en"
 
 msgid "click here"
 msgstr "cliquant ici"
@@ -1193,13 +1193,13 @@ msgstr "Obtenez les depuis"
 msgid "your account"
 msgstr "votre compte"
 
-msgid "SendinBlue API Access Key"
+msgid "Sendinblue API Access Key"
 msgstr "Clé API d'accès"
 
 msgid "Please input Access key to activate."
 msgstr "Insérez votre clé API d'accès pour l'activation"
 
-msgid "SendinBlue API Secret Key"
+msgid "Sendinblue API Secret Key"
 msgstr "Clé API secrète"
 
 msgid "My account "
@@ -1214,8 +1214,8 @@ msgstr "Vous avez"
 msgid "existing users."
 msgstr "utilisateurs existants."
 
-msgid "Do you want to add them to SendinBlue?"
-msgstr "Souhaitez-vous les ajouter à SendinBlue ?"
+msgid "Do you want to add them to Sendinblue?"
+msgstr "Souhaitez-vous les ajouter à Sendinblue ?"
 
 msgid "Sync my users"
 msgstr "Synchroniser"
@@ -1259,11 +1259,11 @@ msgstr "Mapping des champs"
 msgid "WordPress Users Attributes"
 msgstr "Attributs des utilisateurs WordPress"
 
-msgid "SendinBlue Contact Attributes"
-msgstr "Attributs de contact SendinBlue"
+msgid "Sendinblue Contact Attributes"
+msgstr "Attributs de contact Sendinblue"
 
-msgid "You have %s existing users. Do you want to add them to SendinBlue?"
-msgstr "Vous avez %s utilisateurs existants. Souhaitez-vous les ajouter à SendinBlue ?"
+msgid "You have %s existing users. Do you want to add them to Sendinblue?"
+msgstr "Vous avez %s utilisateurs existants. Souhaitez-vous les ajouter à Sendinblue ?"
 
 msgid "Set up the message that will appear when the required field is empty"
 msgstr "Configurez le message qui apparaîtra lorsque le champ requis est vide"

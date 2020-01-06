@@ -160,7 +160,7 @@ if ( ! class_exists( 'SIB_Page_Form' ) ) {
 				<div class="page-header"><strong><?php esc_attr_e( 'Forms', 'sib_lang' ); ?></strong></div>
 
 					<form method="post" class="sib-forms-wrapper" style="padding:20px;min-height: 500px;">
-						<i style="font-size: 13px;"><?php esc_attr_e( "Note: Forms created in SendinBlue plugin for WordPress won't be displayed in Forms section in SendinBlue application", 'sib_lang' ); ?></i>
+						<i style="font-size: 13px;"><?php esc_attr_e( "Note: Forms created in Sendinblue plugin for WordPress won't be displayed in Forms section in Sendinblue application", 'sib_lang' ); ?></i>
 			<?php
 			$this->forms->display();
 			?>
@@ -545,11 +545,11 @@ if ( ! class_exists( 'SIB_Page_Form' ) ) {
 										<input type="hidden" id="sib_hidden_submit" data-type="submit"
 											   data-name="submit" data-text="<?php esc_attr_e( 'Subscribe', 'sib_lang' ); ?>">
 										<input type="hidden" id="sib_hidden_message_1"
-											   value="<?php esc_attr_e( 'Select SendinBlue Attribute', 'sib_lang' ); ?>">
+											   value="<?php esc_attr_e( 'Select Sendinblue Attribute', 'sib_lang' ); ?>">
 										<input type="hidden" id="sib_hidden_message_2"
-											   value="<?php esc_attr_e( 'SendinBlue merge fields : Normal', 'sib_lang' ); ?>">
+											   value="<?php esc_attr_e( 'Sendinblue merge fields : Normal', 'sib_lang' ); ?>">
 										<input type="hidden" id="sib_hidden_message_3"
-											   value="<?php esc_attr_e( 'SendinBlue merge fields : Category', 'sib_lang' ); ?>">
+											   value="<?php esc_attr_e( 'Sendinblue merge fields : Category', 'sib_lang' ); ?>">
 										<input type="hidden" id="sib_hidden_message_4"
 											   value="<?php esc_attr_e( 'Other', 'sib_lang' ); ?>">
 										<input type="hidden" id="sib_hidden_message_5"
@@ -591,7 +591,7 @@ if ( ! class_exists( 'SIB_Page_Form' ) ) {
 								<div id="sib_form_alert_message" class="alert alert-danger alert-dismissable fade in"
 									 role="alert" style="display: none;">
 									<span id="sib_disclaim_smtp"
-										  style="display: none;"><?php _e( 'Confirmation emails will be sent through your own email server, but you have no guarantees on their deliverability. <br/> <a href="https://app-smtp.sendinblue.com/" target="_blank">Click here</a> to send your emails through SendinBlue in order to improve your deliverability and get statistics', 'sib_lang' ); ?></span>
+										  style="display: none;"><?php _e( 'Confirmation emails will be sent through your own email server, but you have no guarantees on their deliverability. <br/> <a href="https://app-smtp.sendinblue.com/" target="_blank">Click here</a> to send your emails through Sendinblue in order to improve your deliverability and get statistics', 'sib_lang' ); ?></span>
 									<span id="sib_disclaim_do_template"
 										  style="display: none;"><?php _e( 'The template you selected does not include a link [DOUBLEOPTIN] to allow subscribers to confirm their subscription. <br/> Please edit the template to include a link with [DOUBLEOPTIN] as URL.', 'sib_lang' ); ?></span>
                                     <span id="sib_disclaim_confirm_template"

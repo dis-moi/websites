@@ -86,7 +86,7 @@ const clickInstallHandler = (e) => {
 };
 
 const testExtension = () => {
-	if (!chrome) {
+	if (!el.isChrome || !chrome) {
 		return;
 	}
 	chrome.runtime.sendMessage(EXTENSION_ID, 'version', response => {

@@ -1,6 +1,6 @@
 <?php
 /**
- * Manage SendinBlue API
+ * Manage Sendinblue API
  *
  * Use wp API transient to reduce loading time of API call
  *
@@ -327,7 +327,7 @@ if ( ! class_exists( 'SIB_API_Manager' ) ) {
 		}
 
 		/**
-		 * Send email through SendinBlue
+		 * Send email through Sendinblue
 		 *
 		 * @param array $data - mail data.
 		 * @return array|mixed|object
@@ -474,7 +474,7 @@ if ( ! class_exists( 'SIB_API_Manager' ) ) {
 		}
 
 		/**
-		 * Send a mail for confirmation through SendinBlue
+		 * Send a mail for confirmation through Sendinblue
 		 *
 		 * @param string                   $type - confirm or double-optin.
 		 * @param $to_email - receive email.
@@ -503,7 +503,7 @@ if ( ! class_exists( 'SIB_API_Manager' ) ) {
 			}
 			if ( '' == $sender_email ) {
 				$sender_email = __( 'no-reply@sendinblue.com', 'sib_lang' );
-				$sender_name = __( 'SendinBlue', 'sib_lang' );
+				$sender_name = __( 'Sendinblue', 'sib_lang' );
 			}
 
 			$template_contents = self::get_email_template( $type );
@@ -741,7 +741,7 @@ if ( ! class_exists( 'SIB_API_Manager' ) ) {
 										<br>
 										<?php echo esc_attr__( 'You have just subscribed to the newsletter of ', 'sib_lang' ) . esc_attr( $site_domain ) . ' .'; ?>
 										<br><br>
-										<?php esc_attr_e( '-SendinBlue', 'sib_lang' ); ?></div>
+										<?php esc_attr_e( '-Sendinblue', 'sib_lang' ); ?></div>
 								</td>
 							</tr>
 							</tbody>
@@ -842,7 +842,7 @@ if ( ! class_exists( 'SIB_API_Manager' ) ) {
 										<br>
 										<?php esc_attr_e( 'The user has been unsubscribed', 'sib_lang' ); ?><br>
 										<br>
-										-SendinBlue
+										-Sendinblue
 									</div>
 								</td>
 							</tr>

@@ -117,13 +117,13 @@ if ( ! class_exists( 'SIB_Page_Campaigns' ) ) {
 					$type = isset( $_GET['type'] ) ? sanitize_text_field( $_GET['type'] ) : 'classic';
 					?>
 					<iframe id="datamain"
-							src="https://my.sendinblue.com/camp/step1/type/<?php echo esc_attr( $type ); ?>/access_token/<?php echo esc_attr( $access_token ); ?>/lang/<?php echo esc_attr( $lang ); ?>"
+							src="https://my.sendinblue.com/camp/step1/type/<?php echo esc_attr( $type ); ?>/access_token/<?php echo esc_attr( $access_token ); ?>?lang=<?php echo esc_attr( $lang ); ?>"
 							width="100%" height="750" scrolling="yes"></iframe>
 					<?php
 				} else {
 					?>
 					<iframe id="datamain"
-						src="https://my.sendinblue.com/camp/listing/access_token/<?php echo esc_attr( $access_token ); ?>/lang/<?php echo esc_attr( $lang ); ?>#<?php echo esc_attr( $sort ); ?>"
+						src="https://my.sendinblue.com/camp/lists/email/access_token/<?php echo esc_attr( $access_token ); ?>?lang=<?php echo esc_attr( $lang ); ?>#<?php echo esc_attr( $sort ); ?>"
 						width="100%" height="750" scrolling="yes"></iframe>
 
 					<?php

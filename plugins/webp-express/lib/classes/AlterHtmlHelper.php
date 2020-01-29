@@ -185,17 +185,18 @@ class AlterHtmlHelper
             self::$options['destination-extension'],
             ($rootId == 'uploads')
         );
-        $result['destination-url'] = $destinationRoot['url'] . '/' . $relPathFromImageRootToDest;
-
         $destPathAbs = $destinationRoot['abs-path'] . '/' . $relPathFromImageRootToDest;
-        $destUrl = $destinationRoot['url'] . '/' . $relPathFromImageRootToDest;
-
         $webpMustExist = self::$options['only-for-webps-that-exists'];
         if ($webpMustExist && (!@file_exists($destPathAbs))) {
             return false;
         }
-        return $destUrl;
 
+        $destUrl = $destinationRoot['url'] . '/' . $relPathFromImageRootToDest;
+
+        // Fix scheme (use same as source)
+        $sourceUrlComponents = parse_url($sourceUrl);
+        $destUrlComponents = parse_url($destUrl);
+        return $sourceUrlComponents['scheme'] . '://' . $sourceUrlComponents['host'] . $destUrlComponents['path'];
     }
 
 
@@ -208,6 +209,10 @@ class AlterHtmlHelper
      */
     public static function getWebPUrl($sourceUrl, $returnValueOnFail)
     {
+        // Get the options
+        if (!isset(self::$options)) {
+            self::$options = json_decode(Option::getOption('webp-express-alter-html-options', null), true);
+        }
 
         // Fail for webp-disabled  browsers (when "only-for-webp-enabled-browsers" is set)
         if ((self::$options['only-for-webp-enabled-browsers']) && (strpos($_SERVER['HTTP_ACCEPT'], 'image/webp') === false)) {
@@ -217,11 +222,6 @@ class AlterHtmlHelper
         // Fail for relative urls. Wordpress doesn't use such very much anyway
         if (!preg_match('#^https?://#', $sourceUrl)) {
             return $returnValueOnFail;
-        }
-
-        // Get the options
-        if (!isset(self::$options)) {
-            self::$options = json_decode(Option::getOption('webp-express-alter-html-options', null), true);
         }
 
         // Fail if the image type isn't enabled

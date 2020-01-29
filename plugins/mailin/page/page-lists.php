@@ -112,7 +112,7 @@ if ( ! class_exists( 'SIB_Page_Lists' ) ) {
 			} else {
 				?>
 				<iframe id="datamain"
-						src="https://my.sendinblue.com/lists/index/access_token/<?php echo esc_attr( $access_token ); ?>/lang/<?php echo esc_attr( $lang ); ?>"
+						src="https://my.sendinblue.com/lists/index/access_token/<?php echo esc_attr( $access_token ); ?>?lang=<?php echo esc_attr( $lang ); ?>"
 						width="100%" height="800" scrolling="yes"></iframe>
 				<?php
 			}

@@ -106,7 +106,7 @@ if ( ! class_exists( 'SIB_Page_Statistics' ) ) {
 			$access_token = SIB_API_Manager::update_access_token();
 			$lang = substr( get_bloginfo( 'language' ),0,2 );
 			?>
-				<iframe id="datamain" src="https://my.sendinblue.com/camp/message/access_token/<?php echo esc_attr( $access_token ); ?>/lang/<?php echo esc_attr( $lang ); ?>" width="100%" height="750" scrolling="yes"></iframe>
+				<iframe id="datamain" src="https://my.sendinblue.com/camp/message/access_token/<?php echo esc_attr( $access_token ); ?>?lang=<?php echo esc_attr( $lang ); ?>" width="100%" height="750" scrolling="yes"></iframe>
 		<?php
 		}
 

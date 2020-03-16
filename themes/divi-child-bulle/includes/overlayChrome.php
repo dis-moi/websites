@@ -12,10 +12,10 @@
   <div class="contentOverlay">
     <div class="imgChrome"></div>
     <div class="title">
-      Cliquer<br>pour ajouter Bulles
+      Cliquer<br>pour ajouter Dismoi
     </div>
     <div class="infos">
-      Bulles respecte votre vie privée :
+        Dismoi respecte votre vie privée :
       <ul>
         <li>Aucune publicité, aucune vente de données</li>
         <li>Les données utilisées servent uniquement à afficher les messages et à améliorer l‘outil.</li>

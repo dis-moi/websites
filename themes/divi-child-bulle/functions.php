@@ -91,7 +91,7 @@ add_filter('upload_mimes', 'cc_mime_types');
 function prefix_customize_register( $wp_customize ) {
 
     $wp_customize->add_section( 'bulle_section' , array(
-        'title'      => __( 'Configuration Bulles', 'divi-child-bulle' ),
+        'title'      => __( 'Configuration Bulles/Dismoi', 'divi-child-bulle' ),
         'priority'   => 30,
     ) );
 

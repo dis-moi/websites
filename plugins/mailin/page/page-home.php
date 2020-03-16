@@ -178,7 +178,7 @@ if ( ! class_exists( 'SIB_Page_Home' ) ) {
 			}
 			// set default sender info.
 			$senders = SIB_API_Manager::get_sender_lists();
-			if ( ! isset( $home_settings['sender'] ) && SIB_Manager::is_done_validation() && is_array( $senders ) ) {
+			if (SIB_Manager::is_done_validation() && is_array( $senders)  && (!isset( $home_settings['sender'] ) || (count($senders) == 1 && $home_settings['from_email'] != $senders[0]['from_email']))) {
 				$home_settings['sender'] = $senders[0]['id'];
 				$home_settings['from_name'] = $senders[0]['from_name'];
 				$home_settings['from_email'] = $senders[0]['from_email'];

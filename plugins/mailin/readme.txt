@@ -2,7 +2,7 @@
 Contributors: neeraj_slit
 Tags: sendinblue, marketing automation, email marketing, email campaign, newsletter, wordpress smtp, subscription form, phpmailer, SMTP, wp_mail, massive email, sendmail, ssl, tls, wp-phpmailer, mail smtp, mailchimp, newsletters, email plugin, signup form, email widget, widget, plugin, sidebar, shortcode
 Requires at least: 4.4
-Tested up to: 5.2.2
+Tested up to: 5.3.2
 Stable tag: trunk
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -112,10 +112,13 @@ In order to create a signup form, you need to:
 2. Integrate the form in a sidebar using a widget from WP panel > Appearance > Widgets. The Sendinblue widget form should appear in your widgets list, you just to have to drag and drop the widget into the sidebar of your choice. 
 
 == Changelog ==
+= 2.9.11 =
+* Add Validation on required fields when invisible captcha is enabled on Forms 
+* New Sender not Updated issue fixed
+
 = 2.9.10 =
 * new branding changes
 
-== Changelog ==
 = 2.9.9 =
 * campaign and list page url issue fixed
 

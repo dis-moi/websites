@@ -291,3 +291,11 @@ function mytheme_et_project_posttype_args( $args ) {
         'show_ui'             => false
     ));
 }
+
+add_filter ('widget_text', 'do_shortcode');
+
+function year_shortcode () {
+    $year = date_i18n ('Y');
+    return $year;
+}
+add_shortcode ('year', 'year_shortcode');

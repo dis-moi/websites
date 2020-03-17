@@ -91,7 +91,7 @@ add_filter('upload_mimes', 'cc_mime_types');
 function prefix_customize_register( $wp_customize ) {
 
     $wp_customize->add_section( 'bulle_section' , array(
-        'title'      => __( 'Configuration Bulles', 'divi-child-bulle' ),
+        'title'      => __( 'Configuration Bulles/Dismoi', 'divi-child-bulle' ),
         'priority'   => 30,
     ) );
 
@@ -291,3 +291,11 @@ function mytheme_et_project_posttype_args( $args ) {
         'show_ui'             => false
     ));
 }
+
+add_filter ('widget_text', 'do_shortcode');
+
+function year_shortcode () {
+    $year = date_i18n ('Y');
+    return $year;
+}
+add_shortcode ('year', 'year_shortcode');

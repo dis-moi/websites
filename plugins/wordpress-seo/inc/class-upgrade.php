@@ -51,6 +51,8 @@ class WPSEO_Upgrade {
 			'12.1-RC0'  => 'clean_all_notifications',
 			'12.3-RC0'  => 'upgrade_123',
 			'12.4-RC0'  => 'upgrade_124',
+			'12.8-RC0'  => 'upgrade_128',
+			'13.2-RC0'  => 'upgrade_132',
 		];
 
 		array_walk( $routines, [ $this, 'run_upgrade_routine' ], $version );
@@ -204,7 +206,7 @@ class WPSEO_Upgrade {
 			}
 
 			foreach ( $wp_query->posts as $post ) {
-				if ( ! in_array( $post->ID, $excluded_posts ) ) {
+				if ( ! in_array( (string) $post->ID, $excluded_posts, true ) ) {
 					$excluded_posts[] = $post->ID;
 				}
 			}
@@ -677,6 +679,53 @@ class WPSEO_Upgrade {
 		// Removes the WordPress update notification, because it is no longer necessary when WordPress 5.3 is released.
 		$center = Yoast_Notification_Center::get();
 		$center->remove_notification_by_id( 'wpseo-dismiss-wordpress-upgrade' );
+	}
+
+	/**
+	 * Performs the 12.8 upgrade.
+	 */
+	private function upgrade_128() {
+		// Re-save wpseo to make sure bf_banner_2019_dismissed key is gone.
+		$this->cleanup_option_data( 'wpseo' );
+
+		Yoast_Notification_Center::get()->remove_notification_by_id( 'wpseo-dismiss-page_comments-notice' );
+		Yoast_Notification_Center::get()->remove_notification_by_id( 'wpseo-dismiss-wordpress-upgrade' );
+	}
+
+	/**
+	 * Performs the 13.2 upgrade.
+	 */
+	private function upgrade_132() {
+		Yoast_Notification_Center::get()->remove_notification_by_id( 'wpseo-dismiss-tagline-notice' );
+		Yoast_Notification_Center::get()->remove_notification_by_id( 'wpseo-dismiss-permalink-notice' );
+		Yoast_Notification_Center::get()->remove_notification_by_id( 'wpseo-dismiss-onpageorg' );
+
+		// Transfers the onpage option value to the ryte option.
+		$ryte_option   = get_option( 'wpseo_ryte' );
+		$onpage_option = get_option( 'wpseo_onpage' );
+		if ( ! $ryte_option && $onpage_option ) {
+			update_option( 'wpseo_ryte', $onpage_option );
+			delete_option( 'wpseo_onpage' );
+		}
+
+		// Changes onpage_indexability to ryte_indexability.
+		$wpseo_option = get_option( 'wpseo' );
+		if ( isset( $wpseo_option['onpage_indexability'] ) && ! isset( $wpseo_option['ryte_indexability'] ) ) {
+			$wpseo_option['ryte_indexability'] = $wpseo_option['onpage_indexability'];
+			unset( $wpseo_option['onpage_indexability'] );
+			update_option( 'wpseo', $wpseo_option );
+		}
+
+		if ( wp_next_scheduled( 'wpseo_ryte_fetch' ) ) {
+			wp_clear_scheduled_hook( 'wpseo_ryte_fetch' );
+		}
+
+		/*
+		 * Re-register capabilities to add the new `view_site_health_checks`
+		 * capability to the SEO Manager role.
+		 */
+		do_action( 'wpseo_register_capabilities' );
+		WPSEO_Capability_Manager_Factory::get()->add();
 	}
 
 	/**

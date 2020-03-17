@@ -3,7 +3,14 @@
 /*
  * Enqueue parent and child styles
  */
-function my_theme_enqueue_styles() {
+function divi_child_bulle_enqueue_styles() {
+
+    // remove dashicons for performancep
+	if (current_user_can( 'update_core' )) {
+		return;
+	}
+	wp_deregister_style('dashicons');
+
 	wp_enqueue_style( 'parent-style', get_template_directory_uri() . '/style.css' );
 	wp_enqueue_style(
 		'bulle-child-style',
@@ -12,31 +19,31 @@ function my_theme_enqueue_styles() {
 		wp_get_theme()->get('Version')
 	);
 
-    wp_register_script(
-        'bulle-child-script',
-        get_stylesheet_directory_uri() . '/dist/main.js',
-        [],
-        wp_get_theme()->get('Version'),
-        true
-    );
+	wp_register_script(
+		'bulle-child-script',
+		get_stylesheet_directory_uri() . '/dist/main.js',
+		[],
+		wp_get_theme()->get('Version'),
+		true
+	);
 
-    $page = get_theme_mod( 'bulle_setting_non_supporte' );
-    $url = (isset($page) && !empty($page)) ? get_permalink($page) : '';
+	$page = get_theme_mod( 'bulle_setting_non_supporte' );
+	$url = (isset($page) && !empty($page)) ? get_permalink($page) : '';
 
-    $page_installe = get_theme_mod( 'bulle_setting_deja_installe' );
-    $url_installe = (isset($page_installe) && !empty($page_installe)) ? get_permalink($page_installe) : '';
-    $data = [
-        'bulle_non_supporte' => $url,
-        'bulle_deja_installe' => $url_installe,
-        'bulle_lien_extension_chrome' => get_theme_mod( 'bulle_setting_extension_chrome', 'https://chrome.google.com/webstore/detail/le-m%C3%AAme-en-mieux/fpjlnlnbacohacebkadbbjebbipcknbg?hl=fr' ),
-        'bulle_lien_extension_firefox' => get_theme_mod( 'bulle_setting_extension_firefox', 'https://addons.mozilla.org/fr/firefox/addon/lmem/' ),
-        'bulle_extension_id_chrome' => get_theme_mod( 'bulle_setting_extension_id_chrome', 'cifabmmlclhhhlhhabmbhhfocdgglljb' ),
-    ];
-    wp_localize_script( 'bulle-child-script', 'bull_config', $data );
-    wp_enqueue_script( 'bulle-child-script' );
+	$page_installe = get_theme_mod( 'bulle_setting_deja_installe' );
+	$url_installe = (isset($page_installe) && !empty($page_installe)) ? get_permalink($page_installe) : '';
+	$data = [
+		'bulle_non_supporte' => $url,
+		'bulle_deja_installe' => $url_installe,
+		'bulle_lien_extension_chrome' => get_theme_mod( 'bulle_setting_extension_chrome', 'https://chrome.google.com/webstore/detail/le-m%C3%AAme-en-mieux/fpjlnlnbacohacebkadbbjebbipcknbg?hl=fr' ),
+		'bulle_lien_extension_firefox' => get_theme_mod( 'bulle_setting_extension_firefox', 'https://addons.mozilla.org/fr/firefox/addon/lmem/' ),
+		'bulle_extension_id_chrome' => get_theme_mod( 'bulle_setting_extension_id_chrome', 'cifabmmlclhhhlhhabmbhhfocdgglljb' ),
+	];
+	wp_localize_script( 'bulle-child-script', 'bull_config', $data );
+	wp_enqueue_script( 'bulle-child-script' );
 
 }
-add_action( 'wp_enqueue_scripts', 'my_theme_enqueue_styles' );
+add_action( 'wp_enqueue_scripts', 'divi_child_bulle_enqueue_styles' );
 
 
 /*
@@ -84,7 +91,7 @@ add_filter('upload_mimes', 'cc_mime_types');
 function prefix_customize_register( $wp_customize ) {
 
     $wp_customize->add_section( 'bulle_section' , array(
-        'title'      => __( 'Configuration Bulles', 'divi-child-bulle' ),
+        'title'      => __( 'Configuration Bulles/Dismoi', 'divi-child-bulle' ),
         'priority'   => 30,
     ) );
 
@@ -284,3 +291,11 @@ function mytheme_et_project_posttype_args( $args ) {
         'show_ui'             => false
     ));
 }
+
+add_filter ('widget_text', 'do_shortcode');
+
+function year_shortcode () {
+    $year = date_i18n ('Y');
+    return $year;
+}
+add_shortcode ('year', 'year_shortcode');

@@ -36,7 +36,7 @@ const closeOverlay = () => {
 const openRequestedPopup = (e) => {
 	const windowsHeight = $( document ).height();
 	const windowsWidth = ($(window).width()/2)-20;
-	const popUpURL = el.isChrome ? LINK_POPUP_EXTENSION_CHROME : LINK_POPUP_EXTENSION_FF;
+	const popUpURL = el.isChrome || el.isOpera ? LINK_POPUP_EXTENSION_CHROME : LINK_POPUP_EXTENSION_FF;
 	let strWindowFeatures = "width="+windowsWidth+",height="+windowsHeight+",resizable=yes,scrollbars=yes,status=1";
 	if(el.isFirefox){
 
@@ -74,7 +74,7 @@ const clickInstallHandler = (e) => {
 	if (el.dejaInstalle && LINK_DEJA_INSTALLE) {
 		window.location.href = LINK_DEJA_INSTALLE;
 	} else {
-		if(el.isChrome || el.isFirefox) {
+		if(el.isOpera || el.isChrome || el.isFirefox) {
 			openRequestedPopup();
 		} else {
 			if (LINK_UNAVAILABLE) {
@@ -143,7 +143,7 @@ const initExtensionInstaller  = () => {
 	setUp();
 	start();
 
-	console.info('Scripts for installing bulle extension TEST');
+	console.info('Scripts for installing bulle extension');
 
 };
 

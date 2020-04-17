@@ -26,11 +26,15 @@ function divi_child_bulle_enqueue_styles() {
     $page = get_theme_mod( 'bulle_setting_non_supporte' );
     $url = (isset($page) && !empty($page)) ? get_permalink($page) : '';
 
+    $page_opera = get_theme_mod( 'bulle_setting_lien_opera' );
+    $url_opera = (isset($page_opera) && !empty($page_opera)) ? get_permalink($page_opera) : '';
+
     $page_installe = get_theme_mod( 'bulle_setting_deja_installe' );
     $url_installe = (isset($page_installe) && !empty($page_installe)) ? get_permalink($page_installe) : '';
     $data = [
         'bulle_non_supporte' => $url,
         'bulle_deja_installe' => $url_installe,
+        'bulle_lien_opera' => $url_opera,
         'bulle_lien_extension_chrome' => get_theme_mod( 'bulle_setting_extension_chrome', 'https://chrome.google.com/webstore/detail/le-m%C3%AAme-en-mieux/fpjlnlnbacohacebkadbbjebbipcknbg?hl=fr' ),
         'bulle_lien_extension_firefox' => get_theme_mod( 'bulle_setting_extension_firefox', 'https://addons.mozilla.org/fr/firefox/addon/lmem/' ),
         'bulle_extension_id_chrome' => get_theme_mod( 'bulle_setting_extension_id_chrome', 'cifabmmlclhhhlhhabmbhhfocdgglljb' ),
@@ -121,6 +125,27 @@ function prefix_customize_register( $wp_customize ) {
                 'label'          => __( 'Page Extension Non Supporté', 'divi-child-bulle' ),
                 'section'        => 'bulle_section',
                 'settings'       => 'bulle_setting_non_supporte',
+                'type'           => 'dropdown-pages'
+            )
+        )
+    );
+
+    // lien opera
+    $wp_customize->add_setting( 'bulle_setting_lien_opera',
+        array(
+            'type'       => 'theme_mod', //Is this an 'option' or a 'theme_mod'?
+            'capability' => 'edit_theme_options', //Optional. Special permissions for accessing this setting.
+        )
+    );
+
+    $wp_customize->add_control(
+        new WP_Customize_Control(
+            $wp_customize,
+            'bulle_control_lien_opera',
+            array(
+                'label'          => __( 'Page Opera', 'divi-child-bulle' ),
+                'section'        => 'bulle_section',
+                'settings'       => 'bulle_setting_lien_opera',
                 'type'           => 'dropdown-pages'
             )
         )

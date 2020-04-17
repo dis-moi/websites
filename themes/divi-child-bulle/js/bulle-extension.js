@@ -1,4 +1,6 @@
 
+// import 'core-js/modules/es.array.find'; // filesize too big
+import 'jspolyfill-array.prototype.find';
 import $ from 'jquery';
 import Bowser from "bowser";
 
@@ -7,6 +9,7 @@ const LINK_POPUP_EXTENSION_CHROME = window.bull_config.bulle_lien_extension_chro
 const LINK_POPUP_EXTENSION_FF = window.bull_config.bulle_lien_extension_firefox;
 const EXTENSION_ID = window.bull_config.bulle_extension_id_chrome;
 const LINK_DEJA_INSTALLE = window.bull_config.bulle_deja_installe;
+const LINK_OPERA = window.bull_config.bulle_lien_opera;
 
 const el = {
 	windowObjectReference: null,
@@ -36,7 +39,7 @@ const closeOverlay = () => {
 const openRequestedPopup = (e) => {
 	const windowsHeight = $( document ).height();
 	const windowsWidth = ($(window).width()/2)-20;
-	const popUpURL = el.isChrome ? LINK_POPUP_EXTENSION_CHROME : LINK_POPUP_EXTENSION_FF;
+	const popUpURL = el.isChrome || el.isOpera ? LINK_POPUP_EXTENSION_CHROME : LINK_POPUP_EXTENSION_FF;
 	let strWindowFeatures = "width="+windowsWidth+",height="+windowsHeight+",resizable=yes,scrollbars=yes,status=1";
 	if(el.isFirefox){
 
@@ -76,6 +79,8 @@ const clickInstallHandler = (e) => {
 	} else {
 		if(el.isChrome || el.isFirefox) {
 			openRequestedPopup();
+		} else if (el.isOpera && LINK_OPERA) {
+			window.location.href = LINK_OPERA;
 		} else {
 			if (LINK_UNAVAILABLE) {
 				window.location.href = LINK_UNAVAILABLE;
@@ -113,11 +118,11 @@ const setUp  = () => {
 
 
 const start = () => {
-	$('.bulle-installer').click(clickInstallHandler);
+	$('.bulle-installer').on('click', clickInstallHandler);
 
-	$('#restartInstallButton').click(clickInstallHandler);
+	$('#restartInstallButton').on('click', clickInstallHandler);
 
-	$( ".overlay" ).click((ev) => {
+	$( ".overlay" ).on('click', (ev) => {
 		if ( ev.target.id !== 'restartInstallButton' ){
 			if  (ev.target.id !== 'h-icon') {
 				closeOverlay();
@@ -125,7 +130,7 @@ const start = () => {
 		}
 	});
 
-	$('#notNowButton').click(() => {
+	$('#notNowButton').on('click', () => {
 		if (el.isFirefox) {
 			closeWin();
 		}
@@ -143,7 +148,7 @@ const initExtensionInstaller  = () => {
 	setUp();
 	start();
 
-	console.info('Scripts for installing bulle extension TEST');
+	console.info('Scripts for installing bulle extension');
 
 };
 

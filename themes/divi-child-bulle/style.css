@@ -87,6 +87,9 @@ input {
 .mobile_menu_bar_toggle:before {
   font-weight: bold; }
 
+.logo-header {
+  max-width: 430px; }
+
 #main-footer .footer-logo {
   max-width: 150px !important;
   width: 100%;

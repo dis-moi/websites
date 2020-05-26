@@ -42,6 +42,20 @@ function divi_child_bulle_enqueue_styles() {
     wp_localize_script( 'bulle-child-script', 'bull_config', $data );
     wp_enqueue_script( 'bulle-child-script' );
 
+
+    // if ( is_page_template( 'page-profile-app.php' ) ) {
+        $relpath = '/profile-app/js/profiles.bundle.js';
+        $vsn = filemtime( get_theme_file_path( $relpath ) );
+        wp_register_script(
+            'dismoi-profiler-app',
+            get_stylesheet_directory_uri() . $relpath,
+            [],
+            $vsn,
+            true
+        );
+        wp_enqueue_script( 'dismoi-profiler-app' );
+   // }
+
 }
 add_action( 'wp_enqueue_scripts', 'divi_child_bulle_enqueue_styles' );
 

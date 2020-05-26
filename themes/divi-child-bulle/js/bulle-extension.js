@@ -37,9 +37,14 @@ const closeOverlay = () => {
 
 /*Function open PopUp*/
 const openRequestedPopup = (e) => {
+	// fail if neither chrome or firefox
+	// To Do handle mobile cases
+	if (!el.isChrome || !el.isFirefox) {
+		return;
+	}
 	const windowsHeight = $( document ).height();
 	const windowsWidth = ($(window).width()/2)-20;
-	const popUpURL = el.isChrome || el.isOpera ? LINK_POPUP_EXTENSION_CHROME : LINK_POPUP_EXTENSION_FF;
+	const popUpURL = el.isChrome ? LINK_POPUP_EXTENSION_CHROME : LINK_POPUP_EXTENSION_FF;
 	let strWindowFeatures = "width="+windowsWidth+",height="+windowsHeight+",resizable=yes,scrollbars=yes,status=1";
 	if(el.isFirefox){
 
@@ -89,6 +94,8 @@ const clickInstallHandler = (e) => {
 	}
 	e.preventDefault();
 };
+
+window.clickInstallHandler = clickInstallHandler;
 
 const testExtension = () => {
 	if (!el.isChrome || !chrome) {

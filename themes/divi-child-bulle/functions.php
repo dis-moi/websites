@@ -42,7 +42,6 @@ function divi_child_bulle_enqueue_styles() {
     wp_localize_script( 'bulle-child-script', 'bull_config', $data );
     wp_enqueue_script( 'bulle-child-script' );
 
-
     if ( is_page_template( 'page-profile-app.php' ) ) {
         $relpath = '/profile-app/js/profiles.bundle.js';
         $vsn = filemtime( get_theme_file_path( $relpath ) );
@@ -347,3 +346,32 @@ function year_shortcode () {
     return $year;
 }
 add_shortcode ('year', 'year_shortcode');
+
+
+function profiles_rewrite() {
+    // get first page with profile
+    $args = array(
+        'post_type' => 'page',
+        'posts_per_page' => 1,
+        'meta_query' => array(
+            array(
+                'key' => '_wp_page_template',
+                'value' => 'page-profile-app.php'
+            )
+        )
+    );
+    $the_pages = new WP_Query( $args );
+    if ( $the_pages->posts && count( $the_pages->posts ) ) {
+        $slug = $the_pages->posts[0]->post_name;
+        $id = $the_pages->posts[0]->ID;
+
+        // must refresh permalinks
+        add_rewrite_rule(
+            '^'.$slug.'/([0-9]+)/([^/]*)?',
+            'index.php?pagename='.$slug,
+            'top'
+        );
+
+    }
+}
+add_action('init', 'profiles_rewrite');

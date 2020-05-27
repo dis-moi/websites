@@ -90,40 +90,56 @@ input {
 .logo-header {
   max-width: 430px; }
 
-#main-footer .footer-logo {
-  max-width: 150px !important;
-  width: 100%;
-  height: auto; }
+#main-footer {
+  /*
+	.footer-widget {
+		margin-bottom: $d_spacer_smm;
+	}
 
-#main-footer .footer-widget {
-  margin-bottom: 15px; }
+	.footer-widget:nth-of-type(3) {
 
-@media (min-width: 960px) {
-  #main-footer .footer-widget:nth-of-type(3) {
-    display: flex;
-    justify-content: flex-end; } }
+		@include respond-to($mq-medium) {
+			display: flex;
+			justify-content: flex-end;
+		}
 
-#main-footer #footer-widgets {
-  padding: 15px 0; }
+	}
+
+	#footer-widgets {
+		padding: $d_spacer_smm 0 $d_spacer_smm;
+
+		@include respond-to($mq-medium) {
+			padding: $d_spacer_m 0 $d_spacer_smm;
+		}
+
+		.footer-widget {
+			margin-bottom: 20px !important;
+		}
+
+	}
+	*/ }
+  #main-footer .footer-logo {
+    max-width: 150px !important;
+    width: 100%;
+    height: auto; }
   @media (min-width: 960px) {
-    #main-footer #footer-widgets {
-      padding: 15px 0; } }
-
-#main-footer .menu {
-  list-style-type: none;
-  margin: 0;
-  padding: 0; }
-  #main-footer .menu li {
-    display: inline;
-    padding-left: 0;
-    margin-right: 10px; }
-    #main-footer .menu li:before {
-      content: none; }
-    #main-footer .menu li a:hover, #main-footer .menu li a:focus {
-      text-decoration: underline; }
-
-#main-footer #footer-bottom {
-  display: none; }
+    #main-footer .footer-widget:nth-of-type(2) {
+      display: flex;
+      justify-content: flex-end; } }
+  #main-footer .menu {
+    list-style-type: none;
+    margin: 0;
+    padding: 0; }
+    #main-footer .menu li {
+      display: inline;
+      padding-left: 0;
+      margin-right: 10px; }
+      #main-footer .menu li:before {
+        content: none; }
+      #main-footer .menu li a:hover, #main-footer .menu li a:focus {
+        text-decoration: underline; }
+  #main-footer #footer-bottom {
+    display: none; }
 
 .page-template-page-landing-alternating #main-header {
   box-shadow: none;

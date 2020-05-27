@@ -28,6 +28,7 @@ $color_body_light: $color_gray_brushed_metal;
 
 $mq-small-less : '<small';
 $mq-small : 'small';
+$mq-divi-medium : 'divimedium';
 $mq-medium : 'medium';
 $mq-xmedium : 'xmedium';
 $mq-large : 'large';
@@ -35,6 +36,7 @@ $mq-large : 'large';
 $breakpoints: (
 		$mq-small-less:  ( max-width:  767px ),
 		$mq-small:  ( min-width:  768px ),
+		$mq-divi-medium: ( min-width:  980px ),
 		$mq-medium: ( min-width:  960px ),
 		$mq-xmedium: ( min-width:  1024px ),
 		$mq-large:  ( min-width: 1200px )

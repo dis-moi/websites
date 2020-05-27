@@ -95,6 +95,20 @@ input {
   width: 100%;
   height: auto; }
 
+#main-footer .footer-widget {
+  margin-bottom: 15px; }
+
+@media (min-width: 960px) {
+  #main-footer .footer-widget:nth-of-type(3) {
+    display: flex;
+    justify-content: flex-end; } }
+
+#main-footer #footer-widgets {
+  padding: 15px 0; }
+  @media (min-width: 960px) {
+    #main-footer #footer-widgets {
+      padding: 15px 0; } }
+
 #main-footer .menu {
   list-style-type: none;
   margin: 0;
@@ -107,6 +121,9 @@ input {
       content: none; }
     #main-footer .menu li a:hover, #main-footer .menu li a:focus {
       text-decoration: underline; }
+
+#main-footer #footer-bottom {
+  display: none; }
 
 .page-template-page-landing-alternating #main-header {
   box-shadow: none;

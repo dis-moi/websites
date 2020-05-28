@@ -12,6 +12,7 @@
   "dependencies": {
     "bowser": "^2.4.0",
     "core-js": "3",
+    "delegate": "^3.2.0",
     "font-awesome": "^4.7.0"
   },
   "devDependencies": {

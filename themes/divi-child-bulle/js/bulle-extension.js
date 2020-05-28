@@ -3,6 +3,7 @@
 import 'jspolyfill-array.prototype.find';
 import $ from 'jquery';
 import Bowser from "bowser";
+import delegate from 'delegate'; // query is loaded in wordpress but I will be slowly removing it as a dependency
 
 const LINK_UNAVAILABLE = window.bull_config.bulle_non_supporte;
 const LINK_POPUP_EXTENSION_CHROME = window.bull_config.bulle_lien_extension_chrome;
@@ -10,12 +11,14 @@ const LINK_POPUP_EXTENSION_FF = window.bull_config.bulle_lien_extension_firefox;
 const EXTENSION_ID = window.bull_config.bulle_extension_id_chrome;
 const LINK_DEJA_INSTALLE = window.bull_config.bulle_deja_installe;
 const LINK_OPERA = window.bull_config.bulle_lien_opera;
+const LINK_EDGE = window.bull_config.bulle_lien_edge;
 
 const el = {
 	windowObjectReference: null,
 	browser: null,
 	isChrome: null,
 	isFirefox: null,
+	isEdge: null,
 	isOpera: null,
 	timer: null,
 	dejaInstalle: false
@@ -39,7 +42,7 @@ const closeOverlay = () => {
 const openRequestedPopup = (e) => {
 	// fail if neither chrome or firefox
 	// To Do handle mobile cases
-	if (!el.isChrome || !el.isFirefox) {
+	if (el.isChrome === false || el.isFirefox === false ) {
 		return;
 	}
 	const windowsHeight = $( document ).height();
@@ -84,6 +87,8 @@ const clickInstallHandler = (e) => {
 	} else {
 		if(el.isChrome || el.isFirefox) {
 			openRequestedPopup();
+		} else if (el.isEdge && LINK_EDGE ) {
+			window.location.href = LINK_EDGE;
 		} else if (el.isOpera && LINK_OPERA) {
 			window.location.href = LINK_OPERA;
 		} else {
@@ -117,6 +122,7 @@ const setUp  = () => {
 
 	el.browser = Bowser.getParser(window.navigator.userAgent);
 	el.isChrome = el.browser.satisfies({chrome: ">20"});
+	el.isEdge = el.browser.satisfies({edge: ">1"});
 	el.isFirefox = el.browser.satisfies({firefox: ">31"});
 	el.isOpera = el.browser.satisfies({opera: ">31"});
 
@@ -125,19 +131,17 @@ const setUp  = () => {
 
 
 const start = () => {
-	$('.bulle-installer').on('click', clickInstallHandler);
 
-	$('#restartInstallButton').on('click', clickInstallHandler);
-
-	$( ".overlay" ).on('click', (ev) => {
+	delegate(document.body, '.bulle-installer', 'click', clickInstallHandler);
+	delegate(document.body, '#restartInstallButton', 'click', clickInstallHandler);
+	delegate(document.body, '.overlay', 'click', (ev) => {
 		if ( ev.target.id !== 'restartInstallButton' ){
 			if  (ev.target.id !== 'h-icon') {
 				closeOverlay();
 			}
 		}
 	});
-
-	$('#notNowButton').on('click', () => {
+	delegate(document.body, '#notNowButton', 'click', () => {
 		if (el.isFirefox) {
 			closeWin();
 		}

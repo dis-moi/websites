@@ -72,13 +72,19 @@ const openRequestedPopup = (e) => {
 	el.windowObjectReference.focus();
 	openOverlay();
 
-	/*Detect if Pop-Up close*/
-	el.timer = setInterval(() => {
-		if(el.windowObjectReference.closed) {
-			clearInterval(el.timer);
-			closeOverlay();
-		}
-	}, 500);
+	// Detect if Pop-Up close
+	// Cannot use onbeforeunload because it gets called right away in chrome for link going to extension marketplace
+	// in Firefox the closed property because true right away, probably because there's some forwarding happening somewhere
+	// Only use the "closed" proeprty approach on non firefox browsers... not sure if there's a way to detect for some	thing so obscure
+	if (!el.isFirefox) {
+		el.timer = setInterval(() => {
+			console.log(el.windowObjectReference);
+			if(!el.windowObjectReference || el.windowObjectReference.closed) {
+				clearInterval(el.timer);
+				closeOverlay();
+			}
+		}, 500);
+	}
 };
 
 const clickInstallHandler = (e) => {
@@ -147,19 +153,22 @@ const start = () => {
 		}
 	});
 
+	/*
+	// add back in once the extension test code has been vetted properly
 	if ($('.bulle-installer').length) {
 		testExtension();
 	}
+	*/
 
 };
 
 
 const initExtensionInstaller  = () => {
 
-	setUp();
-	start();
+setUp();
+start();
 
-	console.info('Scripts for installing bulle extension');
+console.info('Scripts for installing bulle extension');
 
 };
 

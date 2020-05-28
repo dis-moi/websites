@@ -29,12 +29,16 @@ function divi_child_bulle_enqueue_styles() {
     $page_opera = get_theme_mod( 'bulle_setting_lien_opera' );
     $url_opera = (isset($page_opera) && !empty($page_opera)) ? get_permalink($page_opera) : '';
 
+    $page_edge = get_theme_mod( 'bulle_setting_lien_edge' );
+    $url_edge = (isset($page_edge) && !empty($page_edge)) ? get_permalink($page_edge) : '';
+
     $page_installe = get_theme_mod( 'bulle_setting_deja_installe' );
     $url_installe = (isset($page_installe) && !empty($page_installe)) ? get_permalink($page_installe) : '';
     $data = [
         'bulle_non_supporte' => $url,
         'bulle_deja_installe' => $url_installe,
         'bulle_lien_opera' => $url_opera,
+        'bulle_lien_edge' => $url_edge,
         'bulle_lien_extension_chrome' => get_theme_mod( 'bulle_setting_extension_chrome', 'https://chrome.google.com/webstore/detail/le-m%C3%AAme-en-mieux/fpjlnlnbacohacebkadbbjebbipcknbg?hl=fr' ),
         'bulle_lien_extension_firefox' => get_theme_mod( 'bulle_setting_extension_firefox', 'https://addons.mozilla.org/fr/firefox/addon/lmem/' ),
         'bulle_extension_id_chrome' => get_theme_mod( 'bulle_setting_extension_id_chrome', 'cifabmmlclhhhlhhabmbhhfocdgglljb' ),
@@ -87,6 +91,10 @@ function get_browser_name($user_agent) {
 	return 'Other';
 }
 
+/*
+ * Absolutely not cache compatible
+ * ToDo: To be handled on the FE only
+ */
 function output_bulle_overlay() {
 	if( get_browser_name($_SERVER['HTTP_USER_AGENT']) == 'firefox'):
 		echo get_template_part( 'includes/overlayFirefox');
@@ -159,6 +167,27 @@ function prefix_customize_register( $wp_customize ) {
                 'label'          => __( 'Page Opera', 'divi-child-bulle' ),
                 'section'        => 'bulle_section',
                 'settings'       => 'bulle_setting_lien_opera',
+                'type'           => 'dropdown-pages'
+            )
+        )
+    );
+
+    // lien edge
+    $wp_customize->add_setting( 'bulle_setting_lien_edge',
+        array(
+            'type'       => 'theme_mod', //Is this an 'option' or a 'theme_mod'?
+            'capability' => 'edit_theme_options', //Optional. Special permissions for accessing this setting.
+        )
+    );
+
+    $wp_customize->add_control(
+        new WP_Customize_Control(
+            $wp_customize,
+            'bulle_setting_lien_edge',
+            array(
+                'label'          => __( 'Page Edge', 'divi-child-bulle' ),
+                'section'        => 'bulle_section',
+                'settings'       => 'bulle_setting_lien_edge',
                 'type'           => 'dropdown-pages'
             )
         )

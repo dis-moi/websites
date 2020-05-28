@@ -3,6 +3,7 @@
 import 'jspolyfill-array.prototype.find';
 import $ from 'jquery';
 import Bowser from "bowser";
+import delegate from 'delegate'; // query is loaded in wordpress but I will be slowly removing it as a dependency
 
 const LINK_UNAVAILABLE = window.bull_config.bulle_non_supporte;
 const LINK_POPUP_EXTENSION_CHROME = window.bull_config.bulle_lien_extension_chrome;
@@ -41,7 +42,7 @@ const closeOverlay = () => {
 const openRequestedPopup = (e) => {
 	// fail if neither chrome or firefox
 	// To Do handle mobile cases
-	if (!el.isChrome || !el.isFirefox) {
+	if (el.isChrome === false || el.isFirefox === false ) {
 		return;
 	}
 	const windowsHeight = $( document ).height();
@@ -130,19 +131,17 @@ const setUp  = () => {
 
 
 const start = () => {
-	$('.bulle-installer').on('click', clickInstallHandler);
 
-	$('#restartInstallButton').on('click', clickInstallHandler);
-
-	$( ".overlay" ).on('click', (ev) => {
+	delegate(document.body, '.bulle-installer', 'click', clickInstallHandler);
+	delegate(document.body, '#restartInstallButton', 'click', clickInstallHandler);
+	delegate(document.body, '.overlay', 'click', (ev) => {
 		if ( ev.target.id !== 'restartInstallButton' ){
 			if  (ev.target.id !== 'h-icon') {
 				closeOverlay();
 			}
 		}
 	});
-
-	$('#notNowButton').on('click', () => {
+	delegate(document.body, '#notNowButton', 'click', () => {
 		if (el.isFirefox) {
 			closeWin();
 		}

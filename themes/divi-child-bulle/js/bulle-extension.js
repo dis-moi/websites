@@ -42,7 +42,7 @@ const closeOverlay = () => {
 const openRequestedPopup = (e) => {
 	// fail if neither chrome or firefox
 	// To Do handle mobile cases
-	if (el.isChrome === false || el.isFirefox === false ) {
+	if(!(el.isChrome || el.isFirefox)) {
 		return;
 	}
 	const windowsHeight = $( document ).height();

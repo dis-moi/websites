@@ -78,7 +78,6 @@ const openRequestedPopup = (e) => {
 	// Only use the "closed" proeprty approach on non firefox browsers... not sure if there's a way to detect for some	thing so obscure
 	if (!el.isFirefox) {
 		el.timer = setInterval(() => {
-			console.log(el.windowObjectReference);
 			if(!el.windowObjectReference || el.windowObjectReference.closed) {
 				clearInterval(el.timer);
 				closeOverlay();

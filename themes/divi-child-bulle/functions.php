@@ -278,87 +278,24 @@ function prefix_customize_register( $wp_customize ) {
         )
     );
 
-    // Matamo
-    $wp_customize->add_setting( 'bulle_setting_matomo_tracker_url',
-        array(
-            'type'       => 'theme_mod',
-            'capability' => 'edit_theme_options',
-            'default'    => '//stats.lmem.net/'
-        )
-    );
-    $wp_customize->add_control(
-        new WP_Customize_Control(
-            $wp_customize,
-            'bulle_control_matomo_tracker_url',
-            array(
-                'label'          => __( 'Matomo Tracker URL', 'divi-child-bulle' ),
-                'section'        => 'bulle_section',
-                'settings'       => 'bulle_setting_matomo_tracker_url'
-            )
-        )
-    );
-
-    $wp_customize->add_setting( 'bulle_setting_matomo_site_id',
-        array(
-            'type'       => 'theme_mod',
-            'capability' => 'edit_theme_options',
-            'default'    => '4'
-        )
-    );
-    $wp_customize->add_control(
-        new WP_Customize_Control(
-            $wp_customize,
-            'bulle_control_matomo_site_id',
-            array(
-                'label'          => __( 'Matomo Site ID', 'divi-child-bulle' ),
-                'section'        => 'bulle_section',
-                'settings'       => 'bulle_setting_matomo_site_id'
-            )
-        )
-    );
-
-
 }
 add_action( 'customize_register', 'prefix_customize_register' );
 
 /**
- * Output Matomo pwik analytics tag
+ * Output Matomo tag manager tag
  *
  */
 function hook_matomo_tag() {
-    $tracking_url = get_theme_mod( 'bulle_setting_matomo_tracker_url', '//stats.lmem.net/');
-    $site_id = get_theme_mod( 'bulle_setting_matomo_site_id', '4');
-    
-    if (!empty($tracking_url) && !empty($site_id)) {
-        ?>
-        <!-- Matomo -->
-        <script type="text/javascript">
-			var _paq = window._paq || [];
-			/* tracker methods like "setCustomDimension" should be called before "trackPageView" */
-			_paq.push(['trackPageView']);
-			_paq.push(['enableLinkTracking']);
-			(function() {
-				var u="<?php echo $tracking_url; ?>";
-				_paq.push(['setTrackerUrl', u+'piwik.php']);
-				_paq.push(['setSiteId', '<?php echo $site_id; ?>']);
-				var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
-				g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
-			})();
-        </script>
-        <!-- End Matomo Code -->
-        <?php
-    } else {
-        ?>
-        <!-- Matomo Tag Manager -->
-        <script type="text/javascript">
-			var _mtm = _mtm || [];
-			_mtm.push({'mtm.startTime': (new Date().getTime()), 'event': 'mtm.Start'});
-			var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
-			g.type='text/javascript'; g.async=true; g.defer=true; g.src='https://stats.lmem.net/js/container_5XvDMUox.js'; s.parentNode.insertBefore(g,s);
-        </script>
-        <!-- End Matomo Tag Manager -->
-        <?php
-    }
+    ?>
+    <!-- Matomo Tag Manager -->
+    <script type="text/javascript">
+		var _mtm = _mtm || [];
+		_mtm.push({'mtm.startTime': (new Date().getTime()), 'event': 'mtm.Start'});
+		var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+		g.type='text/javascript'; g.async=true; g.defer=true; g.src='https://stats.lmem.net/js/container_5XvDMUox.js'; s.parentNode.insertBefore(g,s);
+    </script>
+    <!-- End Matomo Tag Manager -->
+    <?php
 }
 add_action('wp_head', 'hook_matomo_tag');
 

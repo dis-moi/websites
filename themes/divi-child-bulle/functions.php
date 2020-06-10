@@ -329,27 +329,40 @@ function hook_matomo_tag() {
     $tracking_url = get_theme_mod( 'bulle_setting_matomo_tracker_url', '//stats.lmem.net/');
     $site_id = get_theme_mod( 'bulle_setting_matomo_site_id', '4');
     
-    if (empty($tracking_url) || empty($site_id)) {
-        return;
+    if (!empty($tracking_url) && !empty($site_id)) {
+        ?>
+        <!-- Matomo -->
+        <script type="text/javascript">
+			var _paq = window._paq || [];
+			/* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+			_paq.push(['trackPageView']);
+			_paq.push(['enableLinkTracking']);
+			(function() {
+				var u="<?php echo $tracking_url; ?>";
+				_paq.push(['setTrackerUrl', u+'piwik.php']);
+				_paq.push(['setSiteId', '<?php echo $site_id; ?>']);
+				var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+				g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+			})();
+        </script>
+        <!-- End Matomo Code -->
+        <?php
+    } else {
+        ?>
+        <!-- Matomo Tag Manager -->
+        <script type="text/javascript">
+			var _mtm = _mtm || [];
+			_mtm.push({'mtm.startTime': (new Date().getTime()), 'event': 'mtm.Start'});
+			var d = document, g = d.createElement('script'), s = d.getElementsByTagName('script')[0];
+			g.type = 'text/javascript';
+			g.async = true;
+			g.defer = true;
+			g.src = 'https://stats.lmem.net/js/container_SdTDCzaT.js';
+			s.parentNode.insertBefore(g, s);
+        </script>
+        <!-- End Matomo Tag Manager -->
+        <?php
     }
-
-    ?>
-    <!-- Matomo -->
-    <script type="text/javascript">
-		var _paq = window._paq || [];
-		/* tracker methods like "setCustomDimension" should be called before "trackPageView" */
-		_paq.push(['trackPageView']);
-		_paq.push(['enableLinkTracking']);
-		(function() {
-			var u="<?php echo $tracking_url; ?>";
-			_paq.push(['setTrackerUrl', u+'piwik.php']);
-			_paq.push(['setSiteId', '<?php echo $site_id; ?>']);
-			var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
-			g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
-		})();
-    </script>
-    <!-- End Matomo Code -->
-    <?php
 }
 add_action('wp_head', 'hook_matomo_tag');
 

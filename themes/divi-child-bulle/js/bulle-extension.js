@@ -164,10 +164,10 @@ const start = () => {
 
 const initExtensionInstaller  = () => {
 
-setUp();
-start();
+	setUp();
+	start();
 
-console.info('Scripts for installing bulle extension');
+	console.info('Scripts for installing bulle extension');
 
 };
 

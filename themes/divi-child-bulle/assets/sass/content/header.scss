@@ -11,3 +11,17 @@
 	max-width: 430px;
 }
 
+/* header height override in smaller breakpoints */
+@media (max-width: 980px) {
+	.et_header_style_left #et-top-navigation, .et_header_style_left .et-fixed-header #et-top-navigation {
+		display: block;
+		padding-top: 14px;
+	}
+}
+
+.et_header_style_split .mobile_menu_bar, .et_header_style_left .mobile_menu_bar {
+	padding-bottom: 14px;
+}
+
+
+

@@ -23,5 +23,8 @@
 	padding-bottom: 14px;
 }
 
-
-
+#top-menu-nav>ul>li>a:hover,
+#top-menu-nav>ul>li>a:focus {
+	opacity: 1;
+	text-decoration: underline;
+}

@@ -143,7 +143,7 @@ function prefix_customize_register( $wp_customize ) {
             $wp_customize,
             'bulle_control_non_supporte',
             array(
-                'label'          => __( 'Page Extension Non Supporté', 'divi-child-bulle' ),
+                'label'          => __( 'Desktop Page Browser Non Supporté (Ni Chrome, Firefox, Edge, où Opéra)', 'divi-child-bulle' ),
                 'section'        => 'bulle_section',
                 'settings'       => 'bulle_setting_non_supporte',
                 'type'           => 'dropdown-pages'
@@ -235,6 +235,8 @@ function prefix_customize_register( $wp_customize ) {
         )
     );
 
+
+
     // EXTENSION_ID CHROME
     $wp_customize->add_setting( 'bulle_setting_extension_id_chrome',
         array(
@@ -258,6 +260,7 @@ function prefix_customize_register( $wp_customize ) {
 
 
     // deja installé
+    /*
     $wp_customize->add_setting( 'bulle_setting_deja_installe',
         array(
             'type'       => 'theme_mod', //Is this an 'option' or a 'theme_mod'?
@@ -277,6 +280,68 @@ function prefix_customize_register( $wp_customize ) {
             )
         )
     );
+    */
+
+    $wp_customize->add_setting( 'bulle_setting_extension_chrome_mobile',
+        array(
+            'type'       => 'theme_mod',
+            'capability' => 'edit_theme_options',
+            'default'    => 'https://chrome.google.com/webstore/detail/le-m%C3%AAme-en-mieux/fpjlnlnbacohacebkadbbjebbipcknbg?hl=fr'
+        )
+    );
+
+    $wp_customize->add_control(
+        new WP_Customize_Control(
+            $wp_customize,
+            'bulle_control_extension_chrome_mobile',
+            array(
+                'label'          => __( 'Lien Extension Chrome Mobile', 'divi-child-bulle' ),
+                'section'        => 'bulle_section',
+                'settings'       => 'bulle_setting_extension_chrome_mobile'
+            )
+        )
+    );
+
+    $wp_customize->add_setting( 'bulle_setting_extension_firefox_mobile',
+        array(
+            'type'       => 'theme_mod',
+            'capability' => 'edit_theme_options',
+            'default'    => 'https://addons.mozilla.org/fr/firefox/addon/lmem/'
+        )
+    );
+
+    $wp_customize->add_control(
+        new WP_Customize_Control(
+            $wp_customize,
+            'bulle_control_extension_firefox_mobile',
+            array(
+                'label'          => __( 'Lien Extension Firefox Mobile', 'divi-child-bulle' ),
+                'section'        => 'bulle_section',
+                'settings'       => 'bulle_setting_extension_firefox_mobile'
+            )
+        )
+    );
+
+    $wp_customize->add_setting( 'bulle_setting_non_supporte_mobile',
+        array(
+            'type'       => 'theme_mod', //Is this an 'option' or a 'theme_mod'?
+            'capability' => 'edit_theme_options', //Optional. Special permissions for accessing this setting.
+        )
+    );
+
+    $wp_customize->add_control(
+        new WP_Customize_Control(
+            $wp_customize,
+            'bulle_control_non_supporte_mobile',
+            array(
+                'label'          => __( 'Mobile Page Browser Non Supporté (Ni Chrome, Firefox)', 'divi-child-bulle' ),
+                'section'        => 'bulle_section',
+                'settings'       => 'bulle_setting_non_supporte_mobile',
+                'type'           => 'dropdown-pages'
+            )
+        )
+    );
+
 
 }
 add_action( 'customize_register', 'prefix_customize_register' );

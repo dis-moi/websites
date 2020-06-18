@@ -99,6 +99,11 @@ input {
 .et_header_style_split .mobile_menu_bar, .et_header_style_left .mobile_menu_bar {
   padding-bottom: 14px; }
 
+#top-menu-nav > ul > li > a:hover,
+#top-menu-nav > ul > li > a:focus {
+  opacity: 1;
+  text-decoration: underline; }
+
 #main-footer {
   /*
 	.footer-widget {

@@ -1,11 +1,10 @@
 
+import { browserReady } from './events';
 import { initExtensionInstaller } from 'bulle-extension';
 
-window.addEventListener('load', () => {
-
-  console.info('Bulle JS is ready');
+browserReady(() => {
+  console.info('Dismoi JS is ready');
 
   initExtensionInstaller();
-
 
 });

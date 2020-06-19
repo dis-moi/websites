@@ -23,8 +23,8 @@ function divi_child_bulle_enqueue_styles() {
         true
     );
 
-    $page = get_theme_mod( 'bulle_setting_non_supporte' );
-    $url = (isset($page) && !empty($page)) ? get_permalink($page) : '';
+    $page_nonsupporte = get_theme_mod( 'bulle_setting_non_supporte' );
+    $url_nonsupporte = (isset($page_nonsupporte) && !empty($page_nonsupporte)) ? get_permalink($page_nonsupporte) : '';
 
     $page_opera = get_theme_mod( 'bulle_setting_lien_opera' );
     $url_opera = (isset($page_opera) && !empty($page_opera)) ? get_permalink($page_opera) : '';
@@ -32,16 +32,24 @@ function divi_child_bulle_enqueue_styles() {
     $page_edge = get_theme_mod( 'bulle_setting_lien_edge' );
     $url_edge = (isset($page_edge) && !empty($page_edge)) ? get_permalink($page_edge) : '';
 
-    $page_installe = get_theme_mod( 'bulle_setting_deja_installe' );
-    $url_installe = (isset($page_installe) && !empty($page_installe)) ? get_permalink($page_installe) : '';
+    // $page_installe = get_theme_mod( 'bulle_setting_deja_installe' );
+    // $url_installe = (isset($page_installe) && !empty($page_installe)) ? get_permalink($page_installe) : '';
+
+    $page_nonsupporte_mobile = get_theme_mod( 'bulle_setting_non_supporte_mobile' );
+    $url_nonsupporte_mobile = (isset($page_nonsupporte_mobile) && !empty($page_nonsupporte_mobile)) ? get_permalink($page_nonsupporte_mobile) : '';
+
     $data = [
-        'bulle_non_supporte' => $url,
-        'bulle_deja_installe' => $url_installe,
+        'bulle_non_supporte_mobile' => $url_nonsupporte_mobile,
+        'bulle_non_supporte' => $url_nonsupporte,
+        // 'bulle_deja_installe' => $url_installe,
         'bulle_lien_opera' => $url_opera,
         'bulle_lien_edge' => $url_edge,
-        'bulle_lien_extension_chrome' => get_theme_mod( 'bulle_setting_extension_chrome', 'https://chrome.google.com/webstore/detail/le-m%C3%AAme-en-mieux/fpjlnlnbacohacebkadbbjebbipcknbg?hl=fr' ),
-        'bulle_lien_extension_firefox' => get_theme_mod( 'bulle_setting_extension_firefox', 'https://addons.mozilla.org/fr/firefox/addon/lmem/' ),
-        'bulle_extension_id_chrome' => get_theme_mod( 'bulle_setting_extension_id_chrome', 'cifabmmlclhhhlhhabmbhhfocdgglljb' ),
+        'bulle_extension_id_chrome' => get_theme_mod( 'bulle_setting_extension_id_chrome', 'fpjlnlnbacohacebkadbbjebbipcknbg' ),
+        'bulle_lien_extension_chrome' => get_theme_mod( 'bulle_setting_extension_chrome', 'https://chrome.google.com/webstore/detail/dismoi/fpjlnlnbacohacebkadbbjebbipcknbg?hl=fr' ),
+        'bulle_lien_extension_firefox' => get_theme_mod( 'bulle_setting_extension_firefox', 'https://addons.mozilla.org/en-US/firefox/addon/dismoi/' ),
+        'bulle_lien_extension_chrome_mobile' => get_theme_mod( 'bulle_setting_extension_chrome_mobile', 'https://chrome.google.com/webstore/detail/dismoi/fpjlnlnbacohacebkadbbjebbipcknbg?hl=fr' ),
+        'bulle_lien_extension_firefox_mobile' => get_theme_mod( 'bulle_setting_extension_firefox_mobile', 'https://addons.mozilla.org/en-US/firefox/addon/dismoi/' ),
+
     ];
     wp_localize_script( 'bulle-child-script', 'bull_config', $data );
     wp_enqueue_script( 'bulle-child-script' );
@@ -234,8 +242,6 @@ function prefix_customize_register( $wp_customize ) {
             )
         )
     );
-
-
 
     // EXTENSION_ID CHROME
     $wp_customize->add_setting( 'bulle_setting_extension_id_chrome',

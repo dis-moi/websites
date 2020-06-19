@@ -110,6 +110,10 @@ input {
   .et_header_style_split #et-top-navigation nav > ul#top-menu > li > a {
     padding-bottom: 7px;
     border-bottom: 2px solid transparent; }
+    .et_header_style_left #et-top-navigation nav > ul#top-menu > li > a:hover, .et_header_style_left #et-top-navigation nav > ul#top-menu > li > a:focus,
+    .et_header_style_split #et-top-navigation nav > ul#top-menu > li > a:hover,
+    .et_header_style_split #et-top-navigation nav > ul#top-menu > li > a:focus {
+      border-bottom: 2px solid white; }
   .et_header_style_left #et-top-navigation nav > ul#top-menu > li.current_page_item > a,
   .et_header_style_split #et-top-navigation nav > ul#top-menu > li.current_page_item > a {
     border-bottom: 2px solid white; }

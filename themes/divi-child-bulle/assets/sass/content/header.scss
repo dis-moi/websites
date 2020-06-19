@@ -37,6 +37,11 @@
 		& > a {
 			padding-bottom: 7px;
 			border-bottom: 2px solid transparent;
+
+			&:hover,
+			&:focus {
+				border-bottom: 2px solid white;
+			}
 		}
 
 		&.current_page_item > a {

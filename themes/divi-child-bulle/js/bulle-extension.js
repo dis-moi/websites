@@ -188,13 +188,15 @@ const testExtension = () => {
 const setUp  = () => {
 
 	el.browser = Bowser.getParser(window.navigator.userAgent);
-	el.isChrome = el.browser.satisfies({chrome: ">20"});
+	// el.isChrome = el.browser.satisfies({chrome: ">20"});
+	el.isChrome = el.browser.getBrowserName() === 'Chrome'; // name based for more inclusiveness
 	el.isDesktop = el.browser.getPlatformType() === 'desktop';
 	el.isMobile = el.browser.getPlatformType() === 'mobile';
 	el.isTablet = el.browser.getPlatformType() === 'tablet';
 	el.isEdge = el.browser.satisfies({edge: ">1"});
-	el.isFirefox = el.browser.satisfies({firefox: ">31"});
-	el.isOpera = el.browser.satisfies({opera: ">31"});
+	// el.isFirefox = el.browser.satisfies({firefox: ">=26"});
+	el.isFirefox = el.browser.getBrowserName() === 'Firefox'; // name based for more inclusiveness
+	el.isOpera = el.browser.satisfies({opera: ">31"}); // Opera is strange so we keep this as a satisfies call
 
 	console.info('Browser detection: ', el);
 };

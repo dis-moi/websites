@@ -1,3 +1,40 @@
 body {
 
 }
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin-top: 0.5em;
+  padding-bottom: 0.2em;
+}
+
+// https://trello.com/c/PJbqqQy7/526-ajustement-format-css-des-balises-titres
+h2,
+h3,
+h4,
+h5,
+h6 {
+  line-height: 1.1;
+}
+
+// https://trello.com/c/PJbqqQy7/526-ajustement-format-css-des-balises-titres
+h1 {
+  font-size: 33px;
+}
+
+
+// https://trello.com/c/PJbqqQy7/526-ajustement-format-css-des-balises-titres
+span[style*='font-size: xx-small;'],
+span[style*='font-size: x-small;'],
+span[style*='font-size: small;'] {
+  display: inline-block;
+}
+
+// https://trello.com/c/PJbqqQy7/526-ajustement-format-css-des-balises-titres
+p + ul {
+  margin-top: -0.6em;
+}

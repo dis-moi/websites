@@ -6,14 +6,17 @@
 function divi_child_bulle_enqueue_styles() {
 
     wp_enqueue_style( 'parent-style', get_template_directory_uri() . '/style.css' );
-    /*
+
+    $relpath = 'style.css';
+    $uri = get_theme_file_uri($relpath);
+    $vsn = filemtime(get_theme_file_path($relpath));
     wp_enqueue_style(
-        'bulle-child-style',
-        get_stylesheet_directory_uri() . '/style.css',
+        'divi-style',
+        $uri,
         array( 'parent-style' ),
-        wp_get_theme()->get('Version')
+        $vsn
     );
-    */
+
 
     wp_register_script(
         'bulle-child-script',

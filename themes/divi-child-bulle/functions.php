@@ -58,13 +58,17 @@ function divi_child_bulle_enqueue_styles() {
     wp_enqueue_script( 'bulle-child-script' );
 
     if ( is_page_template( 'page-profile-app.php' ) ) {
-        $relpath = '/profile-app/js/profiles.bundle.js';
-        $vsn = filemtime( get_theme_file_path( $relpath ) );
+        // bulle_setting_profiler_version
+        $profiler_version = get_theme_mod( 'bulle_setting_profiler_version', '0.9' );
+        if ( empty( $profiler_version ) ) {
+            $profiler_version = false;
+        }
+
         wp_register_script(
             'dismoi-profiler-app',
-            get_stylesheet_directory_uri() . $relpath,
+            'https://profiles.dismoi.io/js/profiles.bundle.js',
             [],
-            $vsn,
+            $profiler_version,
             true
         );
         wp_enqueue_script( 'dismoi-profiler-app' );
@@ -347,6 +351,26 @@ function prefix_customize_register( $wp_customize ) {
                 'section'        => 'bulle_section',
                 'settings'       => 'bulle_setting_non_supporte_mobile',
                 'type'           => 'dropdown-pages'
+            )
+        )
+    );
+
+    $wp_customize->add_setting( 'bulle_setting_profiler_version',
+        array(
+            'type'       => 'theme_mod',
+            'capability' => 'edit_theme_options',
+            'default'    => '0.9'
+        )
+    );
+
+    $wp_customize->add_control(
+        new WP_Customize_Control(
+            $wp_customize,
+            'bulle_control_profiler_version',
+            array(
+                'label'          => __( 'Version JS Bundle pour la page "Les Contributeurs"', 'divi-child-bulle' ),
+                'section'        => 'bulle_section',
+                'settings'       => 'bulle_setting_profiler_version'
             )
         )
     );

@@ -402,13 +402,13 @@ function theme_init() {
         $slug_page_profile = get_post_field( 'post_name', get_post( $page_profile ) );
 
         add_rewrite_rule(
-            '^' . $slug_page_profile . '/(d+)/?$+',
+            '^' . $slug_page_profile . '/(d+)/([^/]*)/?',
             'index.php?pagename='.$slug_page_profile,
             'top'
         );
 
         add_rewrite_rule(
-            '^' . $slug_page_profile . '/(d+)/([^/]*)/?',
+            '^' . $slug_page_profile . '/(d+)/?$+',
             'index.php?pagename='.$slug_page_profile,
             'top'
         );
@@ -466,63 +466,6 @@ function year_shortcode () {
     return $year;
 }
 add_shortcode ('year', 'year_shortcode');
-
-
-function profiles_rewrite() {
-
-    // get first page with profile
-    $args = array(
-        'post_type' => 'page',
-        'posts_per_page' => 1,
-        'meta_query' => array(
-            array(
-                'key' => '_wp_page_template',
-                'value' => 'page-profile-app.php'
-            )
-        )
-    );
-    $the_pages = new WP_Query( $args );
-    if ( $the_pages->posts && count( $the_pages->posts ) ) {
-
-        /*
-        global $wp_rewrite;
-        $wp_rewrite->flush_rules();
-        $wp_rewrite->init();
-        */
-
-        // flush_rewrite_rules();
-
-        $slug = $the_pages->posts[0]->post_name;
-        $id = $the_pages->posts[0]->ID;
-
-        // must refresh permalinks
-        // [^/]+\/([^/]+)
-        /*
-        add_rewrite_rule(
-            '^'.$slug.'/([0-9]+)/([^/]*)?',
-            'index.php?pagename='.$slug,
-            'top'
-        );
-        */
-        /*
-        add_rewrite_rule(
-            '^'.$slug.'/(d+)/?$+',
-            'index.php?pagename='.$slug,
-            'top'
-        );
-        */
-        // ^nutrition/([^/]*)/([^/]*)/?
-        /*
-        add_rewrite_rule(
-            '^'.$slug.'/(d+)/([^/]*)/?',
-            'index.php?pagename='.$slug,
-            'top'
-        );
-        */
-
-    }
-}
-// add_action('init', 'profiles_rewrite');
 
 
 /**

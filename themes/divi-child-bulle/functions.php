@@ -423,7 +423,29 @@ function theme_init() {
     }
 }
 
-add_action('init', 'theme_init');
+// add_action('init', 'theme_init');
+
+
+function profiler_rewrite_url( $wp_rewrite ) {
+    $page_profile = get_theme_mod( 'bulle_setting_profile_page' );
+    $page_profile_rules = get_theme_mod( 'bulle_setting_profile_page_rewrite' );
+    if ( isset( $page_profile ) &&
+        !empty( $page_profile ) &&
+        $page_profile_rules == '1' ) {
+        $slug_page_profile = get_post_field( 'post_name', get_post( $page_profile ) );
+
+        $new_rules = array(
+            $slug_page_profile . '/(d+)/([^/]+)/' => 'index.php?pagename=' . $slug_page_profile,
+            $slug_page_profile . '/(d+)/' => 'index.php?pagename=' . $slug_page_profile
+        );
+
+        $wp_rewrite->rules = $new_rules + $wp_rewrite->rules;
+    }
+    return $wp_rewrite->rules;
+}
+add_filter('generate_rewrite_rules', 'profiler_rewrite_url');
+
+
 
 
 /**

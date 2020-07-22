@@ -271,30 +271,6 @@ function prefix_customize_register( $wp_customize ) {
         )
     );
 
-
-    // deja installé
-    /*
-    $wp_customize->add_setting( 'bulle_setting_deja_installe',
-        array(
-            'type'       => 'theme_mod', //Is this an 'option' or a 'theme_mod'?
-            'capability' => 'edit_theme_options', //Optional. Special permissions for accessing this setting.
-        )
-    );
-
-    $wp_customize->add_control(
-        new WP_Customize_Control(
-            $wp_customize,
-            'bulle_control_deja_installe',
-            array(
-                'label'          => __( 'Page Déjà Installé', 'divi-child-bulle' ),
-                'section'        => 'bulle_section',
-                'settings'       => 'bulle_setting_deja_installe',
-                'type'           => 'dropdown-pages'
-            )
-        )
-    );
-    */
-
     $wp_customize->add_setting( 'bulle_setting_extension_chrome_mobile',
         array(
             'type'       => 'theme_mod',
@@ -375,9 +351,80 @@ function prefix_customize_register( $wp_customize ) {
         )
     );
 
+    // profile page
+    $wp_customize->add_setting( 'bulle_setting_profile_page',
+        array(
+            'type'       => 'theme_mod', //Is this an 'option' or a 'theme_mod'?
+            'capability' => 'edit_theme_options', //Optional. Special permissions for accessing this setting.
+        )
+    );
+
+    $wp_customize->add_control(
+        new WP_Customize_Control(
+            $wp_customize,
+            'bulle_control_profile_page',
+            array(
+                'label'          => __( 'Page Profile (Assurer Régles Rewrite)', 'divi-child-bulle' ),
+                'section'        => 'bulle_section',
+                'settings'       => 'bulle_setting_profile_page',
+                'type'           => 'dropdown-pages'
+            )
+        )
+    );
+
+    // Add settings for output description
+    $wp_customize->add_setting( 'bulle_setting_profile_page_rewrite', array(
+        'default'    => '',
+        'type'       => 'theme_mod'
+    ) );
+
+    // Add control and output for select field
+    $wp_customize->add_control( 'bulle_control_profile_page_rewrite', array(
+        'label'      => __( 'Activer Page Profile Rewrite Rules', 'divi-child-bulle' ),
+        'section'    => 'bulle_section',
+        'settings'   => 'bulle_setting_profile_page_rewrite',
+        'type'       => 'checkbox',
+        'std'        => '1'
+    ) );
+
 
 }
 add_action( 'customize_register', 'prefix_customize_register' );
+
+
+
+function theme_init() {
+    $page_profile = get_theme_mod( 'bulle_setting_profile_page' );
+    $page_profile_rules = get_theme_mod( 'bulle_setting_profile_page_rewrite' );
+    if ( isset( $page_profile ) &&
+        !empty( $page_profile ) &&
+        $page_profile_rules == '1' ) {
+        $slug_page_profile = get_post_field( 'post_name', get_post( $page_profile ) );
+
+        add_rewrite_rule(
+            '^' . $slug_page_profile . '/(d+)/?$+',
+            'index.php?pagename='.$slug_page_profile,
+            'top'
+        );
+
+        add_rewrite_rule(
+            '^' . $slug_page_profile . '/(d+)/([^/]*)/?',
+            'index.php?pagename='.$slug_page_profile,
+            'top'
+        );
+
+        /*
+        error_log(
+            $slug_page_profile,
+            3,
+            '/Applications/MAMP/logs/php_error.log'
+        );
+        */
+    }
+}
+
+add_action('init', 'theme_init');
+
 
 /**
  * Output Matomo tag manager tag
@@ -422,6 +469,7 @@ add_shortcode ('year', 'year_shortcode');
 
 
 function profiles_rewrite() {
+
     // get first page with profile
     $args = array(
         'post_type' => 'page',
@@ -435,16 +483,108 @@ function profiles_rewrite() {
     );
     $the_pages = new WP_Query( $args );
     if ( $the_pages->posts && count( $the_pages->posts ) ) {
+
+        /*
+        global $wp_rewrite;
+        $wp_rewrite->flush_rules();
+        $wp_rewrite->init();
+        */
+
+        // flush_rewrite_rules();
+
         $slug = $the_pages->posts[0]->post_name;
         $id = $the_pages->posts[0]->ID;
 
         // must refresh permalinks
+        // [^/]+\/([^/]+)
+        /*
         add_rewrite_rule(
             '^'.$slug.'/([0-9]+)/([^/]*)?',
             'index.php?pagename='.$slug,
             'top'
         );
+        */
+        /*
+        add_rewrite_rule(
+            '^'.$slug.'/(d+)/?$+',
+            'index.php?pagename='.$slug,
+            'top'
+        );
+        */
+        // ^nutrition/([^/]*)/([^/]*)/?
+        /*
+        add_rewrite_rule(
+            '^'.$slug.'/(d+)/([^/]*)/?',
+            'index.php?pagename='.$slug,
+            'top'
+        );
+        */
 
     }
 }
-add_action('init', 'profiles_rewrite');
+// add_action('init', 'profiles_rewrite');
+
+
+/**
+ * Function to add hooks and filter out the Yoast SEO Open Graph Meta Tags
+ */
+/*
+function change_yoast_seo_og_meta() {
+    // We will add the code here to change the meta tags
+    // only change if we're on the profiler template
+    if ( get_page_template() ==  'page-profile-app.php') {
+
+    }
+}
+add_action( 'wpseo_opengraph', 'change_yoast_seo_og_meta' );
+*/
+
+
+function wpseo_opengraph_title( $default ) {
+    // We will add the code here to change the meta tags
+    // only change if we're on the profiler template
+    if ( get_page_template_slug() ===  'page-profile-app.php') {
+
+        /*
+        $path = parse_url( $_SERVER['REQUEST_URI'], PHP_URL_PATH );
+        if ( strpos( $path, '/' ) === 0 ) {
+            // var_dump('sweet');
+            $path = substr( $path, 1 );
+        }
+        $parts = explode("/", $path);
+
+        if ( count( $parts ) > 1 ) {
+            // var_dump(get_page_template_slug() );
+            $id = $parts[1];
+            // var_dump($id);
+            // return 'adsfaf';
+            if ( !empty( $id ) ) {
+                $response = wp_remote_get(
+                    sprintf(
+                        'https://notices.bulles.fr/api/v3/contributors/%s',
+                        $id
+                    )
+                );
+                // var_dump($response);
+
+                if ( is_array( $response ) && ! is_wp_error( $response ) ) {
+                    $headers = $response['headers']; // array of http header lines
+                    $body    = $response['body']; // use the content
+                    try {
+                        $json = json_decode( $response['body'] );
+                    } catch ( Exception $ex ) {
+                        $json = null;
+                    }
+                    if ( !empty($json) && count( $json ) > 0 ) {
+                        return 'title';
+                    }
+                    return 'test';
+                }
+            }
+        }
+        */
+
+    }
+    return $default;
+}
+// add_filter( 'wpseo_opengraph_title', 'wpseo_opengraph_title' );

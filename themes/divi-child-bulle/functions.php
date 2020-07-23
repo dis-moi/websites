@@ -435,16 +435,15 @@ function profiler_rewrite_url( $wp_rewrite ) {
         $slug_page_profile = get_post_field( 'post_name', get_post( $page_profile ) );
 
         $new_rules = array(
-            $slug_page_profile . '/(d+)/([^/]+)/' => 'index.php?pagename=' . $slug_page_profile,
-            $slug_page_profile . '/(d+)/' => 'index.php?pagename=' . $slug_page_profile
+            $slug_page_profile . '/([0-9]+)/([^/]+)/?$' => 'index.php?pagename=' . $slug_page_profile,
+            $slug_page_profile . '/([0-9]+)/?$' => 'index.php?pagename=' . $slug_page_profile
         );
 
-        $wp_rewrite->rules = $new_rules + $wp_rewrite->rules;
+        $wp_rewrite->rules =  $new_rules + $wp_rewrite->rules;
     }
     return $wp_rewrite->rules;
 }
 add_filter('generate_rewrite_rules', 'profiler_rewrite_url');
-
 
 
 
@@ -504,52 +503,91 @@ function change_yoast_seo_og_meta() {
 add_action( 'wpseo_opengraph', 'change_yoast_seo_og_meta' );
 */
 
+function get_profile_object ( $id ) {
+    $key = 'PROFILE_' . $id;
+    $group = 'PROFILES';
+    $expiration = 60;
 
-function wpseo_opengraph_title( $default ) {
+    // if cached object
+    // $profile_object = get_transient( $key );
+    $profile_object = wp_cache_get( $key, $group );
+
+    if ( empty( $profile_object ) ) {
+        try {
+            $response = wp_remote_get(
+                sprintf(
+                    'https://notices.bulles.fr/api/v3/contributors/%s',
+                    $id
+                )
+            );
+            if ( is_array( $response ) && ! is_wp_error( $response ) && $response['body'] ) {
+                // $headers = $response['headers']; // array of http header lines
+                $profile_object    = json_decode( $response['body'] ); // use the content
+                // for caching
+                wp_cache_set( $key, $profile_object, $group, $expiration );
+                // set_transient( $key, $profile_object, $expiration );
+            }
+            ;
+        } catch ( Exception $ex ) {
+        }
+    }
+
+    return $profile_object;
+}
+
+
+function wpseo_title( $default ) {
     // We will add the code here to change the meta tags
     // only change if we're on the profiler template
     if ( get_page_template_slug() ===  'page-profile-app.php') {
 
-        /*
         $path = parse_url( $_SERVER['REQUEST_URI'], PHP_URL_PATH );
         if ( strpos( $path, '/' ) === 0 ) {
-            // var_dump('sweet');
             $path = substr( $path, 1 );
         }
         $parts = explode("/", $path);
 
         if ( count( $parts ) > 1 ) {
-            // var_dump(get_page_template_slug() );
             $id = $parts[1];
-            // var_dump($id);
-            // return 'adsfaf';
             if ( !empty( $id ) ) {
-                $response = wp_remote_get(
-                    sprintf(
-                        'https://notices.bulles.fr/api/v3/contributors/%s',
-                        $id
-                    )
-                );
-                // var_dump($response);
+                $profile_object = get_profile_object( $id );
 
-                if ( is_array( $response ) && ! is_wp_error( $response ) ) {
-                    $headers = $response['headers']; // array of http header lines
-                    $body    = $response['body']; // use the content
-                    try {
-                        $json = json_decode( $response['body'] );
-                    } catch ( Exception $ex ) {
-                        $json = null;
-                    }
-                    if ( !empty($json) && count( $json ) > 0 ) {
-                        return 'title';
-                    }
-                    return 'test';
+                if ( !empty( $profile_object ) && count( $profile_object ) > 0 && $profile_object->name) {
+                    return esc_attr( $profile_object->name );
                 }
             }
         }
-        */
 
     }
     return $default;
 }
-// add_filter( 'wpseo_opengraph_title', 'wpseo_opengraph_title' );
+add_filter( 'wpseo_opengraph_title', 'wpseo_title' );
+add_filter( 'wpseo_twitter_title', 'wpseo_title' );
+
+function wpseo_description( $default ) {
+    // We will add the code here to change the meta tags
+    // only change if we're on the profiler template
+    if ( get_page_template_slug() ===  'page-profile-app.php') {
+
+        $path = parse_url( $_SERVER['REQUEST_URI'], PHP_URL_PATH );
+        if ( strpos( $path, '/' ) === 0 ) {
+            $path = substr( $path, 1 );
+        }
+        $parts = explode("/", $path);
+
+        if ( count( $parts ) > 1 ) {
+            $id = $parts[1];
+            if ( !empty( $id ) ) {
+                $profile_object = get_profile_object( $id );
+
+                if ( !empty( $profile_object ) && count( $profile_object ) > 0 && $profile_object->name) {
+                    return esc_attr( strip_tags( $profile_object->intro ) );
+                }
+            }
+        }
+
+    }
+    return $default;
+}
+add_filter( 'wpseo_opengraph_desc', 'wpseo_description' );
+add_filter( 'wpseo_twitter_description', 'wpseo_description' );

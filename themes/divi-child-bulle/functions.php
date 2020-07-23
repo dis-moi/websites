@@ -110,7 +110,7 @@ function get_browser_name($user_agent) {
  * Absolutely not cache compatible
  * ToDo: To be handled on the FE only
  */
-function output_bulle_overlay() {
+function dismoi_output_bulle_overlay() {
 	if( get_browser_name($_SERVER['HTTP_USER_AGENT']) == 'firefox'):
 		echo get_template_part( 'includes/overlayFirefox');
 	elseif(get_browser_name($_SERVER['HTTP_USER_AGENT']) == 'chrome'):
@@ -118,15 +118,15 @@ function output_bulle_overlay() {
 	endif;
 
 }
-add_action( 'wp_footer', 'output_bulle_overlay' );
+add_action( 'wp_footer', 'dismoi_output_bulle_overlay' );
 
 
-function cc_mime_types($mimes) {
+function dismoi_cc_mime_types($mimes) {
 	$mimes['svg'] = 'image/svg+xml';
 	$mimes['webp'] = 'image/webp';
 	return $mimes;
 }
-add_filter('upload_mimes', 'cc_mime_types');
+add_filter('upload_mimes', 'dismoi_cc_mime_types');
 
 
 
@@ -137,7 +137,7 @@ add_filter('upload_mimes', 'cc_mime_types');
  *
  * @param WP_Customize_Manager $wp_customize Customizer object.
  */
-function prefix_customize_register( $wp_customize ) {
+function dismoi_prefix_customize_register( $wp_customize ) {
 
     $wp_customize->add_section( 'bulle_section' , array(
         'title'      => __( 'Configuration Bulles/Dismoi', 'divi-child-bulle' ),
@@ -389,44 +389,14 @@ function prefix_customize_register( $wp_customize ) {
 
 
 }
-add_action( 'customize_register', 'prefix_customize_register' );
+add_action( 'customize_register', 'dismoi_prefix_customize_register' );
 
 
-
-function theme_init() {
-    $page_profile = get_theme_mod( 'bulle_setting_profile_page' );
-    $page_profile_rules = get_theme_mod( 'bulle_setting_profile_page_rewrite' );
-    if ( isset( $page_profile ) &&
-        !empty( $page_profile ) &&
-        $page_profile_rules == '1' ) {
-        $slug_page_profile = get_post_field( 'post_name', get_post( $page_profile ) );
-
-        add_rewrite_rule(
-            '^' . $slug_page_profile . '/(d+)/([^/]*)/?',
-            'index.php?pagename='.$slug_page_profile,
-            'top'
-        );
-
-        add_rewrite_rule(
-            '^' . $slug_page_profile . '/(d+)/?$+',
-            'index.php?pagename='.$slug_page_profile,
-            'top'
-        );
-
-        /*
-        error_log(
-            $slug_page_profile,
-            3,
-            '/Applications/MAMP/logs/php_error.log'
-        );
-        */
-    }
-}
-
-// add_action('init', 'theme_init');
-
-
-function profiler_rewrite_url( $wp_rewrite ) {
+/**
+ * Set up rewrites based on caonfiguration settings
+ *
+ */
+function dismoi_profiler_rewrite_url( $wp_rewrite ) {
     $page_profile = get_theme_mod( 'bulle_setting_profile_page' );
     $page_profile_rules = get_theme_mod( 'bulle_setting_profile_page_rewrite' );
     if ( isset( $page_profile ) &&
@@ -443,7 +413,7 @@ function profiler_rewrite_url( $wp_rewrite ) {
     }
     return $wp_rewrite->rules;
 }
-add_filter('generate_rewrite_rules', 'profiler_rewrite_url');
+add_filter('generate_rewrite_rules', 'dismoi_profiler_rewrite_url');
 
 
 
@@ -451,7 +421,7 @@ add_filter('generate_rewrite_rules', 'profiler_rewrite_url');
  * Output Matomo tag manager tag
  *
  */
-function hook_matomo_tag() {
+function dismoi_hook_matomo_tag() {
     ?>
     <!-- Matomo Tag Manager -->
     <script type="text/javascript">
@@ -463,14 +433,14 @@ function hook_matomo_tag() {
     <!-- End Matomo Tag Manager -->
     <?php
 }
-add_action('wp_head', 'hook_matomo_tag');
+add_action('wp_head', 'dismoi_hook_matomo_tag');
 
 /**
  *	This will hide the Divi "Project" post type.
  *	Thanks to georgiee (https://gist.github.com/EngageWP/062edef103469b1177bc#gistcomment-1801080) for his improved solution.
  */
-add_filter( 'et_project_posttype_args', 'mytheme_et_project_posttype_args', 10, 1 );
-function mytheme_et_project_posttype_args( $args ) {
+add_filter( 'et_project_posttype_args', 'dismoi_et_project_posttype_args', 10, 1 );
+function dismoi_et_project_posttype_args( $args ) {
     return array_merge( $args, array(
         'public'              => false,
         'exclude_from_search' => false,
@@ -482,27 +452,17 @@ function mytheme_et_project_posttype_args( $args ) {
 
 add_filter ('widget_text', 'do_shortcode');
 
-function year_shortcode () {
+function dismoi_year_shortcode () {
     $year = date_i18n ('Y');
     return $year;
 }
-add_shortcode ('year', 'year_shortcode');
+add_shortcode ('year', 'dismoi_year_shortcode');
 
 
 /**
- * Function to add hooks and filter out the Yoast SEO Open Graph Meta Tags
+ * Function to get profile object
+ * Use cacheed version if it exists to prevent unnecessary retrieval
  */
-/*
-function change_yoast_seo_og_meta() {
-    // We will add the code here to change the meta tags
-    // only change if we're on the profiler template
-    if ( get_page_template() ==  'page-profile-app.php') {
-
-    }
-}
-add_action( 'wpseo_opengraph', 'change_yoast_seo_og_meta' );
-*/
-
 function get_profile_object ( $id ) {
     $key = 'PROFILE_' . $id;
     $group = 'PROFILES';
@@ -536,8 +496,52 @@ function get_profile_object ( $id ) {
 }
 
 
-function wpseo_title( $default ) {
-    // We will add the code here to change the meta tags
+// override title
+function dismoi_wpseo_title( $default ) {
+
+    $id = dismoi_get_informateur_id();
+
+    if ( !empty( $id ) ) {
+        $profile_object = get_profile_object( $id );
+
+        if ( !empty( $profile_object ) && count( $profile_object ) > 0 && !empty( $profile_object->name )) {
+            return esc_attr( $profile_object->name );
+        }
+    }
+    return $default;
+}
+add_filter( 'wpseo_opengraph_title', 'dismoi_wpseo_title' );
+add_filter( 'wpseo_twitter_title', 'dismoi_wpseo_title' );
+
+/**
+ * Get description
+ *
+ * @param $default string
+ * @return string
+ */
+function dismoi_wpseo_description( $default ) {
+
+    $id = dismoi_get_informateur_id();
+
+    if ( !empty( $id ) ) {
+        $profile_object = get_profile_object( $id );
+
+        if ( !empty( $profile_object ) && count( $profile_object ) > 0 && !empty( $profile_object->intro ) ) {
+            return esc_attr( strip_tags( $profile_object->intro ) );
+        }
+    }
+    return $default;
+}
+add_filter( 'wpseo_opengraph_desc', 'dismoi_wpseo_description' );
+add_filter( 'wpseo_twitter_description', 'dismoi_wpseo_description' );
+
+
+/**
+ * Get Informateur ID
+ *
+ * @return string
+ */
+function dismoi_get_informateur_id( ) {
     // only change if we're on the profiler template
     if ( get_page_template_slug() ===  'page-profile-app.php') {
 
@@ -549,45 +553,76 @@ function wpseo_title( $default ) {
 
         if ( count( $parts ) > 1 ) {
             $id = $parts[1];
-            if ( !empty( $id ) ) {
-                $profile_object = get_profile_object( $id );
-
-                if ( !empty( $profile_object ) && count( $profile_object ) > 0 && $profile_object->name) {
-                    return esc_attr( $profile_object->name );
-                }
-            }
+            return $id;
         }
 
     }
-    return $default;
+    return null;
 }
-add_filter( 'wpseo_opengraph_title', 'wpseo_title' );
-add_filter( 'wpseo_twitter_title', 'wpseo_title' );
 
-function wpseo_description( $default ) {
-    // We will add the code here to change the meta tags
-    // only change if we're on the profiler template
-    if ( get_page_template_slug() ===  'page-profile-app.php') {
 
-        $path = parse_url( $_SERVER['REQUEST_URI'], PHP_URL_PATH );
-        if ( strpos( $path, '/' ) === 0 ) {
-            $path = substr( $path, 1 );
-        }
-        $parts = explode("/", $path);
-
-        if ( count( $parts ) > 1 ) {
-            $id = $parts[1];
-            if ( !empty( $id ) ) {
-                $profile_object = get_profile_object( $id );
-
-                if ( !empty( $profile_object ) && count( $profile_object ) > 0 && $profile_object->name) {
-                    return esc_attr( strip_tags( $profile_object->intro ) );
-                }
-            }
-        }
-
+/**
+ * override OG url
+ */
+function dismoi_wpseo_opengraph_url( $default ) {
+    $id = dismoi_get_informateur_id();
+    if ( !empty( $id ) ) {
+        return (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
     }
     return $default;
 }
-add_filter( 'wpseo_opengraph_desc', 'wpseo_description' );
-add_filter( 'wpseo_twitter_description', 'wpseo_description' );
+add_filter( 'wpseo_opengraph_url', 'dismoi_wpseo_opengraph_url' );
+
+
+/**
+ * Changes @type of Webpage Schema data.
+ *
+ * @param array $data Schema.org Webpage data array.
+ *
+ * @return array Schema.org Webpage data array.
+ */
+function dismoi_change_webpage( $data ) {
+    $id = dismoi_get_informateur_id();
+    if ( !empty( $id ) ) {
+
+        // $data['@type'] = 'AboutPage';
+        $url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+
+        $data['url'] = $url;
+        $data['@id'] = $url . '#webpage';
+
+    }
+    return $data;
+}
+add_filter( 'wpseo_schema_webpage', 'dismoi_change_webpage' );
+
+
+/**
+ * Filter title
+ *
+ * @param string $title
+ *
+ * @return string
+ */
+function dismoi_wpseo_meta_title( $title ) {
+    if ( ! is_singular() ) return $title;
+
+    $id = dismoi_get_informateur_id();
+    if ( !empty( $id ) ) {
+        $profile_object = get_profile_object( $id );
+
+        if ( !empty( $profile_object ) && count( $profile_object ) > 0 && !empty( $profile_object->name ) ) {
+            $current_post = get_post();
+            $title = isset( $current_post->post_title ) ? $current_post->post_title : '';
+            return sprintf(
+                '%s - %s',
+                $title,
+                $profile_object->name
+            );
+        }
+
+    }
+}
+add_filter( 'wpseo_title', 'dismoi_wpseo_meta_title', 11, 1 );
+
+

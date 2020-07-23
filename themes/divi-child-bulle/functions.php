@@ -435,16 +435,15 @@ function profiler_rewrite_url( $wp_rewrite ) {
         $slug_page_profile = get_post_field( 'post_name', get_post( $page_profile ) );
 
         $new_rules = array(
-            $slug_page_profile . '/(d+)/([^/]+)/' => 'index.php?pagename=' . $slug_page_profile,
-            $slug_page_profile . '/(d+)/' => 'index.php?pagename=' . $slug_page_profile
+            $slug_page_profile . '/(d+)/([^/]+)/?$' => 'index.php?pagename=' . $slug_page_profile,
+            $slug_page_profile . '/(d+)/?$' => 'index.php?pagename=' . $slug_page_profile
         );
 
-        $wp_rewrite->rules = $new_rules + $wp_rewrite->rules;
+        $wp_rewrite->rules =  $wp_rewrite->rules + $new_rules;
     }
     return $wp_rewrite->rules;
 }
 add_filter('generate_rewrite_rules', 'profiler_rewrite_url');
-
 
 
 

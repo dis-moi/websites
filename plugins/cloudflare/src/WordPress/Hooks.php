@@ -130,7 +130,7 @@ class Hooks
     {
         if ($this->isPluginSpecificCacheEnabled()) {
             $wpDomainList = $this->integrationAPI->getDomainList();
-            if (count($wpDomainList) <= 0) {
+            if (!count($wpDomainList)) {
                 return;
             }
             $wpDomain = $wpDomainList[0];
@@ -157,11 +157,15 @@ class Hooks
             $zoneTag = $this->api->getZoneTag($wpDomain);
 
             if (isset($zoneTag) && !empty($urls)) {
-                $isOK = $this->api->zonePurgeFiles($zoneTag, $urls);
+                $chunks = array_chunk($urls, 30);
 
-                $isOK = ($isOK) ? 'succeeded' : 'failed';
-                $this->logger->debug("List of URLs purged are: " . print_r($urls, true));
-                $this->logger->debug("purgeCacheByRevelantURLs " . $isOK);
+                foreach ($chunks as $chunk) {
+                    $isOK = $this->api->zonePurgeFiles($zoneTag, $chunk);
+
+                    $isOK = ($isOK) ? 'succeeded' : 'failed';
+                    $this->logger->debug("List of URLs purged are: " . print_r($chunk, true));
+                    $this->logger->debug("purgeCacheByRevelantURLs " . $isOK);
+                }
             }
         }
     }
@@ -232,6 +236,19 @@ class Hooks
         if (is_string($pageLink) && !empty($pageLink) && get_option('show_on_front') == 'page') {
             array_push($listofurls, $pageLink);
         }
+        
+        // Attachments
+        if ('attachment' == $postType) {
+            $attachmentUrls = array();
+            foreach (get_intermediate_image_sizes() as $size) {
+                $attachmentSrc = wp_get_attachment_image_src($postId, $size);
+                $attachmentUrls[] = $attachmentSrc[0];
+            }
+            $listofurls = array_merge(
+                $listofurls,
+                array_unique(array_filter($attachmentUrls))
+            );
+        }
 
         // Purge https and http URLs
         if (function_exists('force_ssl_admin') && force_ssl_admin()) {
@@ -246,9 +263,15 @@ class Hooks
     protected function isPluginSpecificCacheEnabled()
     {
         $cacheSettingObject = $this->dataStore->getPluginSetting(\CF\API\Plugin::SETTING_PLUGIN_SPECIFIC_CACHE);
+
+        if (! $cacheSettingObject) {
+            return false;
+        }
+
         $cacheSettingValue = $cacheSettingObject[\CF\API\Plugin::SETTING_VALUE_KEY];
 
-        return isset($cacheSettingValue) && $cacheSettingValue !== false && $cacheSettingValue !== 'off';
+        return $cacheSettingValue !== false
+            && $cacheSettingValue !== 'off';
     }
 
     public function http2ServerPushInit()

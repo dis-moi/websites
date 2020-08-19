@@ -3,8 +3,8 @@ Contributors: rosell.dk
 Donate link: https://ko-fi.com/rosell
 Tags: webp, images, performance
 Requires at least: 4.0
-Tested up to: 5.3
-Stable tag: 0.17.3
+Tested up to: 5.5
+Stable tag: 0.17.5
 Requires PHP: 5.6
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -377,6 +377,13 @@ Here are rules if you need to *replace* the file extension with ".webp" rather t
 = I am on a Windows server =
 Good news! It should work now, thanks to a guy that calls himself lwxbr. At least on XAMPP 7.3.1, Windows 10. https://github.com/rosell-dk/webp-express/pull/213.
 
+= I am on a Litespeed server =
+You do not have to do anything special for it to work on a Litespeed server. You should be able to use WebP Express in any operation mode. For best performance, I however recommend that use the *LiteSpeed Cache* plugin for page caching.
+
+LiteSpeed Cache can be set up to maintain separate page caches for browsers that supports webp and browsers that don't. Through this functionality it is possible to use "Alter HTML" with the option "Replace image URLs" and "Only do the replacements in webp enabled browsers" mode.
+
+The setup was kindly shared and explained in detail by [@ribeiroeder](https://github.com/ribeiroeder) [here](https://github.com/rosell-dk/webp-express/issues/433)
+
 = I am using Jetpack =
 If you install Jetpack and enable the "Speed up image load times" then Jetpack will alter the HTML such that images are pointed to their CDN.
 
@@ -646,6 +653,16 @@ If you got any further questions, look at, or comment on [this topic](https://wo
 = Update failed and cannot reinstall =
 The 0.17.0 release contained binaries with dots in their filenames, which caused the unpacking during update to fail on a few systems. This failure could leave an incomplete installation. With important files missing - such as the main plugin file - Wordpress no longer registers that the plugin is there (it is missing from the list). However, the folder is there in the file system and trying to install WebP Express again fails because Wordpress complains about just that. The solution is to remove the "webp-express" folder in "plugins" manually (via ftp or a plugin, such as File Manager) and then install WebP Express anew. The setting will be intact. The filenames that caused the trouble where fixed in 0.17.2.
 
+=  Alter HTML only replaces some of the images =
+
+If you are wondering why Alter HTML are missing some images, it can be due to one of the following reasons:
+
+- WebP Express doesn't convert external images, only images on your server. Alter HTML will therefore not alter URLS that unless they point to your server or a CDN that you have added in the *CDN hostnames* section
+- WebP Express has a "Scope" option, which for example can be set to "Uploads and themes". Only images that resides within the selected scope are replaced with webp.
+- If you have selected `<picture>` tags syntax, only images inserted with `<img>`-tags will be replaced (CSS images will not be replaced). Additionally, the `<img>`-tag must have a "src" attribute or a commonly used data attribute for lazyloading (such as “data-src” or “data-lazy-src”)
+- If you have set the "How to replace" option to "Use content filtering hooks", images inserted with some third party plugins/themes might not be replaced. To overcome that, change that setting to "The complete page".
+- The image might have been inserted with javascript. WebP Express doesn't changSome plugins might insert the
+
 = When is feature X coming? / Roadmap =
 No schedule. I move forward as time allows. I currently spend a lot of time answering questions in the support forum. If someone would be nice and help out answering questions here, it would allow me to spend that time developing. Also, donations would allow me to turn down some of the more boring requests from my customers, and speed things up here.
 
@@ -662,10 +679,28 @@ Easy enough! - [Go here!](https://ko-fi.com/rosell). Or [here](https://buymeacof
 
 == Changelog ==
 
+= 0.17.5 =
+*(released: 11 Aug 2020)*
+* Fixed "Path is outside resolved document root" in a certain symlinked configuration. Thanks to @spiderPan on github for providing the fix.
+* Added content filtering hooks for several third party plugins including ACF and WooCommerce Product Images. With this change, the "Use content filtering hooks" in Alter HTML works in more scenarios, which means there are fewer scenarios where you have to resort to the slower "The complete page" option. Thanks to alextuan for providing the contribution
+* Fixed problems with Alter HTML when migrating: Absolute paths were cached in the database and the cache was only updated upon saving settings. The paths are not cached anymore (recalculating these on each page load is not a performance problem)
+
+For more info, see the closed issues on the 0.17.5 milestone on the github repository: https://github.com/rosell-dk/webp-express/milestone/30?closed=1
+
+= 0.17.4 =
+*(released: 26 Jun 2020)*
+* Fixed bug: Configuration was repeatedly resetting for some users
+* Fixed "Path is outside resolved document root" on file conversion attempts in Windows. Thanks to @Ruzgfpegk from Japan for providing the fix.
+* Fix errors not caught in the selftest. Thanks to Benji Bilheimer from Germany providing the fix.
+* Fix errors not caught in the selftest with unverified certificates. Thanks to Rikesh Ramlochund from Mauritius for providing the fix.
+* Fixed errors with filenames containing encoded symbols. Thanks to Eddie Zhou from Canada for the fix.
+
+For more info, see the closed issues on the 0.17.3 milestone on the github repository: https://github.com/rosell-dk/webp-express/milestone/32?closed=1
+
 = 0.17.3 =
 *(released: 3 Feb 2020)*
 
-* Fixed critical bug: Fatal error after updating plugin (if one had been postponing updating WebP Express for a while and then updated Wordpress to 5.3 and THEN updated WebP Express)
+* Fixed critical bug: Fatal error after updating plugin (if one had been postponing updating WebP Express for a while and then updated Wordpress to 5.2 and THEN updated WebP Express)
 * A critical bug was fixed in the webp-convert library (PHP 7.4 related)
 * A critical bug was fixed in dom-util-for-webp library (PHP 7.4 related)
 * Alter HTML now processes the "poster" attribute in Video tags. Thanks to @MikhailRoot from Russia for the PR on github.
@@ -1073,6 +1108,12 @@ For more info, see the closed issues on the 0.5.0 milestone on our github reposi
 For older releases, check out changelog.txt
 
 == Upgrade Notice ==
+
+= 0.17.5 =
+* Various fixes, mainly by community.
+
+= 0.17.4 =
+* Various fixes by community. Maintainer is partly back. Will be fully back mid august.
 
 = 0.17.3 =
 * Fixed two critical bugs. One occurred on PHP 7.4, the other when updating old WebP Express on Wordpress 5.3

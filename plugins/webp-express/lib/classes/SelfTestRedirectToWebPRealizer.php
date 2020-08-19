@@ -1,6 +1,8 @@
 <?php
 
 namespace WebPExpress;
+use \WebPExpress\Option;
+
 
 class SelfTestRedirectToWebPRealizer extends SelfTestRedirectAbstract
 {
@@ -46,6 +48,19 @@ class SelfTestRedirectToWebPRealizer extends SelfTestRedirectAbstract
             Paths::getAbsDirById($rootId)
         );
 
+        if ($requestUrl === false) {
+          $log[] = 'Hm, strange. The source URL does not seem to be in the base root';
+          $log[] = 'Source URL:' . $sourceUrl;
+          //$log[] = 'Root ID:' . $rootId;
+          $log[] = 'Root Url:' . Paths::getUrlById($rootId);
+          $log[] = 'Request Url:' . $requestUrl;
+          $log[] = 'parsed url:' . print_r(parse_url($sourceUrl), true);
+          $log[] = 'parsed url:' . print_r(parse_url(Paths::getUrlById($rootId)), true);
+          $log[] = 'scope:' . print_r(AlterHtmlHelper::$options['scope'], true);
+          $log[] = 'cached options:' . print_r(AlterHtmlHelper::$options, true);
+          $log[] = 'cached options: ' . print_r(Option::getOption('webp-express-alter-html-options', 'not there!'), true);
+        }
+
 
         $log[] = '### Lets check that browsers supporting webp gets a freshly converted WEBP ' .
             'when a non-existing WEBP is requested, which has a corresponding source';
@@ -59,11 +74,11 @@ class SelfTestRedirectToWebPRealizer extends SelfTestRedirectAbstract
         $headers = $results[count($results)-1]['headers'];
         $log = array_merge($log, $remoteGetLog);
 
+
         if (!$success) {
             //$log[count($log) - 1] .= '. FAILED';
             //$log[] = '*' . $requestUrl . '*';
 
-            $log = array_merge($log, $errors);
             $log[] = 'The test **failed**{: .error}';
 
             $log[] = 'Why did it fail? It could either be that the redirection rule did not trigger ' .
@@ -72,7 +87,7 @@ class SelfTestRedirectToWebPRealizer extends SelfTestRedirectAbstract
                 'if the latter is the case (sorry!). However, if the redirection rules are the problem, here is some info:';
 
             $log[] = '### Diagnosing redirection problems (presuming it is the redirection to the script that is failing)';
-            $log = array_merge($log, SelfTestHelper::diagnoseFailedRewrite($this->config));
+            $log = array_merge($log, SelfTestHelper::diagnoseFailedRewrite($this->config, $headers));
 
 
             //$log[count($log) - 1] .= '. FAILED';
@@ -107,7 +122,7 @@ class SelfTestRedirectToWebPRealizer extends SelfTestRedirectAbstract
                     'probably that the redirection simply failed';
 
                     $log[] = '### Diagnosing redirection problems';
-                    $log = array_merge($log, SelfTestHelper::diagnoseFailedRewrite($this->config));
+                    $log = array_merge($log, SelfTestHelper::diagnoseFailedRewrite($this->config, $headers));
             }
             return [false, $log, $createdTestFiles];
         }

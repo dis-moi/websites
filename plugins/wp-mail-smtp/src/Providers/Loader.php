@@ -3,7 +3,7 @@
 namespace WPMailSMTP\Providers;
 
 use WPMailSMTP\Debug;
-use WPMailSMTP\MailCatcher;
+use WPMailSMTP\MailCatcherInterface;
 use WPMailSMTP\Options;
 
 /**
@@ -24,6 +24,7 @@ class Loader {
 	 */
 	protected $providers = array(
 		'mail'        => 'WPMailSMTP\Providers\Mail\\',
+		'smtpcom'     => 'WPMailSMTP\Providers\SMTPcom\\',
 		'pepipostapi' => 'WPMailSMTP\Providers\PepipostAPI\\',
 		'sendinblue'  => 'WPMailSMTP\Providers\Sendinblue\\',
 		'mailgun'     => 'WPMailSMTP\Providers\Mailgun\\',
@@ -38,7 +39,7 @@ class Loader {
 	/**
 	 * @since 1.0.0
 	 *
-	 * @var MailCatcher
+	 * @var MailCatcherInterface
 	 */
 	private $phpmailer;
 
@@ -131,17 +132,14 @@ class Loader {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param string      $provider
-	 * @param MailCatcher $phpmailer
+	 * @param string               $provider  The provider name.
+	 * @param MailCatcherInterface $phpmailer The MailCatcher object.
 	 *
 	 * @return MailerAbstract|null
 	 */
 	public function get_mailer( $provider, $phpmailer ) {
 
-		if (
-			$phpmailer instanceof MailCatcher ||
-			$phpmailer instanceof \PHPMailer
-		) {
+		if ( wp_mail_smtp()->is_valid_phpmailer( $phpmailer ) ) {
 			$this->phpmailer = $phpmailer;
 		}
 

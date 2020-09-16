@@ -534,7 +534,7 @@ function dismoi_wpseo_description( $default ) {
 }
 add_filter( 'wpseo_opengraph_desc', 'dismoi_wpseo_description' );
 add_filter( 'wpseo_twitter_description', 'dismoi_wpseo_description' );
-
+add_filter( 'wpseo_metadesc', 'dismoi_wpseo_description' );
 
 /**
  * Get Informateur ID
@@ -615,12 +615,10 @@ function dismoi_wpseo_meta_title( $title ) {
             $current_post = get_post();
             $title = isset( $current_post->post_title ) ? $current_post->post_title : '';
             return sprintf(
-                '%s - %s',
-                $title,
+                '%s - Informateur sur DisMoi',
                 $profile_object->name
             );
         }
-
     }
 }
 add_filter( 'wpseo_title', 'dismoi_wpseo_meta_title', 11, 1 );

@@ -505,7 +505,12 @@ function dismoi_wpseo_title( $default ) {
         $profile_object = get_profile_object( $id );
 
         if ( !empty( $profile_object ) && count( $profile_object ) > 0 && !empty( $profile_object->name )) {
-            return esc_attr( $profile_object->name );
+            return esc_attr(
+                    sprintf(
+                        '%s - Informateur sur DisMoi',
+                        $profile_object->name
+                    )
+            );
         }
     }
     return $default;
@@ -612,8 +617,8 @@ function dismoi_wpseo_meta_title( $title ) {
         $profile_object = get_profile_object( $id );
 
         if ( !empty( $profile_object ) && count( $profile_object ) > 0 && !empty( $profile_object->name ) ) {
-            $current_post = get_post();
-            $title = isset( $current_post->post_title ) ? $current_post->post_title : '';
+            // $current_post = get_post();
+            // $title = isset( $current_post->post_title ) ? $current_post->post_title : '';
             return sprintf(
                 '%s - Informateur sur DisMoi',
                 $profile_object->name

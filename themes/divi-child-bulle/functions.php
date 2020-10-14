@@ -660,29 +660,33 @@ add_filter( 'wpseo_title', 'dismoi_wpseo_meta_title', 11, 1 );
 /**
  * Head hook
  *
+ * @param string $url
+ *
+ * @return string
+ *
  */
-function dismoi_wpseo_canonical_informateurs() {
+function dismoi_wpseo_canonical_informateurs( $url ) {
     if ( get_page_template_slug() ===  'page-profile-app.php') {
         $id = dismoi_get_informateur_id();
         if ( !empty( $id ) ) {
             $profile_object = get_profile_object( $id );
             if ( empty( $profile_object ) ) {
-                return;
+                return $url;
             }
             // construct canonical
-            $permalink = get_permalink();
             $arr = explode("-", sanitize_title( $profile_object->name ) );
             $transformed_arr = array_map( 'ucwords', $arr );
-            printf(
-                '<link rel="canonical" href="%s%s/%s" />',
-                $permalink,
+            return sprintf(
+                '%s%s/%s',
+                $url,
                 $id,
                 implode('-', $transformed_arr)
             );
         }
     }
+    return $url;
 }
 
-add_action('wp_head', 'dismoi_wpseo_canonical_informateurs');
+add_action('wpseo_canonical', 'dismoi_wpseo_canonical_override');
 
 

@@ -665,7 +665,7 @@ add_filter( 'wpseo_title', 'dismoi_wpseo_meta_title', 11, 1 );
  * @return string
  *
  */
-function dismoi_wpseo_canonical_informateurs( $url ) {
+function dismoi_wpseo_canonical_override( $url ) {
     if ( get_page_template_slug() ===  'page-profile-app.php') {
         $id = dismoi_get_informateur_id();
         if ( !empty( $id ) ) {
@@ -687,6 +687,6 @@ function dismoi_wpseo_canonical_informateurs( $url ) {
     return $url;
 }
 
-add_action('wpseo_canonical', 'dismoi_wpseo_canonical_override');
+add_filter('wpseo_canonical', 'dismoi_wpseo_canonical_override');
 
 

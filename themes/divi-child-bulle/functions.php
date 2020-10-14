@@ -657,3 +657,32 @@ function dismoi_wpseo_meta_title( $title ) {
 add_filter( 'wpseo_title', 'dismoi_wpseo_meta_title', 11, 1 );
 
 
+/**
+ * Head hook
+ *
+ */
+function dismoi_wpseo_canonical_informateurs() {
+    if ( get_page_template_slug() ===  'page-profile-app.php') {
+        $id = dismoi_get_informateur_id();
+        if ( !empty( $id ) ) {
+            $profile_object = get_profile_object( $id );
+            if ( empty( $profile_object ) ) {
+                return;
+            }
+            // construct canonical
+            $permalink = get_permalink();
+            $arr = explode("-", sanitize_title( $profile_object->name ) );
+            $transformed_arr = array_map( 'ucwords', $arr );
+            printf(
+                '<link rel="canonical" href="%s%s/%s" />',
+                $permalink,
+                $id,
+                implode('-', $transformed_arr)
+            );
+        }
+    }
+}
+
+add_action('wp_head', 'dismoi_wpseo_canonical_informateurs');
+
+

@@ -529,7 +529,7 @@ function dismoi_wpseo_opengraph_image($default) {
     return ($informateur && $informateur->preview) ? $informateur->preview : $default;
 }
 
-add_filter( 'wpseo_opengraph_image', 'filter_wpseo_opengraph_image');
+add_filter( 'wpseo_opengraph_image', 'dismoi_wpseo_opengraph_image');
 
 /**
  * Get description
@@ -586,9 +586,7 @@ function dismoi_get_informateur_id( ) {
 function dismoi_get_informateur_by_id( ) {
     $id = dismoi_get_informateur_id();
     if (!empty($id)) {
-        if (!empty( $profile_object ) && count( $profile_object ) > 0)  {
-            return get_profile_object($id);
-        }
+        return get_profile_object( $id );
     }
 
     return null;

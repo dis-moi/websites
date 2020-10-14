@@ -495,28 +495,41 @@ function get_profile_object ( $id ) {
     return $profile_object;
 }
 
+function dismoi_format_informateur_title($name) {
+    return esc_attr(sprintf('%s - Informateur sur DisMoi', $name));
+}
 
 // override title
 function dismoi_wpseo_title( $default ) {
 
-    $id = dismoi_get_informateur_id();
+    $informateur = dismoi_get_informateur_by_id();
 
-    if ( !empty( $id ) ) {
-        $profile_object = get_profile_object( $id );
-
-        if ( !empty( $profile_object ) && count( $profile_object ) > 0 && !empty( $profile_object->name )) {
-            return esc_attr(
-                    sprintf(
-                        '%s - Informateur sur DisMoi',
-                        $profile_object->name
-                    )
-            );
-        }
+    if ($informateur && !empty($informateur->name)) {
+        return dismoi_format_informateur_title($informateur->name);
     }
     return $default;
 }
-add_filter( 'wpseo_opengraph_title', 'dismoi_wpseo_title' );
+
 add_filter( 'wpseo_twitter_title', 'dismoi_wpseo_title' );
+
+function dismoi_wpseo_opengraph_title($default) {
+    $informateur = dismoi_get_informateur_by_id();
+    if ($informateur) {
+        return $informateur->title ? $informateur->title : dismoi_format_informateur_title($informateur->name);
+    }
+
+    return $default;
+}
+
+add_filter( 'wpseo_opengraph_title', 'dismoi_wpseo_opengraph_title' );
+
+function dismoi_wpseo_opengraph_image($default) {
+    $informateur = dismoi_get_informateur_by_id();
+
+    return ($informateur && $informateur->preview) ? $informateur->preview : $default;
+}
+
+add_filter( 'wpseo_opengraph_image', 'dismoi_wpseo_opengraph_image');
 
 /**
  * Get description
@@ -564,6 +577,21 @@ function dismoi_get_informateur_id( ) {
     }
     return null;
 }
+
+/**
+ * Get Informateur by id
+ *
+ * @return stdClass|null
+ */
+function dismoi_get_informateur_by_id( ) {
+    $id = dismoi_get_informateur_id();
+    if (!empty($id)) {
+        return get_profile_object( $id );
+    }
+
+    return null;
+}
+
 
 
 /**
@@ -627,5 +655,34 @@ function dismoi_wpseo_meta_title( $title ) {
     }
 }
 add_filter( 'wpseo_title', 'dismoi_wpseo_meta_title', 11, 1 );
+
+
+/**
+ * Head hook
+ *
+ */
+function dismoi_wpseo_canonical_informateurs() {
+    if ( get_page_template_slug() ===  'page-profile-app.php') {
+        $id = dismoi_get_informateur_id();
+        if ( !empty( $id ) ) {
+            $profile_object = get_profile_object( $id );
+            if ( empty( $profile_object ) ) {
+                return;
+            }
+            // construct canonical
+            $permalink = get_permalink();
+            $arr = explode("-", sanitize_title( $profile_object->name ) );
+            $transformed_arr = array_map( 'ucwords', $arr );
+            printf(
+                '<link rel="canonical" href="%s%s/%s" />',
+                $permalink,
+                $id,
+                implode('-', $transformed_arr)
+            );
+        }
+    }
+}
+
+add_action('wp_head', 'dismoi_wpseo_canonical_informateurs');
 
 

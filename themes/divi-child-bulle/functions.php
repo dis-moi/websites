@@ -660,6 +660,10 @@ add_filter( 'wpseo_title', 'dismoi_wpseo_meta_title', 11, 1 );
 /**
  * Head hook
  *
+ * @param string $url
+ *
+ * @return string
+ *
  */
 function dismoi_wpseo_canonical_informateurs( $url ) {
     if ( get_page_template_slug() ===  'page-profile-app.php') {

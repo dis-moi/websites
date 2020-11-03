@@ -14,11 +14,19 @@ try {
     $ipRewrite = new IpRewrite();
 
     $isCf = $ipRewrite->isCloudFlare();
+
     if ($isCf) {
         // Fixes Flexible SSL
         if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') {
             $_SERVER['HTTPS'] = 'on';
         }
+
+        // Rewrite Cloudflare IPs when the plugin is loaded,
+        // Doing this later in the plugin lifecycle will not update the IPs correctly
+        add_action('plugins_loaded', function () {
+            $_SERVER['REMOTE_ADDR'] = $_SERVER['HTTP_CF_CONNECTING_IP'];
+            $_SERVER['HTTP_X_FORWARDED_FOR'] = $_SERVER['HTTP_CF_CONNECTING_IP'];
+        }, 1);
     }
 } catch (\RuntimeException $e) {
     error_log($e->getMessage());
@@ -33,6 +41,8 @@ add_action('plugins_loaded', array($cloudflareHooks, 'getCloudflareRequestJSON')
 if (defined('CLOUDFLARE_HTTP2_SERVER_PUSH_ACTIVE') && CLOUDFLARE_HTTP2_SERVER_PUSH_ACTIVE && !is_admin()) {
     add_action('init', array($cloudflareHooks, 'http2ServerPushInit'));
 }
+
+add_action('init', array($cloudflareHooks, 'initAutomaticPlatformOptimization'));
 
 if (is_admin()) {
     //Register proxy AJAX endpoint
@@ -87,10 +97,11 @@ $cloudflarePurgeURLActions = array(
     'edit_post',                        // Edit a post - includes leaving comments
     'delete_attachment',                // Delete an attachment - includes re-uploading
     'post_updated',                     // Update a post
+    'comment_post',                     // Post a comment
 );
 
 $cloudflarePurgeURLActions = apply_filters('cloudflare_purge_url_actions', $cloudflarePurgeURLActions);
 
 foreach ($cloudflarePurgeURLActions as $action) {
-    add_action($action, array($cloudflareHooks, 'purgeCacheByRevelantURLs'), PHP_INT_MAX, 2);
+    add_action($action, array($cloudflareHooks, 'purgeCacheByRelevantURLs'), PHP_INT_MAX, 2);
 }

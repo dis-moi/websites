@@ -1,29 +1,34 @@
 === Cloudflare ===
-Contributors: icyapril, manatarms, thillcf, deuill
+Contributors: icyapril, manatarms, thillcf, deuill, epatryk
 Tags: cloudflare, seo, ssl, ddos, speed, security, cdn, performance, free
 Requires at least: 3.4
-Tested up to: 5.2.2
-Stable tag: 3.4.1
+Tested up to: 5.5.1
+Stable tag: 3.8.5
 License: BSD-3-Clause
 
-All of Cloudflare’s performance and security benefits in a simple one-click install of recommended settings specifically developed for WordPress.
+All of Cloudflare’s performance and security benefits in a simple one-click install.
 
 == Description ==
 
 = What this plugin can do for you =
 
+**Automatic Platform Optimization (APO)**
+
+Take your WordPress site's performance to the next level with Automatic Platform Optimizations (APO). APO allows Cloudflare to serve your entire WordPress site from its edge network ensuring consistent, fast performance for visitors no matter where they are. Find out more in our [announcement blog](https://blog.cloudflare.com/automatic-platform-optimizations-starting-with-wordpress/).
+
 **One-click WordPress-optimized settings**
 
-The easiest way to setup Cloudflare for your WordPress site.
+The easiest way to setup Cloudflare for your WordPress site. Let us configure Cloudflare with the tried and true settings for an optimal experience.
 
 **Web application firewall (WAF) rulesets**
 
-Available on all of Cloudflare’s paid plans, the WAF has built-in rulesets, including rules that mitigate WordPress specific threats and vulnerabilities. These security rules are always kept up-to-date, once the WAF is enabled, you can rest easy knowing your site is protected from even the latest threats.
+Available on all of Cloudflare’s [paid plans](https://www.cloudflare.com/plans/), the WAF has built-in rulesets, including rules specifically tailored to mitigate WordPress threats and vulnerabilities. These security rules are always kept up-to-date, once the WAF is enabled, you can rest easy knowing your site is protected from even the latest threats.
 
-**Automatic cache purge**
+**Automatic cache purge on website updates**
 
-Occurs when you change the appearance of your website. This means that you can focus on your website, while we ensure that the latest content is always available to your visitors.
-(Note: By default, Cloudflare does not cache HTML, and a cache purge is not required on updating HTML content such as publishing a new blog entry).
+If you don't take advantage of the performance benefits of Automatic Platform Optimization for WordPress, using the Cloudflare plugin still ensures that changes to the appearance of your website purge the cache. This means that you can focus on your website, while we ensure that the latest static content is always available to your visitors.
+
+Additionally, Cloudflare’s plugin for WordPress automatically refreshes the Cloudflare cache of static content for each post/page/custom post type when you update the content.
 
 = Additional features =
 
@@ -54,20 +59,23 @@ Make sure your PHP version is 5.3.10 or higher.
 
 = Once Activated =
 
-1. Go to cloudflare.com
-2. Login with your cloudflare account. (If you don’t have a Cloudflare account first sign up for Cloudflare)
-3. Press your account name on top right corner and select “My Settings”
-4. Scroll down to “API Key” → “Global API Key” → View API Key
-5. Copy the API key
-6. Return back to WordPress Cloudflare Plugin page
-7. Enter your email address and paste your API key
-8. Press Login.
+1. Go to https://dash.cloudflare.com
+2. Login with your cloudflare account. If you don’t have a Cloudflare account, first sign up for Cloudflare.
+3. Navigate to the [API Tokens section](https://dash.cloudflare.com/profile/api-tokens) of the user profile (found in the top right corner of the dashboard).
+4. Select 'Create Token'
+5. Select the 'WordPress' Template
+6. Select the Account and Zone to grant the plugin access to
+7. Then select "Continue to Summary" and "Create Token"
+8. Copy your API Token
+9. Return back to WordPress Cloudflare Plugin page
+10. Enter your email address and paste your API Token
+11. Press Login.
 
 == Frequently Asked Questions ==
 
 = Do I need a Cloudflare account to use the plugin? =
 
-Yes, on install and activation the plugin, first time users will be asked to enter their email address (used to sign-up for an account at cloudflare.com) and their user API key. This is needed to support all the features offered by the plugin.
+Yes, on install and activation of the plugin, first time users will be asked to enter their email address (used to sign-up for an account at cloudflare.com) and either an API Token or their API key. This is needed to support all the features offered by the plugin.
 
 = What settings are applied when I click "Apply Default Settings" in Cloudflare's WordPress plugin? =
 
@@ -79,16 +87,75 @@ Yes, Cloudflare works with, and helps speed up your site even more, if you have 
 
 == Screenshots ==
 
+== Changelog ==
+
+= 3.8.5 - 2020-10-15 =
+
+* Added automatic purge cache on new comment
+
+= 3.8.4 - 2020-10-13 =
+
+* Added composer's type=wordpress-plugin for Bedrock users
+* Fixed typo in readme.txt
+* Fix modify header exception thrown during wp-cron
+
 1. Cloudflare Plugin
 
 == Changelog ==
+
+= 3.8.3 - 2020-10-05 =
+
+* Fixed setting all APO values properly for correct dashboard rendering
+
+= 3.8.2 - 2020-10-02 =
+
+* re-relase broken version, no changes
+
+= 3.8.1 - 2020-10-02 =
+
+* Fixed typo in config.js(on) that resulted in warning [#292](https://github.com/cloudflare/Cloudflare-WordPress/pull/292)
+* Check for array indicies are set before using [#278](https://github.com/cloudflare/Cloudflare-WordPress/pull/278)
+
+= 3.8.0 - 2020-10-01 =
+
+* Added APO support
+* Renamed Automatic Cache Management card to Auto Purge Content On Update
+
+= 3.7.0 - 2020-09-25 =
+
+* Bump cloudflare-plugin-backend v2.3.0 and cloudflare-plugin-frontend v3.1.0 [#283](https://github.com/cloudflare/Cloudflare-WordPress/pull/283)
+
+= 3.6.0 - 2020-09-17 =
+
+* Bump cloudflare-plugin-backend [#276](https://github.com/cloudflare/Cloudflare-WordPress/pull/276)
+
+= 3.5.1 - 2020-07-02 =
+
+*Fixed*
+
+* Fixed Cache Purges failing [#266](https://github.com/cloudflare/Cloudflare-WordPress/issues/266)
+
+= 3.5.0 - 2020-06-26 =
+
+*Fixed*
+
+* Disable HTTP/2 Push on wp-admin pages [#214](https://github.com/cloudflare/Cloudflare-WordPress/pull/214)
+* Fix PHP 7.4 notice [#256](https://github.com/cloudflare/Cloudflare-WordPress/pull/256)
+
+*Added*
+
+* Purge attachment URLs [#208](https://github.com/cloudflare/Cloudflare-WordPress/pull/208)
+* Purge URLs on page/post update [#206](https://github.com/cloudflare/Cloudflare-WordPress/pull/206)
+* Turn on IPv6 by default [#229](https://github.com/cloudflare/Cloudflare-WordPress/pull/229)
+* Add constants for better control HTTP/2 Server Push [#213](https://github.com/cloudflare/Cloudflare-WordPress/pull/213)
+* Allow custom actions for purge url and purge everything actions [#212](https://github.com/cloudflare/Cloudflare-WordPress/pull/212)
 
 = 3.4.1 - 2019-08-29 =
 
 *Fixed*
 
 * Updated list of contributors.
-* Updated tested Wordpress version to latest (5.2.2).
+* Updated tested WordPress version to latest (5.2.2).
 
 = 3.4.0 - 2019-08-29 =
 

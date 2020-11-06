@@ -21,7 +21,7 @@ class Hooks
 
     public function __construct()
     {
-        $this->config = new Integration\DefaultConfig(file_get_contents(CLOUDFLARE_PLUGIN_DIR.'config.js', true));
+        $this->config = new Integration\DefaultConfig(file_get_contents(CLOUDFLARE_PLUGIN_DIR.'config.json', true));
         $this->logger = new Integration\DefaultLogger($this->config->getValue('debug'));
         $this->dataStore = new DataStore($this->logger);
         $this->integrationAPI = new WordPressAPI($this->dataStore);
@@ -109,7 +109,7 @@ class Hooks
 
     public function purgeCacheEverything()
     {
-        if ($this->isPluginSpecificCacheEnabled()) {
+        if ($this->isPluginSpecificCacheEnabled() || $this->isAutomaticPlatformOptimizationEnabled()) {
             $wpDomainList = $this->integrationAPI->getDomainList();
             if (count($wpDomainList) > 0) {
                 $wpDomain = $wpDomainList[0];
@@ -126,11 +126,11 @@ class Hooks
         }
     }
 
-    public function purgeCacheByRevelantURLs($postId)
+    public function purgeCacheByRelevantURLs($postId)
     {
-        if ($this->isPluginSpecificCacheEnabled()) {
+        if ($this->isPluginSpecificCacheEnabled() || $this->isAutomaticPlatformOptimizationEnabled()) {
             $wpDomainList = $this->integrationAPI->getDomainList();
-            if (count($wpDomainList) <= 0) {
+            if (!count($wpDomainList)) {
                 return;
             }
             $wpDomain = $wpDomainList[0];
@@ -157,11 +157,15 @@ class Hooks
             $zoneTag = $this->api->getZoneTag($wpDomain);
 
             if (isset($zoneTag) && !empty($urls)) {
-                $isOK = $this->api->zonePurgeFiles($zoneTag, $urls);
+                $chunks = array_chunk($urls, 30);
 
-                $isOK = ($isOK) ? 'succeeded' : 'failed';
-                $this->logger->debug("List of URLs purged are: " . print_r($urls, true));
-                $this->logger->debug("purgeCacheByRevelantURLs " . $isOK);
+                foreach ($chunks as $chunk) {
+                    $isOK = $this->api->zonePurgeFiles($zoneTag, $chunk);
+
+                    $isOK = ($isOK) ? 'succeeded' : 'failed';
+                    $this->logger->debug("List of URLs purged are: " . print_r($chunk, true));
+                    $this->logger->debug("purgeCacheByRelevantURLs " . $isOK);
+                }
             }
         }
     }
@@ -233,6 +237,19 @@ class Hooks
             array_push($listofurls, $pageLink);
         }
 
+        // Attachments
+        if ('attachment' == $postType) {
+            $attachmentUrls = array();
+            foreach (get_intermediate_image_sizes() as $size) {
+                $attachmentSrc = wp_get_attachment_image_src($postId, $size);
+                $attachmentUrls[] = $attachmentSrc[0];
+            }
+            $listofurls = array_merge(
+                $listofurls,
+                array_unique(array_filter($attachmentUrls))
+            );
+        }
+
         // Purge https and http URLs
         if (function_exists('force_ssl_admin') && force_ssl_admin()) {
             $listofurls = array_merge($listofurls, str_replace('https://', 'http://', $listofurls));
@@ -246,9 +263,29 @@ class Hooks
     protected function isPluginSpecificCacheEnabled()
     {
         $cacheSettingObject = $this->dataStore->getPluginSetting(\CF\API\Plugin::SETTING_PLUGIN_SPECIFIC_CACHE);
+
+        if (! $cacheSettingObject) {
+            return false;
+        }
+
         $cacheSettingValue = $cacheSettingObject[\CF\API\Plugin::SETTING_VALUE_KEY];
 
-        return isset($cacheSettingValue) && $cacheSettingValue !== false && $cacheSettingValue !== 'off';
+        return $cacheSettingValue !== false
+            && $cacheSettingValue !== 'off';
+    }
+
+    protected function isAutomaticPlatformOptimizationEnabled()
+    {
+        $cacheSettingObject = $this->dataStore->getPluginSetting(\CF\API\Plugin::SETTING_AUTOMATIC_PLATFORM_OPTIMIZATION);
+
+        if (! $cacheSettingObject) {
+            return false;
+        }
+
+        $cacheSettingValue = $cacheSettingObject[\CF\API\Plugin::SETTING_VALUE_KEY];
+
+        return $cacheSettingValue !== false
+            && $cacheSettingValue !== 'off';
     }
 
     public function http2ServerPushInit()
@@ -266,5 +303,21 @@ class Hooks
         if (isset($_GET['action']) && $_GET['action'] === self::WP_AJAX_ACTION) {
             $GLOBALS[self::CLOUDFLARE_JSON] = file_get_contents('php://input');
         }
+    }
+
+    public function initAutomaticPlatformOptimization()
+    {
+      // it could be too late to set the headers,
+      // return early without triggering a warning in logs
+      if (headers_sent()) {
+        return;
+      }
+
+      // add header unconditionally so we can detect plugin is activated
+      if (!is_user_logged_in() ) {
+        header( 'cf-edge-cache: cache,platform=wordpress' );
+      } else {
+        header( 'cf-edge-cache: no-cache' );
+      }
     }
 }

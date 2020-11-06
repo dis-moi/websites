@@ -14,6 +14,11 @@ class WordPressClientAPI extends Client
      */
     public function getZoneTag($zone_name)
     {
+        $zone_tag = wp_cache_get('cloudflare/client-api/zone-tag/'.$zone_name);
+        if (false !== $zone_tag) {
+            return $zone_tag;
+        }
+
         $request = new Request('GET', 'zones/', array('name' => $zone_name), array());
         $response = $this->callAPI($request);
 
@@ -26,6 +31,8 @@ class WordPressClientAPI extends Client
                 }
             }
         }
+
+        wp_cache_set('cloudflare/client-api/zone-tag/'.$zone_name, $zone_tag);
 
         return $zone_tag;
     }
@@ -179,9 +186,9 @@ class WordPressClientAPI extends Client
             $request->setParameters($parameters);
             $pagedResponse = $this->sendRequest($request);
             $mergedResponse['result'] = array_merge($mergedResponse['result'], $pagedResponse['result']);
-            
+
             // Notify the frontend that pagination is taken care.
-            $mergedResponse['result_info']['notify'] = 'Backend has taken care of pagination. Ouput is merged in results.';
+            $mergedResponse['result_info']['notify'] = 'Backend has taken care of pagination. Output is merged in results.';
             $mergedResponse['result_info']['page'] = -1;
             $mergedResponse['result_info']['count'] = -1;
             $currentPage++;

@@ -110,7 +110,7 @@ function get_browser_name($user_agent) {
  * Absolutely not cache compatible
  * ToDo: To be handled on the FE only
  */
-function output_bulle_overlay() {
+function dismoi_output_bulle_overlay() {
 	if( get_browser_name($_SERVER['HTTP_USER_AGENT']) == 'firefox'):
 		echo get_template_part( 'includes/overlayFirefox');
 	elseif(get_browser_name($_SERVER['HTTP_USER_AGENT']) == 'chrome'):
@@ -118,15 +118,15 @@ function output_bulle_overlay() {
 	endif;
 
 }
-add_action( 'wp_footer', 'output_bulle_overlay' );
+add_action( 'wp_footer', 'dismoi_output_bulle_overlay' );
 
 
-function cc_mime_types($mimes) {
+function dismoi_cc_mime_types($mimes) {
 	$mimes['svg'] = 'image/svg+xml';
 	$mimes['webp'] = 'image/webp';
 	return $mimes;
 }
-add_filter('upload_mimes', 'cc_mime_types');
+add_filter('upload_mimes', 'dismoi_cc_mime_types');
 
 
 
@@ -137,7 +137,7 @@ add_filter('upload_mimes', 'cc_mime_types');
  *
  * @param WP_Customize_Manager $wp_customize Customizer object.
  */
-function prefix_customize_register( $wp_customize ) {
+function dismoi_prefix_customize_register( $wp_customize ) {
 
     $wp_customize->add_section( 'bulle_section' , array(
         'title'      => __( 'Configuration Bulles/Dismoi', 'divi-child-bulle' ),
@@ -389,11 +389,14 @@ function prefix_customize_register( $wp_customize ) {
 
 
 }
-add_action( 'customize_register', 'prefix_customize_register' );
+add_action( 'customize_register', 'dismoi_prefix_customize_register' );
 
 
-
-function theme_init() {
+/**
+ * Set up rewrites based on caonfiguration settings
+ *
+ */
+function dismoi_profiler_rewrite_url( $wp_rewrite ) {
     $page_profile = get_theme_mod( 'bulle_setting_profile_page' );
     $page_profile_rules = get_theme_mod( 'bulle_setting_profile_page_rewrite' );
     if ( isset( $page_profile ) &&
@@ -401,36 +404,24 @@ function theme_init() {
         $page_profile_rules == '1' ) {
         $slug_page_profile = get_post_field( 'post_name', get_post( $page_profile ) );
 
-        add_rewrite_rule(
-            '^' . $slug_page_profile . '/(d+)/?$+',
-            'index.php?pagename='.$slug_page_profile,
-            'top'
+        $new_rules = array(
+            $slug_page_profile . '/([0-9]+)/([^/]+)/?$' => 'index.php?pagename=' . $slug_page_profile,
+            $slug_page_profile . '/([0-9]+)/?$' => 'index.php?pagename=' . $slug_page_profile
         );
 
-        add_rewrite_rule(
-            '^' . $slug_page_profile . '/(d+)/([^/]*)/?',
-            'index.php?pagename='.$slug_page_profile,
-            'top'
-        );
-
-        /*
-        error_log(
-            $slug_page_profile,
-            3,
-            '/Applications/MAMP/logs/php_error.log'
-        );
-        */
+        $wp_rewrite->rules =  $new_rules + $wp_rewrite->rules;
     }
+    return $wp_rewrite->rules;
 }
+add_filter('generate_rewrite_rules', 'dismoi_profiler_rewrite_url');
 
-add_action('init', 'theme_init');
 
 
 /**
  * Output Matomo tag manager tag
  *
  */
-function hook_matomo_tag() {
+function dismoi_hook_matomo_tag() {
     ?>
     <!-- Matomo Tag Manager -->
     <script type="text/javascript">
@@ -442,14 +433,14 @@ function hook_matomo_tag() {
     <!-- End Matomo Tag Manager -->
     <?php
 }
-add_action('wp_head', 'hook_matomo_tag');
+add_action('wp_head', 'dismoi_hook_matomo_tag');
 
 /**
  *	This will hide the Divi "Project" post type.
  *	Thanks to georgiee (https://gist.github.com/EngageWP/062edef103469b1177bc#gistcomment-1801080) for his improved solution.
  */
-add_filter( 'et_project_posttype_args', 'mytheme_et_project_posttype_args', 10, 1 );
-function mytheme_et_project_posttype_args( $args ) {
+add_filter( 'et_project_posttype_args', 'dismoi_et_project_posttype_args', 10, 1 );
+function dismoi_et_project_posttype_args( $args ) {
     return array_merge( $args, array(
         'public'              => false,
         'exclude_from_search' => false,
@@ -461,130 +452,233 @@ function mytheme_et_project_posttype_args( $args ) {
 
 add_filter ('widget_text', 'do_shortcode');
 
-function year_shortcode () {
+function dismoi_year_shortcode () {
     $year = date_i18n ('Y');
     return $year;
 }
-add_shortcode ('year', 'year_shortcode');
-
-
-function profiles_rewrite() {
-
-    // get first page with profile
-    $args = array(
-        'post_type' => 'page',
-        'posts_per_page' => 1,
-        'meta_query' => array(
-            array(
-                'key' => '_wp_page_template',
-                'value' => 'page-profile-app.php'
-            )
-        )
-    );
-    $the_pages = new WP_Query( $args );
-    if ( $the_pages->posts && count( $the_pages->posts ) ) {
-
-        /*
-        global $wp_rewrite;
-        $wp_rewrite->flush_rules();
-        $wp_rewrite->init();
-        */
-
-        // flush_rewrite_rules();
-
-        $slug = $the_pages->posts[0]->post_name;
-        $id = $the_pages->posts[0]->ID;
-
-        // must refresh permalinks
-        // [^/]+\/([^/]+)
-        /*
-        add_rewrite_rule(
-            '^'.$slug.'/([0-9]+)/([^/]*)?',
-            'index.php?pagename='.$slug,
-            'top'
-        );
-        */
-        /*
-        add_rewrite_rule(
-            '^'.$slug.'/(d+)/?$+',
-            'index.php?pagename='.$slug,
-            'top'
-        );
-        */
-        // ^nutrition/([^/]*)/([^/]*)/?
-        /*
-        add_rewrite_rule(
-            '^'.$slug.'/(d+)/([^/]*)/?',
-            'index.php?pagename='.$slug,
-            'top'
-        );
-        */
-
-    }
-}
-// add_action('init', 'profiles_rewrite');
+add_shortcode ('year', 'dismoi_year_shortcode');
 
 
 /**
- * Function to add hooks and filter out the Yoast SEO Open Graph Meta Tags
+ * Function to get profile object
+ * Use cacheed version if it exists to prevent unnecessary retrieval
  */
-/*
-function change_yoast_seo_og_meta() {
-    // We will add the code here to change the meta tags
-    // only change if we're on the profiler template
-    if ( get_page_template() ==  'page-profile-app.php') {
+function get_profile_object ( $id ) {
+    $key = 'PROFILE_' . $id;
+    $group = 'PROFILES';
+    $expiration = 60;
 
+    // if cached object
+    // $profile_object = get_transient( $key );
+    $profile_object = wp_cache_get( $key, $group );
+
+    if ( empty( $profile_object ) ) {
+        try {
+            $response = wp_remote_get(
+                sprintf(
+                    'https://notices.bulles.fr/api/v3/contributors/%s',
+                    $id
+                )
+            );
+            if ( is_array( $response ) && ! is_wp_error( $response ) && $response['body'] ) {
+                // $headers = $response['headers']; // array of http header lines
+                $profile_object    = json_decode( $response['body'] ); // use the content
+                // for caching
+                wp_cache_set( $key, $profile_object, $group, $expiration );
+                // set_transient( $key, $profile_object, $expiration );
+            }
+            ;
+        } catch ( Exception $ex ) {
+        }
     }
+
+    return $profile_object;
 }
-add_action( 'wpseo_opengraph', 'change_yoast_seo_og_meta' );
-*/
+
+function dismoi_format_informateur_title($name) {
+    return esc_attr(sprintf('%s - Source d\'information sur DisMoi', $name));
+}
+
+// override title
+function dismoi_wpseo_title( $default ) {
+
+    $informateur = dismoi_get_informateur_by_id();
+
+    if ($informateur) {
+        return $informateur->title ? $informateur->title : dismoi_format_informateur_title($informateur->name);
+    }
+    return $default;
+}
+
+add_filter( 'wpseo_twitter_title', 'dismoi_wpseo_title' );
+add_filter( 'wpseo_opengraph_title', 'dismoi_wpseo_title' );
 
 
-function wpseo_opengraph_title( $default ) {
-    // We will add the code here to change the meta tags
+function dismoi_wpseo_opengraph_image($default) {
+    $informateur = dismoi_get_informateur_by_id();
+
+    return ($informateur && $informateur->preview) ? $informateur->preview : $default;
+}
+
+add_filter( 'wpseo_opengraph_image', 'dismoi_wpseo_opengraph_image');
+add_filter( 'wpseo_twitter_image', 'dismoi_wpseo_opengraph_image');
+
+/**
+ * Get description
+ *
+ * @param $default string
+ * @return string
+ */
+function dismoi_wpseo_description( $default ) {
+
+    $id = dismoi_get_informateur_id();
+
+    if ( !empty( $id ) ) {
+        $profile_object = get_profile_object( $id );
+
+        if ( !empty( $profile_object ) && count( $profile_object ) > 0 && !empty( $profile_object->intro ) ) {
+            return esc_attr( strip_tags( $profile_object->intro ) );
+        }
+    }
+    return $default;
+}
+add_filter( 'wpseo_opengraph_desc', 'dismoi_wpseo_description' );
+add_filter( 'wpseo_twitter_description', 'dismoi_wpseo_description' );
+add_filter( 'wpseo_metadesc', 'dismoi_wpseo_description' );
+
+/**
+ * Get Informateur ID
+ *
+ * @return string
+ */
+function dismoi_get_informateur_id( ) {
     // only change if we're on the profiler template
     if ( get_page_template_slug() ===  'page-profile-app.php') {
 
-        /*
         $path = parse_url( $_SERVER['REQUEST_URI'], PHP_URL_PATH );
         if ( strpos( $path, '/' ) === 0 ) {
-            // var_dump('sweet');
             $path = substr( $path, 1 );
         }
         $parts = explode("/", $path);
 
         if ( count( $parts ) > 1 ) {
-            // var_dump(get_page_template_slug() );
             $id = $parts[1];
-            // var_dump($id);
-            // return 'adsfaf';
-            if ( !empty( $id ) ) {
-                $response = wp_remote_get(
-                    sprintf(
-                        'https://notices.bulles.fr/api/v3/contributors/%s',
-                        $id
-                    )
-                );
-                // var_dump($response);
-
-                if ( is_array( $response ) && ! is_wp_error( $response ) ) {
-                    $headers = $response['headers']; // array of http header lines
-                    $body    = $response['body']; // use the content
-                    try {
-                        $json = json_decode( $response['body'] );
-                    } catch ( Exception $ex ) {
-                        $json = null;
-                    }
-                    if ( !empty($json) && count( $json ) > 0 ) {
-                        return 'title';
-                    }
-                    return 'test';
-                }
-            }
+            return $id;
         }
-        */
 
+    }
+    return null;
+}
+
+/**
+ * Get Informateur by id
+ *
+ * @return stdClass|null
+ */
+function dismoi_get_informateur_by_id( ) {
+    $id = dismoi_get_informateur_id();
+    if (!empty($id)) {
+        return get_profile_object( $id );
+    }
+
+    return null;
+}
+
+
+
+/**
+ * override OG url
+ */
+function dismoi_wpseo_opengraph_url( $default ) {
+    $id = dismoi_get_informateur_id();
+    if ( !empty( $id ) ) {
+        return (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
     }
     return $default;
 }
-// add_filter( 'wpseo_opengraph_title', 'wpseo_opengraph_title' );
+add_filter( 'wpseo_opengraph_url', 'dismoi_wpseo_opengraph_url' );
+
+
+/**
+ * Changes @type of Webpage Schema data.
+ *
+ * @param array $data Schema.org Webpage data array.
+ *
+ * @return array Schema.org Webpage data array.
+ */
+function dismoi_change_webpage( $data ) {
+    $id = dismoi_get_informateur_id();
+    if ( !empty( $id ) ) {
+
+        // $data['@type'] = 'AboutPage';
+        $url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+
+        $data['url'] = $url;
+        $data['@id'] = $url . '#webpage';
+
+    }
+    return $data;
+}
+add_filter( 'wpseo_schema_webpage', 'dismoi_change_webpage' );
+
+
+/**
+ * Filter title
+ *
+ * @param string $title
+ *
+ * @return string
+ */
+function dismoi_wpseo_meta_title( $title ) {
+    if ( ! is_singular() ) return $title;
+
+    $id = dismoi_get_informateur_id();
+    if ( !empty( $id ) ) {
+        $profile_object = get_profile_object( $id );
+
+        if ( !empty( $profile_object ) && count( $profile_object ) > 0 && !empty( $profile_object->name ) ) {
+            // $current_post = get_post();
+            // $title = isset( $current_post->post_title ) ? $current_post->post_title : '';
+            return sprintf(
+                '%s - Source d\'information sur DisMoi',
+                $profile_object->name
+            );
+        }
+    }
+}
+add_filter( 'wpseo_title', 'dismoi_wpseo_meta_title', 11, 1 );
+
+
+/**
+ * Head hook
+ *
+ * @param string $url
+ *
+ * @return string
+ *
+ */
+function dismoi_wpseo_canonical_override( $url ) {
+    if ( get_page_template_slug() ===  'page-profile-app.php') {
+        $id = dismoi_get_informateur_id();
+        if ( !empty( $id ) ) {
+            $profile_object = get_profile_object( $id );
+            if ( empty( $profile_object ) ) {
+                return $url;
+            }
+            // construct canonical
+            $arr = explode("-", sanitize_title( $profile_object->name ) );
+            $transformed_arr = array_map( 'ucwords', $arr );
+            return sprintf(
+                '%s%s/%s',
+                $url,
+                $id,
+                implode('-', $transformed_arr)
+            );
+        }
+    }
+    return $url;
+}
+
+add_filter('wpseo_canonical', 'dismoi_wpseo_canonical_override');
+
+

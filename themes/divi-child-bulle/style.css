@@ -228,6 +228,9 @@ p + ul {
   box-shadow: none;
   background-color: transparent; }
 
+.page-template-page-profile-app #root {
+  min-height: calc(100vh - 59px); }
+
 .custom-overlay {
   position: absolute;
   top: 0;

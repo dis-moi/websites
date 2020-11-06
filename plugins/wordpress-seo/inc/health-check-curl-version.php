@@ -28,12 +28,12 @@ class WPSEO_Health_Check_Curl_Version extends WPSEO_Health_Check {
 		}
 
 		if ( ! $this->is_my_yoast_api_reachable() && $this->is_recent_curl_version() ) {
-			$this->label          = sprintf(
+			$this->label = sprintf(
 				/* translators: %1$s expands to 'my.yoast.com'. */
 				esc_html__( 'Your site can not connect to %1$s', 'wordpress-seo' ),
 				'my.yoast.com'
 			);
-			$this->status         = self::STATUS_RECOMMENDED;
+			$this->status         = self::STATUS_CRITICAL;
 			$this->badge['color'] = 'red';
 			$this->description    = sprintf(
 				/* translators: %1$s Emphasis open tag, %2$s: Emphasis close tag, %3$s Link start tag to the Yoast knowledge base, %4$s Link closing tag. */
@@ -49,7 +49,7 @@ class WPSEO_Health_Check_Curl_Version extends WPSEO_Health_Check {
 
 		// Note: as of January 2020, the most recent cURL version is 7.67.0.
 		if ( ! $this->is_my_yoast_api_reachable() && ! $this->is_recent_curl_version() ) {
-			$this->label          = sprintf(
+			$this->label = sprintf(
 				/* translators: %1$s expands to 'my.yoast.com'. */
 				esc_html__( 'Your site can not connect to %1$s', 'wordpress-seo' ),
 				'my.yoast.com'
@@ -67,7 +67,7 @@ class WPSEO_Health_Check_Curl_Version extends WPSEO_Health_Check {
 			return;
 		}
 
-		$this->label          = sprintf(
+		$this->label = sprintf(
 			/* translators: %1$s expands to 'my.yoast.com'. */
 			esc_html__( 'Your site can connect to %1$s', 'wordpress-seo' ),
 			'my.yoast.com'

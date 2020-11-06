@@ -2,15 +2,6 @@
 
 namespace WebPExpress;
 
-use \WebPExpress\ConvertersHelper;
-use \WebPExpress\FileHelper;
-use \WebPExpress\HTAccess;
-use \WebPExpress\Messenger;
-use \WebPExpress\Paths;
-use \WebPExpress\State;
-use \WebPExpress\TestRun;
-use \WebPExpress\Option;
-
 class Config
 {
 
@@ -39,7 +30,7 @@ class Config
             'image-types' => 3,
             'destination-folder' => 'separate',
             'destination-extension' => 'append',
-            'destination-structure' => (Paths::canUseDocRootForRelPaths() ? 'doc-root' : 'image-roots'),
+            'destination-structure' => (PlatformInfo::isNginx() ? 'doc-root' : 'image-roots'),
             'cache-control' => 'no-header',     /* can be "no-header", "set" or "custom" */
             'cache-control-custom' => 'public, max-age=31536000, stale-while-revalidate=604800, stale-if-error=604800',
             'cache-control-max-age' => 'one-week',
@@ -267,9 +258,12 @@ class Config
     public static function runAndStoreCapabilityTests(&$config)
     {
         $config['base-htaccess-on-these-capability-tests'] = [
-            'passThroughHeaderWorking' => CapabilityTest::passThroughHeaderWorking(),
-            'passThroughEnvWorking' => CapabilityTest::passThroughEnvWorking(),
-            'modHeaderWorking' => CapabilityTest::modHeaderWorking(),
+            'passThroughHeaderWorking' => HTAccessCapabilityTestRunner::passThroughHeaderWorking(),
+            'passThroughEnvWorking' => HTAccessCapabilityTestRunner::passThroughEnvWorking(),
+            'modHeaderWorking' => HTAccessCapabilityTestRunner::modHeaderWorking(),
+            //'grantAllAllowed' => HTAccessCapabilityTestRunner::grantAllAllowed(),
+            'canRunTestScriptInWOD' => HTAccessCapabilityTestRunner::canRunTestScriptInWOD(),
+            'canRunTestScriptInWOD2' => HTAccessCapabilityTestRunner::canRunTestScriptInWOD2(),
         ];
     }
 
@@ -646,10 +640,10 @@ class Config
         if ($forceRuleUpdating) {
             $rewriteRulesNeedsUpdate = true;
         } else {
-            $rewriteRulesNeedsUpdate = HTAccess::doesRewriteRulesNeedUpdate($config);
+            $rewriteRulesNeedsUpdate = HTAccessRules::doesRewriteRulesNeedUpdate($config);
         }
 
-        if (!isset($config['base-htaccess-on-these-capability-tests'])) {
+        if (!isset($config['base-htaccess-on-these-capability-tests']) || $rewriteRulesNeedsUpdate) {
             self::runAndStoreCapabilityTests($config);
         }
 

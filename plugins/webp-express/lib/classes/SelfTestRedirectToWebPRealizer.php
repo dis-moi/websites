@@ -41,6 +41,9 @@ class SelfTestRedirectToWebPRealizer extends SelfTestRedirectAbstract
         AlterHtmlHelper::$options = json_decode(Option::getOption('webp-express-alter-html-options', null), true);
         AlterHtmlHelper::$options['only-for-webps-that-exists'] = false;
 
+        // TODO: Check that AlterHtmlHelper::$options['scope'] is not empty
+        //       - it has been seen to happen
+
         $requestUrl = AlterHtmlHelper::getWebPUrlInImageRoot(
             $sourceUrl,
             $rootId,
@@ -49,16 +52,18 @@ class SelfTestRedirectToWebPRealizer extends SelfTestRedirectAbstract
         );
 
         if ($requestUrl === false) {
-          $log[] = 'Hm, strange. The source URL does not seem to be in the base root';
-          $log[] = 'Source URL:' . $sourceUrl;
-          //$log[] = 'Root ID:' . $rootId;
-          $log[] = 'Root Url:' . Paths::getUrlById($rootId);
-          $log[] = 'Request Url:' . $requestUrl;
-          $log[] = 'parsed url:' . print_r(parse_url($sourceUrl), true);
-          $log[] = 'parsed url:' . print_r(parse_url(Paths::getUrlById($rootId)), true);
-          $log[] = 'scope:' . print_r(AlterHtmlHelper::$options['scope'], true);
-          $log[] = 'cached options:' . print_r(AlterHtmlHelper::$options, true);
-          $log[] = 'cached options: ' . print_r(Option::getOption('webp-express-alter-html-options', 'not there!'), true);
+            // PS: this has happened due to AlterHtmlHelper::$options['scope'] being empty...
+
+            $log[] = 'Hm, strange. The source URL does not seem to be in the base root';
+            $log[] = 'Source URL:' . $sourceUrl;
+            //$log[] = 'Root ID:' . $rootId;
+            $log[] = 'Root Url:' . Paths::getUrlById($rootId);
+            $log[] = 'Request Url:' . $requestUrl;
+            $log[] = 'parsed url:' . print_r(parse_url($sourceUrl), true);
+            $log[] = 'parsed url:' . print_r(parse_url(Paths::getUrlById($rootId)), true);
+            $log[] = 'scope:' . print_r(AlterHtmlHelper::$options['scope'], true);
+            $log[] = 'cached options:' . print_r(AlterHtmlHelper::$options, true);
+            $log[] = 'cached options: ' . print_r(Option::getOption('webp-express-alter-html-options', 'not there!'), true);
         }
 
 
@@ -80,6 +85,17 @@ class SelfTestRedirectToWebPRealizer extends SelfTestRedirectAbstract
             //$log[] = '*' . $requestUrl . '*';
 
             $log[] = 'The test **failed**{: .error}';
+
+            if (isset($results[0]['response']['code'])) {
+                $responseCode = $results[0]['response']['code'];
+                if (($responseCode == 500) || ($responseCode == 403)) {
+
+                    $log = array_merge($log, SelfTestHelper::diagnoseWod403or500($this->config, $rootId, $responseCode));
+                    return [false, $log, $createdTestFiles];
+                    //$log[] = 'or that there is an .htaccess file in the ';
+                }
+//                $log[] = print_r($results[0]['response']['code'], true);
+            }
 
             $log[] = 'Why did it fail? It could either be that the redirection rule did not trigger ' .
                 'or it could be that the PHP script could not locate a source image corresponding to the destination URL. ' .

@@ -59,8 +59,13 @@ class SelfTestRedirectToExisting extends SelfTestRedirectAbstract
         $log = array_merge($log, $remoteGetLog);
 
         if (!$success) {
-            $log[] = 'The request FAILED';
-            $log[] = 'The test cannot be completed';
+            $log[] = 'The test cannot be completed, as the HTTP request failed. This does not neccesarily mean that the redirections ' .
+                "aren't" . ' working, but it means you will have to check it manually. Check out the FAQ on how to do this. ' .
+                'You might also want to check out why a simple HTTP request could not be issued. WebP Express uses such requests ' .
+                'for detecting system capabilities, which are used when generating .htaccess files. These tests are not essential, but ' .
+                'it would be best to have them working. I can inform that the Wordpress function *wp_remote_get* was used for the HTTP request ' .
+                'and the URL was: ' . $requestUrl;
+
             return [false, $log, $createdTestFiles];
         }
         //$log[count($log) - 1] .= '. ok!';
@@ -134,13 +139,12 @@ class SelfTestRedirectToExisting extends SelfTestRedirectAbstract
         } else {
             $log[] = 'Alrighty. We got a webp. Just what we wanted. **Great!**{: .ok}';
         }
+
         if (!SelfTestHelper::hasVaryAcceptHeader($headers)) {
-            $log[count($log) - 1] .= '. **BUT!**';
-            $log[] = '**Warning: We did not receive a Vary:Accept header. ' .
-                'That header should be set in order to tell proxies that the response varies depending on the ' .
-                'Accept header. Otherwise browsers not supporting webp might get a cached webp and vice versa.**{: .warn}';
+            $log = array_merge($log, SelfTestHelper::diagnoseNoVaryHeader($rootId, 'existing'));
             $noWarningsYet = false;
         }
+
         if (!SelfTestHelper::hasCacheControlOrExpiresHeader($headers)) {
             $log[] = '**Notice: No cache-control or expires header has been set. ' .
                 'It is recommended to do so. Set it nice and big once you are sure the webps have a good quality/compression compromise.**{: .warn}';
@@ -212,10 +216,7 @@ class SelfTestRedirectToExisting extends SelfTestRedirectAbstract
         $log[] = 'Alrighty. We got the ' . $imageType . '. **Great!**{: .ok}.';
 
         if (!SelfTestHelper::hasVaryAcceptHeader($headers)) {
-            $log[count($log) - 1] .= '. **BUT!**';
-            $log[] = '**We did not receive a Vary:Accept header. ' .
-                'That header should be set in order to tell proxies that the response varies depending on the ' .
-                'Accept header. Otherwise browsers not supporting webp might get a cached webp and vice versa.**{: .warn}';
+            $log = array_merge($log, SelfTestHelper::diagnoseNoVaryHeader($rootId, 'existing'));
             $noWarningsYet = false;
         }
 

@@ -496,7 +496,7 @@ function get_profile_object ( $id ) {
 }
 
 function dismoi_format_informateur_title($name) {
-    return esc_attr(sprintf('%s - Informateur sur DisMoi', $name));
+    return esc_attr(sprintf('%s - Source d\'information sur DisMoi', $name));
 }
 
 // override title
@@ -504,24 +504,15 @@ function dismoi_wpseo_title( $default ) {
 
     $informateur = dismoi_get_informateur_by_id();
 
-    if ($informateur && !empty($informateur->name)) {
-        return dismoi_format_informateur_title($informateur->name);
+    if ($informateur) {
+        return $informateur->title ? $informateur->title : dismoi_format_informateur_title($informateur->name);
     }
     return $default;
 }
 
 add_filter( 'wpseo_twitter_title', 'dismoi_wpseo_title' );
+add_filter( 'wpseo_opengraph_title', 'dismoi_wpseo_title' );
 
-function dismoi_wpseo_opengraph_title($default) {
-    $informateur = dismoi_get_informateur_by_id();
-    if ($informateur) {
-        return $informateur->title ? $informateur->title : dismoi_format_informateur_title($informateur->name);
-    }
-
-    return $default;
-}
-
-add_filter( 'wpseo_opengraph_title', 'dismoi_wpseo_opengraph_title' );
 
 function dismoi_wpseo_opengraph_image($default) {
     $informateur = dismoi_get_informateur_by_id();
@@ -530,6 +521,7 @@ function dismoi_wpseo_opengraph_image($default) {
 }
 
 add_filter( 'wpseo_opengraph_image', 'dismoi_wpseo_opengraph_image');
+add_filter( 'wpseo_twitter_image', 'dismoi_wpseo_opengraph_image');
 
 /**
  * Get description
@@ -648,7 +640,7 @@ function dismoi_wpseo_meta_title( $title ) {
             // $current_post = get_post();
             // $title = isset( $current_post->post_title ) ? $current_post->post_title : '';
             return sprintf(
-                '%s - Informateur sur DisMoi',
+                '%s - Source d\'information sur DisMoi',
                 $profile_object->name
             );
         }

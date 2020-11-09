@@ -17,6 +17,8 @@ Install packages by running `yarn install`
 
 `docker-compose up` for docker
 
+A phpmyadmin is available at: http://localhost:8081
+
 
 ### Wordpress migration
 

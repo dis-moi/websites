@@ -12,6 +12,16 @@ services:
       MYSQL_USER: wordpress
       MYSQL_PASSWORD: wordpress
 
+  phpmyadmin:
+    image: phpmyadmin
+    container_name: phpmyadmin
+    restart: always
+    ports:
+      - 8081:80
+    environment:
+      PMA_USER: wordpress
+      PMA_PASSWORD: wordpress
+
   wordpress:
     depends_on:
       - db

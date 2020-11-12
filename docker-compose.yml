@@ -29,5 +29,6 @@ services:
     volumes:
       - ./plugins:/var/www/html/wp-content/plugins
       - ./themes:/var/www/html/wp-content/themes
+      - ./uploads:/var/www/html/wp-content/uploads
 volumes:
   db_data: {}

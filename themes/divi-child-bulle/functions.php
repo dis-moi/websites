@@ -106,21 +106,6 @@ function get_browser_name($user_agent) {
 	return 'Other';
 }
 
-/*
- * Absolutely not cache compatible
- * ToDo: To be handled on the FE only
- */
-function dismoi_output_bulle_overlay() {
-	if( get_browser_name($_SERVER['HTTP_USER_AGENT']) == 'firefox'):
-		echo get_template_part( 'includes/overlayFirefox');
-	elseif(get_browser_name($_SERVER['HTTP_USER_AGENT']) == 'chrome'):
-		echo get_template_part( 'includes/overlayChrome');
-	endif;
-
-}
-add_action( 'wp_footer', 'dismoi_output_bulle_overlay' );
-
-
 function dismoi_cc_mime_types($mimes) {
 	$mimes['svg'] = 'image/svg+xml';
 	$mimes['webp'] = 'image/webp';

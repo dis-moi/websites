@@ -21,3 +21,4 @@ wp-content/plugins/hello.php
 .DS_Store
 
 uploads/
+initdb.d/

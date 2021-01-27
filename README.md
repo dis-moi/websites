@@ -1,6 +1,6 @@
 # www.dismoi.io
 
-Bulle’s Website
+DisMoi’s Website
 
 
 ### Development

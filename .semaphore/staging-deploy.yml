@@ -22,3 +22,6 @@ blocks:
         - name: Copy Plugins to Simple Hosting
           commands:
             - cd ./plugins && lftp -c "set sftp:connect-program 'ssh -a -x -o StrictHostKeyChecking=no';open -u $sftp_user,nopassword sftp://$sftp_hostname; mirror -v -R --only-newer ./ $sftp_basepath/wp-content/plugins/"
+        - name: Copy Signatures files
+          commands:
+              - cd ./signatures && lftp -c "set sftp:connect-program 'ssh -a -x -o StrictHostKeyChecking=no'; open -u $sftp_user,nopassword sftp://$sftp_hostname; mirror -v -R --only-newer ./ $sftp_basepath/signatures/"

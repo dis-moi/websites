@@ -1,0 +1,4 @@
+AuthUserFile /srv/data/web/vhosts/www.bulle.io/htdocs/signatures/generator/.htpasswd
+AuthType Basic
+AuthName "Restricted area"
+Require valid-user

@@ -172,7 +172,7 @@ ob_start("sanitize_output");
                             <div></div>
                         </td>
                         <td style="padding: 0px; vertical-align: middle;">
-                            <h3 style="margin: 0px; font-size: 16px; line-height: 22px; color: #2754a0;"><?php if($firstName) echo htmlentities(ucwords($firstName)); ?><?php if($firstName && $lastName) echo '&nbsp;'; ?><?php if($lastName) echo htmlentities(ucwords($lastName)); ?></h3>
+                            <h3 style="margin: 0px; font-size: 16px; line-height: 22px; color: #2754a0;"><?php if($firstName) echo ucwords($firstName); ?><?php if($firstName && $lastName) echo '&nbsp;'; ?><?php if($lastName) echo ucwords($lastName); ?></h3>
                             <p style="margin: 0px; color: #3e3e3e; font-size: 12px; line-height: 18px;"
                             ><?= $role; ?> &#x2013; DisMoi</p>
                             <table cellpadding="0" cellspacing="0" style="font-size: medium; font-family: Tahoma; width: 100%;">

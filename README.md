@@ -29,6 +29,9 @@ Install packages by running `yarn install`
 
 More information here -> https://wordpress.org/support/article/moving-wordpress/
 
+### Update the js profiles app
+
+To force cache refresh : change the value in _Version JS Bundle pour la page "Les Contributeurs"_ in /wp-admin/customize.php?theme=divi-child-bulle _Configuration Bulles/Dismoi_
 
 ### Wishlist
 

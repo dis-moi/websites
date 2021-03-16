@@ -119,7 +119,7 @@ ob_start("sanitize_output");
                                         </tr>
                                         </tbody>
                                     </table>
-                                    <p style="padding:0px;margin:0px;color:#2754a0;font-size:12px;line-height:15px;text-align:center;">À vos côtés<br />dans la jungle web</p>
+                                    <p style="padding:0px;margin:0px;color:#2754a0;font-size:12px;line-height:15px;text-align:center;">À vos côtés dans<br />la jungle du web</p>
                                 </td>
                             </tr>
                             </tbody>

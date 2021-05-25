@@ -481,7 +481,7 @@ function get_profile_object ( $id ) {
 }
 
 function dismoi_format_informateur_title($name) {
-    return esc_attr(sprintf('%s - Source d\'information sur DisMoi', $name));
+    return esc_attr(sprintf('%s - Contributeur sur DisMoi', $name));
 }
 
 // override title
@@ -625,7 +625,7 @@ function dismoi_wpseo_meta_title( $title ) {
             // $current_post = get_post();
             // $title = isset( $current_post->post_title ) ? $current_post->post_title : '';
             return sprintf(
-                '%s - Source d\'information sur DisMoi',
+                '%s - Contributeur sur DisMoi',
                 $profile_object->name
             );
         }

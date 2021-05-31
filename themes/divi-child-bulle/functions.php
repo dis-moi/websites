@@ -72,6 +72,14 @@ function divi_child_bulle_enqueue_styles() {
             true
         );
         wp_enqueue_script( 'dismoi-profiler-app' );
+        wp_register_script(
+            'dismoi-app-onboarding',
+            'https://profiles.dismoi.io/js/1.chunk.js',
+            [],
+            $profiler_version,
+            true
+        );
+        wp_enqueue_script( 'dismoi-app-onboarding' );
    }
 
 }

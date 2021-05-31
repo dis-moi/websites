@@ -1,5 +1,9 @@
 <?php
-
+function dump_debug($data){
+    echo '<script type="text/javascript">
+		console.log("'.$data.'");
+	</script>';
+}
 /*
  * Enqueue parent and child styles
  */
@@ -91,6 +95,7 @@ add_action( 'wp_enqueue_scripts', 'divi_child_bulle_enqueue_styles' );
  */
 function divi_child_bulle_remove_dash () {
     // remove dashicons for performance
+
     if (current_user_can( 'update_core' )) {
         return;
     }
@@ -399,7 +404,9 @@ function dismoi_profiler_rewrite_url( $wp_rewrite ) {
 
         $new_rules = array(
             $slug_page_profile . '/([0-9]+)/([^/]+)/?$' => 'index.php?pagename=' . $slug_page_profile,
-            $slug_page_profile . '/([0-9]+)/?$' => 'index.php?pagename=' . $slug_page_profile
+            $slug_page_profile . '/([0-9]+)/?$' => 'index.php?pagename=' . $slug_page_profile,
+            '/([a-z]+)/' . $slug_page_profile . '/([0-9]+)/([^/]+)/?$' => 'index.php?pagename=' . $slug_page_profile
+
         );
 
         $wp_rewrite->rules =  $new_rules + $wp_rewrite->rules;

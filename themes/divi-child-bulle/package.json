@@ -5,7 +5,8 @@
   "main": "main.js",
   "scripts": {
     "build": "webpack --color -d --display-error-details",
-    "watch": "webpack --watch-stdin --color -d --display-error-details"
+    "watch": "webpack --watch-stdin --color -d --display-error-details",
+    "restore": "cat ../../db/dis_www_bulle_io.sql | docker exec -i wp_db_1 /usr/bin/mysql -u wordpress --password=wordpress wordpress"
   },
   "author": "",
   "license": "ISC",

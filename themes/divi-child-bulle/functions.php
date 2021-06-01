@@ -1,5 +1,6 @@
 <?php
 
+include_once ("utils/debug.php");
 /*
  * Enqueue parent and child styles
  */
@@ -91,6 +92,7 @@ add_action( 'wp_enqueue_scripts', 'divi_child_bulle_enqueue_styles' );
  */
 function divi_child_bulle_remove_dash () {
     // remove dashicons for performance
+
     if (current_user_can( 'update_core' )) {
         return;
     }
@@ -399,9 +401,8 @@ function dismoi_profiler_rewrite_url( $wp_rewrite ) {
 
         $new_rules = array(
             $slug_page_profile . '/([0-9]+)/([^/]+)/?$' => 'index.php?pagename=' . $slug_page_profile,
-            $slug_page_profile . '/([0-9]+)/?$' => 'index.php?pagename=' . $slug_page_profile
+            $slug_page_profile . '/([0-9]+)/?$' => 'index.php?pagename=' . $slug_page_profile,
         );
-
         $wp_rewrite->rules =  $new_rules + $wp_rewrite->rules;
     }
     return $wp_rewrite->rules;
@@ -674,4 +675,15 @@ function dismoi_wpseo_canonical_override( $url ) {
 
 add_filter('wpseo_canonical', 'dismoi_wpseo_canonical_override');
 
+function en_profiles_redirect() {
+    $url = parse_url($_SERVER['REQUEST_URI']);
+    $path = explode('/', $url['path']);
+    $isId = is_numeric($path[3]);
 
+    if ( $path[2] === "guides" && $isId)
+    {
+       wp_redirect("/en/guides");
+    }
+
+}
+add_action( 'template_redirect', 'en_profiles_redirect' );

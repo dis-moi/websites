@@ -392,19 +392,34 @@ add_action( 'customize_register', 'dismoi_prefix_customize_register' );
  *
  */
 function dismoi_profiler_rewrite_url( $wp_rewrite ) {
-    $page_profile = get_theme_mod( 'bulle_setting_profile_page' );
     $page_profile_rules = get_theme_mod( 'bulle_setting_profile_page_rewrite' );
-    if ( isset( $page_profile ) &&
-        !empty( $page_profile ) &&
-        $page_profile_rules == '1' ) {
-        $slug_page_profile = get_post_field( 'post_name', get_post( $page_profile ) );
+    $page_profile_fr = get_theme_mod( 'bulle_setting_profile_page' );
 
-        $new_rules = array(
-            $slug_page_profile . '/([0-9]+)/([^/]+)/?$' => 'index.php?pagename=' . $slug_page_profile,
-            $slug_page_profile . '/([0-9]+)/?$' => 'index.php?pagename=' . $slug_page_profile,
-        );
-        $wp_rewrite->rules =  $new_rules + $wp_rewrite->rules;
+    if ( isset( $page_profile_fr ) && !empty( $page_profile_fr ) && $page_profile_rules == '1' ) {
+        $slug_page_profile_fr = get_post_field( 'post_name', get_post( $page_profile_fr ) );
+
+        $new_rules = array();
+
+        $languages = apply_filters( 'wpml_active_languages', NULL, 'orderby=id&order=desc' );
+        if ( !empty( $languages ) ) {
+            foreach( $languages as $l ) {
+              $languageCode = $l['language_code'];
+              if ($languageCode != 'fr')
+                {
+                    $page_profile =  apply_filters('wpml_object_id', $page_profile_fr, 'post', true, $languageCode);
+                    $slug_page_profile = get_post_field( 'post_name', get_post( $page_profile ) );
+
+                    $new_rules[$slug_page_profile . '/([0-9]+)/([^/]+)/?$'] = 'index.php?pagename=' . $slug_page_profile;
+                    $new_rules[$slug_page_profile . '/([0-9]+)/?$'] = 'index.php?pagename=' . $slug_page_profile;
+                }
+            }
+        }
+        $new_rules[$slug_page_profile_fr . '/([0-9]+)/([^/]+)/?$'] = 'index.php?pagename=' . $slug_page_profile_fr;
+        $new_rules[$slug_page_profile_fr . '/([0-9]+)/?$'] = 'index.php?pagename=' . $slug_page_profile_fr;
+
+        $wp_rewrite->rules = $new_rules + $wp_rewrite->rules;
     }
+
     return $wp_rewrite->rules;
 }
 add_filter('generate_rewrite_rules', 'dismoi_profiler_rewrite_url');
@@ -554,7 +569,6 @@ function dismoi_get_informateur_id( ) {
             $path = substr( $path, 1 );
         }
         $parts = explode("/", $path);
-
         if ( count( $parts ) > 1 ) {
             $id = $parts[1];
             return $id;
@@ -674,16 +688,3 @@ function dismoi_wpseo_canonical_override( $url ) {
 }
 
 add_filter('wpseo_canonical', 'dismoi_wpseo_canonical_override');
-
-function en_profiles_redirect() {
-    $url = parse_url($_SERVER['REQUEST_URI']);
-    $path = explode('/', $url['path']);
-    $isId = is_numeric($path[3]);
-
-    if ( $path[2] === "guides" && $isId)
-    {
-       wp_redirect("/en/guides");
-    }
-
-}
-add_action( 'template_redirect', 'en_profiles_redirect' );

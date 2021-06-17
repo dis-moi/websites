@@ -17,7 +17,6 @@ Install packages by running `yarn install`
 
 `docker-compose up` for docker
 
-
 ### Wordpress migration
 
 1) Download production uploads directory
@@ -37,4 +36,13 @@ To force cache refresh : change the value in _Version JS Bundle pour la page "Le
 
 * Add a Uglification to the CSS output without removing the style header comments
 
+### URL and Redirection
 
+`rewrite_rules` are used for `eclaireur` and `en/guides` path and redirection profiles pages.
+To do that the function `function dismoi_profiler_rewrite_url( $wp_rewrite )` is used in `functions.php`
+For any changes, Wordpress have to flush the `rewrite_rules` to apply the new change, to do that :
+- go on backoffice
+- find permalink page
+- save with the button (no need to change anything else)
+
+> saving will flush rewrite_rules and generate the new one

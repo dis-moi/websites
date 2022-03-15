@@ -409,13 +409,13 @@ function dismoi_profiler_rewrite_url( $wp_rewrite ) {
                     $page_profile =  apply_filters('wpml_object_id', $page_profile_fr, 'post', true, $languageCode);
                     $slug_page_profile = get_post_field( 'post_name', get_post( $page_profile ) );
 
-                    $new_rules[$slug_page_profile . '/([0-9]+)/([^/]+)/?$'] = 'index.php?pagename=' . $slug_page_profile;
-                    $new_rules[$slug_page_profile . '/([0-9]+)/?$'] = 'index.php?pagename=' . $slug_page_profile;
+                    $new_rules["($languageCode/)?" . $slug_page_profile . '/([0-9]+)/([^/]+)/?$'] = 'index.php?pagename=' . $slug_page_profile;
+                    $new_rules["($languageCode/)?" . $slug_page_profile . '/([0-9]+)/?$'] = 'index.php?pagename=' . $slug_page_profile;
                 }
             }
         }
-        $new_rules[$slug_page_profile_fr . '/([0-9]+)/([^/]+)/?$'] = 'index.php?pagename=' . $slug_page_profile_fr;
-        $new_rules[$slug_page_profile_fr . '/([0-9]+)/?$'] = 'index.php?pagename=' . $slug_page_profile_fr;
+        $new_rules['(fr/)?' . $slug_page_profile_fr . '/([0-9]+)/([^/]+)/?$'] = 'index.php?pagename=' . $slug_page_profile_fr;
+        $new_rules['(fr/)?' . $slug_page_profile_fr . '/([0-9]+)/?$'] = 'index.php?pagename=' . $slug_page_profile_fr;
 
         $wp_rewrite->rules = $new_rules + $wp_rewrite->rules;
     }
